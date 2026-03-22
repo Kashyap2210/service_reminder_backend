@@ -1,0 +1,5 @@
+export enum ServiceStatus {
+  SERVICE_COMMENCED = 'SERVICE_COMMENCED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
