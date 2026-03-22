@@ -1,3 +1,12 @@
+import { IAppointmentEntity } from '../interfaces/entities/appointment.entity.interface';
+import { IBaseHistoryEntity } from '../interfaces/entities/base-history.entity.interface';
+import { ICronJobEntity } from '../interfaces/entities/cronjob.entity.interface';
+import { INotificationEntity } from '../interfaces/entities/notification.entity.interface';
+import { IRecurringItemEntity } from '../interfaces/entities/recurring-item.entity.interface';
+import { IServiceEntity } from '../interfaces/entities/service.entity.interface';
+import { IUserEntity } from '../interfaces/entities/user.entity.interface';
+import { IVendorEntity } from '../interfaces/entities/vendor.entity.interface';
+
 export enum EntityList {
   USER = 'user',
   USER_HISTORY = 'user_history',
@@ -12,3 +21,29 @@ export enum EntityList {
   NOTIFICATION = 'notification',
   CRONJOB = 'cron_job',
 }
+
+export type EntityType<T extends EntityList> = T extends EntityList.USER
+  ? IUserEntity
+  : T extends EntityList.USER_HISTORY
+    ? IBaseHistoryEntity
+    : T extends EntityList.RECURRING_ITEM
+      ? IRecurringItemEntity
+      : T extends EntityList.RECURRING_ITEM_HISTORY
+        ? IBaseHistoryEntity
+        : T extends EntityList.VENDOR
+          ? IVendorEntity
+          : T extends EntityList.VENDOR_HISTORY
+            ? IBaseHistoryEntity
+            : T extends EntityList.APPOINTMENT
+              ? IAppointmentEntity
+              : T extends EntityList.APPOINTMENT_HISTORY
+                ? IBaseHistoryEntity
+                : T extends EntityList.SERVICE
+                  ? IServiceEntity
+                  : T extends EntityList.SERVICE_HISTORY
+                    ? IBaseHistoryEntity
+                    : T extends EntityList.NOTIFICATION
+                      ? INotificationEntity
+                      : T extends EntityList.CRONJOB
+                        ? ICronJobEntity
+                        : never;
