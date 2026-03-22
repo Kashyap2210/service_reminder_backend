@@ -3,7 +3,7 @@ import { IAuditColumnEntity } from 'src/common/helpers/audit-column.entity.inter
 import { Nullable } from 'src/common/types/types.generic';
 
 export interface IRecurringItemEntity extends IAuditColumnEntity {
-  id: string;
+  id: number;
   name: string;
   type: string;
   companyName: Nullable<string>;
@@ -11,5 +11,5 @@ export interface IRecurringItemEntity extends IAuditColumnEntity {
   servicePeriod: number;
   servicePeriodUnit: ServicePeriodUnit;
   servicePlaceAddress: Nullable<string>;
-  userId: string;
+  userid: number;
 }

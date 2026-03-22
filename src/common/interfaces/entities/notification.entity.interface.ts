@@ -4,9 +4,9 @@ import { IAuditColumnEntity } from 'src/common/helpers/audit-column.entity.inter
 import { Nullable } from 'src/common/types/types.generic';
 
 export interface INotificationEntity extends IAuditColumnEntity {
-  id: string;
-  userId: string;
-  recurringItemId: string;
+  id: number;
+  userid: number;
+  recurringItemid: number;
   appointmentId: Nullable<string>;
   type: NotificationType;
   status: NotificationStatus;

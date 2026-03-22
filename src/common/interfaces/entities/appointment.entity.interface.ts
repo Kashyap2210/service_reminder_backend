@@ -3,10 +3,10 @@ import { IAuditColumnEntity } from 'src/common/helpers/audit-column.entity.inter
 import { Nullable } from 'src/common/types/types.generic';
 
 export interface IAppointmentEntity extends IAuditColumnEntity {
-  id: string;
+  id: number;
   appointmentDate: number;
-  recurringItemId: string;
-  userId: string;
+  recurringItemid: number;
+  userid: number;
   appointmentType: Nullable<string>;
   vendorId: Nullable<string>;
   appointmentStatus: AppointmentStatus;
