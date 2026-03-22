@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: service_reminder_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - service_reminder_data:/var/lib/postgresql/data
+
+volumes:
+  service_reminder_data:
