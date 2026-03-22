@@ -16,12 +16,12 @@ export abstract class BaseEntity {
 
   @BeforeInsert()
   setCreatedOn() {
-    this.createdOn = DateUtil.now();
-    this.updatedOn = DateUtil.now();
+    this.createdOn = DateUtil.toEpoch(new Date());
+    this.updatedOn = DateUtil.toEpoch(new Date());
   }
 
   @BeforeUpdate()
   setUpdatedOn() {
-    this.updatedOn = DateUtil.now();
+    this.updatedOn = DateUtil.toEpoch(new Date());
   }
 }
