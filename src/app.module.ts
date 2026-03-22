@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import databaseConfig from './config/database.config';
 import { DataBaseModule } from './config/database.module';
+import { SharedModule } from './shared/shared.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { DataBaseModule } from './config/database.module';
       load: [databaseConfig],
     }),
     DataBaseModule,
+    SharedModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
