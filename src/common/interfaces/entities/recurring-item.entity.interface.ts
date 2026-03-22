@@ -7,9 +7,9 @@ export interface IRecurringItemEntity extends IAuditColumnEntity {
   name: string;
   type: string;
   companyName: Nullable<string>;
-  vendorId: Nullable<string>;
+  vendorId: Nullable<number>;
   servicePeriod: number;
   servicePeriodUnit: ServicePeriodUnit;
   servicePlaceAddress: Nullable<string>;
-  userid: number;
+  userId: number;
 }

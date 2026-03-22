@@ -6,6 +6,12 @@ import databaseConfig from './config/database.config';
 import { DataBaseModule } from './config/database.module';
 import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
+import { AppointmentModule } from './appointment/appointment.module';
+import { ServiceModule } from './service/service.module';
+import { CronjobModule } from './cronjob/cronjob.module';
+import { NotificationModule } from './notification/notification.module';
+import { VendorModule } from './vendor/vendor.module';
+import { RecurringItemModule } from './recurring-item/recurring-item.module';
 
 @Module({
   imports: [
@@ -16,6 +22,12 @@ import { UserModule } from './user/user.module';
     DataBaseModule,
     SharedModule,
     UserModule,
+    AppointmentModule,
+    ServiceModule,
+    CronjobModule,
+    NotificationModule,
+    VendorModule,
+    RecurringItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
