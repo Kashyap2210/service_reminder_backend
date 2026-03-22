@@ -1,6 +1,8 @@
+import { Nullable } from '../types/types.generic';
+
 export interface IBaseResponse<T> {
   success: boolean;
   message: string;
-  data: T | null;
-  error: string | null;
+  data: Nullable<T>;
+  error: Nullable<string>;
 }
