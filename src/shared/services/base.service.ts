@@ -7,8 +7,8 @@ import {
 } from 'src/common/types/generic.dto.types';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { DataSource, EntityManager } from 'typeorm';
-import { EntityManagerBaseService } from '../repositories/entity.base.manager';
 import { RegistryService } from './registry.service';
+import { EntityManagerBaseService } from '../repositories/entity.base.manager';
 
 export abstract class BaseService<
   T extends EntityList,
@@ -25,6 +25,14 @@ export abstract class BaseService<
     this.registryService.set(this.entityName, this);
   }
 
+  abstract getRepository(
+    entityManager?: EntityManager,
+  ): EntityManagerBaseService<T>;
+
+  getEntityManager(entityManager?: EntityManager) {
+    return entityManager ?? this.dataSource.manager;
+  }
+
   getServicesFromRegistry<K extends EntityList>(entities: K[]) {
     const response: Map<K, BaseService<K>> = new Map();
     for (const entity of entities) {
@@ -33,14 +41,6 @@ export abstract class BaseService<
     }
 
     return response;
-  }
-
-  abstract getRepository(
-    entityManager?: EntityManager,
-  ): EntityManagerBaseService<T>;
-
-  getEntityManager(entityManager?: EntityManager) {
-    return entityManager ?? this.dataSource.manager;
   }
 
   async getInstanceBase(
