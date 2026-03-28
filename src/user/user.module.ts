@@ -9,6 +9,8 @@ import { UserHistoryRepository } from './repositories/user-history.repository';
 import { UserRepository } from './repositories/user.repository';
 import { UserHistoryService } from './services/user-history.service';
 import { UserService } from './services/user.service';
+import { UserCreateTransaction } from './transactions/user.create.transaction';
+import { UserUpdateTransaction } from './transactions/user.update.transaction';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { UserService } from './services/user.service';
     UserRepository,
     UserHistoryService,
     UserHistoryRepository,
+    UserCreateTransaction,
+    UserUpdateTransaction,
   ],
   controllers: [UserController],
   exports: [UserService],

@@ -22,7 +22,7 @@ export class UserUpdateDto
     currentUser: IUserEntity,
     registryService: RegistryService,
     existingEntityId: number,
-  ): Promise<IDtoValidationError[] | null> {
+  ): Promise<IDtoValidationError[] | IUserEntity | null> {
     this.registryService = registryService;
     const errors: IDtoValidationError[] = [];
     let existingEntity: IUserEntity | null = null;
@@ -47,7 +47,7 @@ export class UserUpdateDto
       }
     }
 
-    return errors.length > 0 ? errors : null;
+    return errors.length > 0 ? errors : (existingEntity ?? null);
   }
 
   async validateExistingEntityId(

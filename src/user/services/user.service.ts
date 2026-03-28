@@ -1,7 +1,6 @@
 // src/users/services/user.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
@@ -10,11 +9,20 @@ import { EntityManager } from 'typeorm';
 import { UserCreateDto } from '../dtos/user.create.dto';
 import { UserUpdateDto } from '../dtos/user.update.dto';
 import { UserRepository } from '../repositories/user.repository';
+import { IUserCreateTransactionInputData } from '../transactions/interfaces/user-create-transaction.interface';
+import { IUserUpdateTransactionInputData } from '../transactions/interfaces/user-update-transaction.interface';
+import { UserCreateTransaction } from '../transactions/user.create.transaction';
+import { UserUpdateTransaction } from '../transactions/user.update.transaction';
 import { UserHistoryService } from './user-history.service';
 
 @Injectable()
 export class UserService extends BaseService<EntityList.USER> {
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(
+    private readonly userRepository: UserRepository,
+
+    private readonly userCreateTransaction: UserCreateTransaction,
+    private readonly userUpdateTransaction: UserUpdateTransaction,
+  ) {
     super(EntityList.USER);
   }
 
@@ -43,25 +51,15 @@ export class UserService extends BaseService<EntityList.USER> {
       throw new BadRequestException(errors[0]);
     }
 
-    const instance = await this.userRepository.getInstance(
-      { ...dto.toCreateDto(), password: await bcrypt.hash(dto.password, 10) },
-      entityManager,
-    );
+    const data: IUserCreateTransactionInputData = {
+      dto: {
+        ...dto.toCreateDto(),
+        password: await bcrypt.hash(dto.password, 10),
+      },
+      currentUser: systemUser,
+    };
 
-    const userEntity = await this.userRepository.create(
-      instance,
-      entityManager,
-    );
-
-    await this.userHistoryService.createHistoryEntity(
-      systemUser,
-      { ...userEntity },
-      EntityHistoryOperation.CREATE,
-      undefined,
-      entityManager,
-    );
-
-    return userEntity;
+    return this.userCreateTransaction.run(data);
   }
 
   async updateUser(
@@ -70,14 +68,19 @@ export class UserService extends BaseService<EntityList.USER> {
     dto: UserUpdateDto,
     entityManager?: EntityManager,
   ) {
+    let existingUser: IUserEntity | null = null;
     const validationResult = await dto.validate(
       currentUser,
       this.registryService,
       id,
     );
     if (validationResult) {
-      const errors = validationResult;
-      throw new BadRequestException(errors[0]);
+      if (Array.isArray(validationResult)) {
+        const errors = validationResult;
+        throw new BadRequestException(errors[0]);
+      } else if (typeof validationResult === 'object') {
+        existingUser = validationResult;
+      }
     }
 
     let updatedPassword = '';
@@ -85,15 +88,17 @@ export class UserService extends BaseService<EntityList.USER> {
       updatedPassword = await bcrypt.hash(dto.password, 10);
     }
 
-    return this.updateByIdBase(
+    const data: IUserUpdateTransactionInputData = {
       id,
-      {
+      dto: {
         ...dto.toUpdateDto(),
         ...(dto.password ? { password: updatedPassword } : {}),
-        updatedBy: currentUser.id,
       },
-      entityManager,
-    );
+      currentUser,
+      existingEntity: existingUser!, // <== User will always be there as we throw error from dto
+    };
+
+    return this.userUpdateTransaction.run(data);
   }
 
   async deleteUser(
