@@ -1,6 +1,7 @@
 // src/users/services/user.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
@@ -9,11 +10,18 @@ import { EntityManager } from 'typeorm';
 import { UserCreateDto } from '../dtos/user.create.dto';
 import { UserUpdateDto } from '../dtos/user.update.dto';
 import { UserRepository } from '../repositories/user.repository';
+import { UserHistoryService } from './user-history.service';
 
 @Injectable()
 export class UserService extends BaseService<EntityList.USER> {
   constructor(private readonly userRepository: UserRepository) {
     super(EntityList.USER);
+  }
+
+  get userHistoryService(): UserHistoryService {
+    return this.registryService.get(
+      EntityList.USER_HISTORY,
+    ) as UserHistoryService;
   }
 
   getRepository(
@@ -39,7 +47,21 @@ export class UserService extends BaseService<EntityList.USER> {
       { ...dto.toCreateDto(), password: await bcrypt.hash(dto.password, 10) },
       entityManager,
     );
-    return this.userRepository.create(instance, entityManager);
+
+    const userEntity = await this.userRepository.create(
+      instance,
+      entityManager,
+    );
+
+    await this.userHistoryService.createHistoryEntity(
+      systemUser,
+      { ...userEntity },
+      EntityHistoryOperation.CREATE,
+      undefined,
+      entityManager,
+    );
+
+    return userEntity;
   }
 
   async updateUser(
