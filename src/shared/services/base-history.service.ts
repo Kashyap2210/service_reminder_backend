@@ -62,6 +62,10 @@ export abstract class BaseHistoryService<
     oldEntity: EntityType<K>,
     newEntity?: EntityType<K>,
   ): Partial<EntityType<K>> {
-    return getObjectDiffingKeys(oldEntity, newEntity ?? {});
+    let data: Partial<EntityType<K>> = oldEntity;
+    if (newEntity) {
+      data = getObjectDiffingKeys(oldEntity, newEntity);
+    }
+    return data;
   }
 }

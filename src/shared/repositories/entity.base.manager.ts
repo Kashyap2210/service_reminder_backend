@@ -81,6 +81,8 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     filter: IEntityFilterData<EntityType<T>>,
     entityManager?: EntityManager,
   ): Promise<EntityType<T>[]> {
+    console.log('filter from entity-base-manager for getByFilter', filter);
+
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;
 

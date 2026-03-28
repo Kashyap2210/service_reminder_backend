@@ -146,7 +146,7 @@ export class UserCreateDto implements IUserCreateDto {
       contactNo: this.contactNo,
       email: this.email,
       password: this.password,
-      role: UserRole.USER,
+      role: this.role,
     };
   }
 }

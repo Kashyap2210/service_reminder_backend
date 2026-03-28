@@ -1,8 +1,10 @@
 // src/users/services/user.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from 'src/common/enums/user.role.enum';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -19,6 +21,7 @@ import { UserHistoryService } from './user-history.service';
 export class UserService extends BaseService<EntityList.USER> {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly configService: ConfigService,
 
     private readonly userCreateTransaction: UserCreateTransaction,
     private readonly userUpdateTransaction: UserUpdateTransaction,
@@ -40,7 +43,7 @@ export class UserService extends BaseService<EntityList.USER> {
 
   async createUser(dto: UserCreateDto, entityManager?: EntityManager) {
     // here we will require system user
-    const systemUser = {} as IUserEntity;
+    const systemUser = await this.getSystemUser();
 
     const validationResult = await dto.validate(
       systemUser,
@@ -107,5 +110,22 @@ export class UserService extends BaseService<EntityList.USER> {
     entityManager?: EntityManager,
   ) {
     return this.userRepository.deleteById(id, entityManager);
+  }
+
+  async getSystemUser(
+    entityManager?: EntityManager,
+  ): Promise<EntityType<EntityList.USER>> {
+    const userId = this.configService.get('SYSTEM_USER_ID')!;
+    const systemUser = (
+      await this.search(
+        {
+          id: [Number(userId)],
+          role: [UserRole.ADMIN],
+        },
+        undefined,
+        entityManager,
+      )
+    )[0];
+    return systemUser;
   }
 }
