@@ -14,9 +14,7 @@ import {
 } from 'typeorm';
 
 @Injectable()
-export abstract class EntityManagerBaseService<
-  T extends EntityType<EntityList>,
-> {
+export abstract class EntityManagerBaseService<T extends EntityList> {
   protected readonly globalEntityManager: EntityManager;
 
   constructor(globalEntityManager: EntityManager) {
@@ -29,17 +27,19 @@ export abstract class EntityManagerBaseService<
   }
 
   // Every service must tell us which entity class it manages
-  abstract getEntityClass(): new () => T;
+  abstract getEntityClass(): new () => EntityType<T>;
 
   // Get repository from entity manager
-  getRepository(entityManager?: EntityManager): Repository<T> {
+  getRepository(entityManager?: EntityManager): Repository<EntityType<T>> {
     return this.getEntityManager(entityManager).getRepository(
       this.getEntityClass(),
     );
   }
 
   // Get query builder
-  getQueryBuilder(entityManager?: EntityManager): SelectQueryBuilder<T> {
+  getQueryBuilder(
+    entityManager?: EntityManager,
+  ): SelectQueryBuilder<EntityType<T>> {
     const repository = this.getRepository(entityManager);
     return repository.createQueryBuilder(repository.metadata.tableName);
   }
@@ -50,7 +50,7 @@ export abstract class EntityManagerBaseService<
     propertyValues: P[],
     key?: string,
     entityManager?: EntityManager,
-  ): Promise<T[]> {
+  ): Promise<EntityType<T>[]> {
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;
 
@@ -78,9 +78,9 @@ export abstract class EntityManagerBaseService<
 
   // Get by dynamic filters
   async getByFilter(
-    filter: IEntityFilterData<T>,
+    filter: IEntityFilterData<EntityType<T>>,
     entityManager?: EntityManager,
-  ): Promise<T[]> {
+  ): Promise<EntityType<T>[]> {
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;
 
@@ -101,29 +101,34 @@ export abstract class EntityManagerBaseService<
 
   // Create instance without saving
   async getInstance(
-    data: IEntityCreateDto<T>,
+    data: IEntityCreateDto<EntityType<T>>,
     entityManager?: EntityManager,
-  ): Promise<T> {
-    return this.getRepository(entityManager).create(data as DeepPartial<T>);
+  ): Promise<EntityType<T>> {
+    return this.getRepository(entityManager).create(
+      data as DeepPartial<EntityType<T>>,
+    );
   }
 
   // Save entity
-  async create(entity: T, entityManager?: EntityManager): Promise<T> {
+  async create(
+    entity: EntityType<T>,
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>> {
     return this.getRepository(entityManager).save(entity);
   }
 
   // Update by id
   async updateById(
     id: number,
-    entity: IEntityUpdateDto<T> & { updatedBy: number },
+    entity: IEntityUpdateDto<EntityType<T>> & { updatedBy: number },
     entityManager?: EntityManager,
-  ): Promise<T> {
+  ): Promise<EntityType<T>> {
     await this.getRepository(entityManager).update(
       id,
-      entity as QueryDeepPartialEntity<T>,
+      entity as QueryDeepPartialEntity<EntityType<T>>,
     );
     const updated = await this.getByFilter(
-      { id: [id] } as IEntityFilterData<T>,
+      { id: [id] } as IEntityFilterData<EntityType<T>>,
       entityManager,
     );
     return updated[0];
