@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user.role.enum';
-import { IUserSearchDto } from 'src/common/interfaces/dtos/user.dto';
+import { IUserSearchDto } from 'src/common/interfaces/dtos/user.dto.interface';
 
 export class UserSearchDto implements IUserSearchDto {
   @ApiPropertyOptional({

@@ -1,5 +1,5 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
-import { IUserUpdateDto } from 'src/common/interfaces/dtos/user.dto';
+import { IUserUpdateDto } from 'src/common/interfaces/dtos/user.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';

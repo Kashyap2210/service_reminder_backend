@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, MaxLength } from 'class-validator';
 import { UserRole } from 'src/common/enums/user.role.enum';
-import { IUserCreateDto } from 'src/common/interfaces/dtos/user.dto';
+import { IUserCreateDto } from 'src/common/interfaces/dtos/user.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
