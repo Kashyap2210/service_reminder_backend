@@ -17,13 +17,13 @@ export class RecurringItemHistoryEntity
   @Column({ type: 'int' })
   entityId: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 1024 })
   data: string;
 
   @Column({
     type: 'enum',
     enum: EntityHistoryOperation,
-    enumName: 'history_operation_enum', 
+    enumName: 'history_operation_enum',
   })
   operation: EntityHistoryOperation;
 }
