@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { EntityHistoryOperation } from '../common/enums/entity-history-operation.enum';
-import { IBaseHistoryEntity } from '../common/interfaces/entities/base-history.entity.interface';
-import { EntityList } from '../common/utils/entity.utils';
-import { dbSchemaName } from '../shared/constants';
-import { BaseEntity } from '../shared/entities/base.entity';
+import { EntityHistoryOperation } from '../../common/enums/entity-history-operation.enum';
+import { IBaseHistoryEntity } from '../../common/interfaces/entities/base-history.entity.interface';
+import { EntityList } from '../../common/utils/entity.utils';
+import { dbSchemaName } from '../../shared/constants';
+import { BaseEntity } from '../../shared/entities/base.entity';
 
 @Entity({ name: EntityList.USER_HISTORY, schema: dbSchemaName })
 export class UserHistoryEntity
@@ -16,7 +16,7 @@ export class UserHistoryEntity
   @Column({ type: 'int' })
   entityId: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 1024 })
   data: string;
 
   @Column({

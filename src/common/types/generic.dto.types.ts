@@ -8,5 +8,5 @@ export type IEntityUpdateDto<T> = Omit<
 >;
 
 export type IEntityFilterData<T> = {
-  [K in keyof T]?: T[K] | T[K][];
+  [K in keyof T]?: T[K][];
 };
