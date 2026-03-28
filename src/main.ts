@@ -7,13 +7,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors(); // Enable CORS globally
   app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
+      transform: true, // ← required for @Transform and @Type to work
     }),
   );
 
@@ -29,7 +28,7 @@ async function bootstrap() {
         name: 'JWT',
         in: 'header',
       },
-      'JWT-auth',
+      'access-token',
     )
     .build();
 
