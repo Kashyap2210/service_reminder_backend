@@ -1,14 +1,20 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BaseEntity } from '../shared/entities/base.entity';
-import { dbSchemaName } from '../shared/constants';
-import { EntityList } from '../common/utils/entity.utils';
-import { INotificationEntity, INotificationPayload } from '../common/interfaces/entities/notification.entity.interface';
-import { NotificationStatus } from '../common/enums/notification-status.enum';
-import { NotificationType } from '../common/enums/notification-type.enum';
-import { Nullable } from '../common/types/types.generic';
+import { NotificationStatus } from '../../common/enums/notification-status.enum';
+import { NotificationType } from '../../common/enums/notification-type.enum';
+import {
+  INotificationEntity,
+  INotificationPayload,
+} from '../../common/interfaces/entities/notification.entity.interface';
+import { Nullable } from '../../common/types/types.generic';
+import { EntityList } from '../../common/utils/entity.utils';
+import { dbSchemaName } from '../../shared/constants';
+import { BaseEntity } from '../../shared/entities/base.entity';
 
 @Entity({ name: EntityList.NOTIFICATION, schema: dbSchemaName })
-export class NotificationEntity extends BaseEntity implements INotificationEntity {
+export class NotificationEntity
+  extends BaseEntity
+  implements INotificationEntity
+{
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
