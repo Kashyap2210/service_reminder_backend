@@ -5,6 +5,7 @@ import { INotificationEntity } from '../interfaces/entities/notification.entity.
 import { IRecurringItemEntity } from '../interfaces/entities/recurring-item.entity.interface';
 import { IServiceEntity } from '../interfaces/entities/service.entity.interface';
 import { IUserEntity } from '../interfaces/entities/user.entity.interface';
+import { IVendorRecurringItemMapping } from '../interfaces/entities/vendor-recurring-item-mapping.entity.interface';
 import { IVendorEntity } from '../interfaces/entities/vendor.entity.interface';
 
 export enum EntityList {
@@ -20,6 +21,7 @@ export enum EntityList {
   SERVICE_HISTORY = 'service_history',
   NOTIFICATION = 'notification',
   CRONJOB = 'cron_job',
+  VENDOR_RECURRING_ITEM_MAPPING = 'vendor_recurring_item_mapping',
 }
 
 export type EntityType<T extends EntityList> = T extends EntityList.USER
@@ -46,4 +48,6 @@ export type EntityType<T extends EntityList> = T extends EntityList.USER
                       ? INotificationEntity
                       : T extends EntityList.CRONJOB
                         ? ICronJobEntity
-                        : never;
+                        : T extends EntityList.VENDOR_RECURRING_ITEM_MAPPING
+                          ? IVendorRecurringItemMapping
+                          : never;

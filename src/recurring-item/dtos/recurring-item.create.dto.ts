@@ -45,16 +45,16 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   @MaxLength(100)
   companyName: Nullable<string>;
 
-  @ApiProperty({
-    type: Number,
-    example: 1,
-    description: 'Vendor id (optional)',
-    required: false,
-    nullable: true,
-  })
-  @IsOptional()
-  @IsNumber()
-  vendorId: Nullable<number>;
+  // @ApiProperty({
+  //   type: Number,
+  //   example: 1,
+  //   description: 'Vendor id (optional)',
+  //   required: false,
+  //   nullable: true,
+  // })
+  // @IsOptional()
+  // @IsNumber()
+  // vendorId: Nullable<number>;
 
   @ApiProperty({
     type: Number,
@@ -103,8 +103,39 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
 
-    const userValidationResult = await this.validateUserId(currentUser);
-    if (userValidationResult) errors.push(...userValidationResult);
+    const userIdValidationResult = await this.validateUserId(currentUser);
+    if (userIdValidationResult) errors.push(...userIdValidationResult);
+
+    // const vendorIdValidationResult = await this.validateVendorId(currentUser);
+    // if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
+
+    const nameTypeCombineValidationResult = await this.validateNameTypeCombine(
+      currentUser,
+      existingEntity,
+    );
+    if (nameTypeCombineValidationResult)
+      errors.push(...nameTypeCombineValidationResult);
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateNameTypeCombine(
+    currentUser: IUserEntity,
+    existingEntity?: EntityType<EntityList.RECURRING_ITEM>,
+  ) {
+    const errors: IDtoValidationError[] = [];
+
+    const existingRecurringItems = await this.registryService
+      .get(EntityList.RECURRING_ITEM)
+      .search({ name: [this.name], type: [this.type] }, currentUser);
+
+    if (existingRecurringItems && existingRecurringItems.length === 0) {
+      if (!existingEntity || existingEntity.id !== existingRecurringItems[0].id)
+        errors.push({
+          key: 'name',
+          message: `Recurring Item with name: ${this.name} & type: ${this.type} already exists. Please try again with different details.`,
+        });
+    }
 
     return errors.length > 0 ? errors : null;
   }
@@ -126,12 +157,30 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
+  // async validateVendorId(currentUser: IUserEntity) {
+  //   const errors: IDtoValidationError[] = [];
+  //   if (this.vendorId) {
+  //     const vendors = await this.registryService
+  //       .get(EntityList.VENDOR)
+  //       .search({ id: [this.vendorId] }, currentUser);
+
+  //     if (!vendors || vendors.length === 0) {
+  //       errors.push({
+  //         key: 'vendorId',
+  //         message: `Vendor with id: ${this.vendorId} does not exist. Please verify the id & try again`,
+  //       });
+  //     }
+
+  //     return errors.length > 0 ? errors : null;
+  //   }
+  // }
+
   toCreateDto(): IRecurringItemCreateDto {
     return {
       name: this.name,
       type: this.type,
       companyName: this.companyName,
-      vendorId: this.vendorId,
+      // vendorId: this.vendorId,
       servicePeriod: this.servicePeriod,
       servicePeriodUnit: this.servicePeriodUnit,
       servicePlaceAddress: this.servicePlaceAddress,

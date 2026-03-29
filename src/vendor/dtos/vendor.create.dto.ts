@@ -1,12 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsEmail,
   IsNumber,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
-import { IVendorCreateDto } from 'src/common/interfaces/dtos/vendor.dto.interface';
+import {
+  IVendorCreateDto,
+  IVendorEntityCreateDto,
+} from 'src/common/interfaces/dtos/vendor.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { Nullable } from 'src/common/types/types.generic';
@@ -44,12 +48,13 @@ export class VendorCreateDto implements IVendorCreateDto {
   email: Nullable<string>;
 
   @ApiProperty({
-    type: Number,
-    example: 1,
-    description: 'Linked recurring item id',
+    type: [Number],
+    example: [1],
+    description: 'Recurring-Item entity id(s)',
+    required: true,
   })
-  @IsNumber()
-  recurringItemId: number;
+  @IsArray()
+  recurringItemIds: number[];
 
   @ApiProperty({
     type: Number,
@@ -74,8 +79,7 @@ export class VendorCreateDto implements IVendorCreateDto {
 
     const recurringValidationResult =
       await this.validateRecurringItemId(currentUser);
-    if (recurringValidationResult)
-      errors.push(...recurringValidationResult);
+    if (recurringValidationResult) errors.push(...recurringValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
@@ -102,24 +106,34 @@ export class VendorCreateDto implements IVendorCreateDto {
 
     const items = await this.registryService
       .get(EntityList.RECURRING_ITEM)
-      .search({ id: [this.recurringItemId] }, currentUser);
+      .search({ id: this.recurringItemIds }, currentUser);
 
     if (!items || items.length === 0) {
       errors.push({
         key: 'recurringItemId',
-        message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
+        message: `Recurring item with id: ${this.recurringItemIds} does not exist. Please verify the id & try again`,
       });
     }
+
+    // const existingVendorForRecurringItem = await this.registryService
+    //   .get(EntityList.VENDOR)
+    //   .search({ recurringItemId: [this.recurringItemId] }, currentUser);
+    //   if(existingVendorForRecurringItem && existingVendorForRecurringItem.length> 0 ){
+    //     errors.push({
+    //       key: 'recurringItemId',
+    //       message: `A vendor already exists for the ${items[0].name}. If you wish you can update the recurring item to`
+    //     })
+    //   }
 
     return errors.length > 0 ? errors : null;
   }
 
-  toCreateDto(): IVendorCreateDto {
+  toCreateDto(): IVendorEntityCreateDto {
     return {
       name: this.name,
       contactNo: this.contactNo,
       email: this.email,
-      recurringItemId: this.recurringItemId,
+      // recurringItemId: this.recurringItemId,
       userId: this.userId,
     };
   }

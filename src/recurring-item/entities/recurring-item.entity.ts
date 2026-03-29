@@ -23,8 +23,8 @@ export class RecurringItemEntity
   @Column({ type: 'varchar', length: 100, nullable: true })
   companyName: Nullable<string>;
 
-  @Column({ type: 'int', nullable: true })
-  vendorId: Nullable<number>;
+  // @Column({ type: 'int', nullable: true })
+  // vendorId: Nullable<number>;
 
   @Column({ type: 'int' })
   servicePeriod: number;

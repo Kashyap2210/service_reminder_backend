@@ -101,7 +101,7 @@ export class RecurringItemUpdateDto
       name: this.name ?? undefined,
       type: this.type ?? undefined,
       companyName: this.companyName ?? undefined,
-      vendorId: this.vendorId ?? undefined,
+      // vendorId: this.vendorId ?? undefined,
       servicePeriod: this.servicePeriod ?? undefined,
       servicePeriodUnit: this.servicePeriodUnit ?? undefined,
       servicePlaceAddress: this.servicePlaceAddress ?? undefined,

@@ -1,7 +1,8 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
-import { IVendorUpdateDto } from 'src/common/interfaces/dtos/vendor.dto.interface';
-import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { IsArray } from 'class-validator';
+import { IVendorEntityUpdateDto } from 'src/common/interfaces/dtos/vendor.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -12,11 +13,20 @@ export class VendorUpdateDto
     OmitType(VendorCreateDto, [
       'validate',
       'validateUserId',
-      'validateRecurringItemId',
+      // 'validateRecurringItemId',
     ] as const),
   )
-  implements IVendorUpdateDto
+  implements IVendorEntityUpdateDto
 {
+  @ApiProperty({
+    type: [Number],
+    example: [1],
+    description: 'Recurring-Item entity id(s)',
+    required: true,
+  })
+  @IsArray()
+  recurringItemIds: number[];
+
   registryService: RegistryService;
 
   async validate(
@@ -57,14 +67,12 @@ export class VendorUpdateDto
   ): Promise<IDtoValidationError[] | EntityType<EntityList.VENDOR>> {
     const errors: IDtoValidationError[] = [];
 
-    const existing = await this.registryService
-      .get(EntityList.VENDOR)
-      .search(
-        {
-          id: [existingEntityId],
-        },
-        currentUser,
-      );
+    const existing = await this.registryService.get(EntityList.VENDOR).search(
+      {
+        id: [existingEntityId],
+      },
+      currentUser,
+    );
 
     if (!existing || existing.length === 0) {
       errors.push({
@@ -98,12 +106,12 @@ export class VendorUpdateDto
     return errors.length > 0 ? errors : null;
   }
 
-  toUpdateDto(): IVendorUpdateDto {
+  toUpdateDto(): IVendorEntityUpdateDto {
     return {
       name: this.name ?? undefined,
       contactNo: this.contactNo ?? undefined,
       email: this.email ?? undefined,
-      recurringItemId: this.recurringItemId ?? undefined,
+      // recurringItemId: this.recurringItemId ?? undefined,
       userId: this.userId ?? undefined,
     };
   }
