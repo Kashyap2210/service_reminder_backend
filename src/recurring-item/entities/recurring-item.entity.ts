@@ -1,13 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BaseEntity } from '../shared/entities/base.entity';
-import { dbSchemaName } from '../shared/constants';
-import { EntityList } from '../common/utils/entity.utils';
-import { IRecurringItemEntity } from '../common/interfaces/entities/recurring-item.entity.interface';
-import { ServicePeriodUnit } from '../common/enums/service-period-unit.enum';
-import { Nullable } from '../common/types/types.generic';
+import { ServicePeriodUnit } from '../../common/enums/service-period-unit.enum';
+import { IRecurringItemEntity } from '../../common/interfaces/entities/recurring-item.entity.interface';
+import { Nullable } from '../../common/types/types.generic';
+import { EntityList } from '../../common/utils/entity.utils';
+import { dbSchemaName } from '../../shared/constants';
+import { BaseEntity } from '../../shared/entities/base.entity';
 
 @Entity({ name: EntityList.RECURRING_ITEM, schema: dbSchemaName })
-export class RecurringItemEntity extends BaseEntity implements IRecurringItemEntity {
+export class RecurringItemEntity
+  extends BaseEntity
+  implements IRecurringItemEntity
+{
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
