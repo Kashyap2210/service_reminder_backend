@@ -1,15 +1,14 @@
-// src/vendors/entities/vendor-history.entity.ts
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { EntityHistoryOperation } from '../common/enums/entity-history-operation.enum';
-import { IBaseHistoryEntity } from '../common/interfaces/entities/base-history.entity.interface';
-import { EntityList } from '../common/utils/entity.utils';
-import { dbSchemaName } from '../shared/constants';
-import { BaseEntity } from '../shared/entities/base.entity';
+import { EntityHistoryOperation } from '../../common/enums/entity-history-operation.enum';
+import { IVendorHistoryEntity } from '../../common/interfaces/entities/vendor-history.entity.interface';
+import { EntityList } from '../../common/utils/entity.utils';
+import { dbSchemaName } from '../../shared/constants';
+import { BaseEntity } from '../../shared/entities/base.entity';
 
 @Entity({ name: EntityList.VENDOR_HISTORY, schema: dbSchemaName })
 export class VendorHistoryEntity
   extends BaseEntity
-  implements IBaseHistoryEntity
+  implements IVendorHistoryEntity
 {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
