@@ -4,6 +4,7 @@ import {
   IEntityCreateDto,
   IEntityFilterData,
   IEntityUpdateDto,
+  ISearchV2Response,
 } from 'src/common/types/generic.dto.types';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { DataSource, EntityManager } from 'typeorm';
@@ -114,23 +115,19 @@ export abstract class BaseService<
     );
     mainResponse[this.entityName] = response as ISearchV2Response[T];
 
-    console.log('entities', entities);
-
     if (entities?.length && this.registryService) {
       await Promise.all(
-        entities.map(async ({ name, filter: entityFilter }) => {
-          console.log(1);
+        entities.map(async ({ name, include: entityFilter }) => {
           const cleanEntityFilter = entityFilter
             ? Object.fromEntries(
                 Object.entries(entityFilter).filter(
                   ([_, v]) => v !== undefined && v !== null,
                 ),
               )
-            : {}; // ✅ no filter provided → fetch all
+            : {};
           const results = await this.registryService
             .get(name)
             .search(cleanEntityFilter, currentUser, entityManager);
-          console.log('results', results);
 
           // @ts-ignore — runtime type is correct, TS can't narrow through Map<EntityList, BaseService<EntityList>>
           mainResponse[name] = results;
@@ -141,7 +138,3 @@ export abstract class BaseService<
     return mainResponse;
   }
 }
-
-export type ISearchV2Response = {
-  [key in EntityList]?: EntityType<key>[];
-};
