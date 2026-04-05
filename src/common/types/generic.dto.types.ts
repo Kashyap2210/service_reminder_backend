@@ -8,15 +8,17 @@ export type IEntityUpdateDto<T> = Omit<
   'id' | keyof IAuditColumnEntity
 >;
 
+export type IEntityFilterIncludeData<K extends EntityList = EntityList> = {
+  name: K;
+  include: IEntityFilterData<EntityType<K>>;
+};
+
 export type IEntityFilterData<T> = {
   [K in keyof T]?: T[K][];
 } & {
-  entities?: Array<
-    {
-      [N in EntityList]: {
-        name: N;
-        filter: IEntityFilterData<EntityType<N>>;
-      };
-    }[EntityList]
-  >;
+  entities?: IEntityFilterIncludeData<EntityList>[];
+};
+
+export type ISearchV2Response = {
+  [key in EntityList]?: EntityType<key>[];
 };
