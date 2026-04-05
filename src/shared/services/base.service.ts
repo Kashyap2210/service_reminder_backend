@@ -7,8 +7,8 @@ import {
 } from 'src/common/types/generic.dto.types';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { DataSource, EntityManager } from 'typeorm';
-import { RegistryService } from './registry.service';
 import { EntityManagerBaseService } from '../repositories/entity.base.manager';
+import { RegistryService } from './registry.service';
 
 export abstract class BaseService<
   T extends EntityList,
@@ -93,6 +93,55 @@ export abstract class BaseService<
     currentUser?: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<EntityType<T>[]> {
-    return this.getRepository(entityManager).getByFilter(filter, entityManager);
+    const response = await this.getRepository(entityManager).getByFilter(
+      filter,
+      entityManager,
+    );
+
+    return response;
+  }
+
+  async searchV2(
+    filter: IEntityFilterData<EntityType<T>>,
+    currentUser?: IUserEntity,
+    entityManager?: EntityManager,
+  ): Promise<ISearchV2Response> {
+    const { entities, ...rest } = filter;
+    const mainResponse = {} as ISearchV2Response;
+    const response = await this.getRepository(entityManager).getByFilter(
+      rest as IEntityFilterData<EntityType<T>>,
+      entityManager,
+    );
+    mainResponse[this.entityName] = response as ISearchV2Response[T];
+
+    console.log('entities', entities);
+
+    if (entities?.length && this.registryService) {
+      await Promise.all(
+        entities.map(async ({ name, filter: entityFilter }) => {
+          console.log(1);
+          const cleanEntityFilter = entityFilter
+            ? Object.fromEntries(
+                Object.entries(entityFilter).filter(
+                  ([_, v]) => v !== undefined && v !== null,
+                ),
+              )
+            : {}; // ✅ no filter provided → fetch all
+          const results = await this.registryService
+            .get(name)
+            .search(cleanEntityFilter, currentUser, entityManager);
+          console.log('results', results);
+
+          // @ts-ignore — runtime type is correct, TS can't narrow through Map<EntityList, BaseService<EntityList>>
+          mainResponse[name] = results;
+        }),
+      );
+    }
+
+    return mainResponse;
   }
 }
+
+export type ISearchV2Response = {
+  [key in EntityList]?: EntityType<key>[];
+};

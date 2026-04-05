@@ -76,4 +76,14 @@ export class AppointmentController {
   ): Promise<boolean> {
     return this.appointmentService.deleteAppointment(+id, currentUser);
   }
+
+  @SearchAppointmentsSwagger()
+  @Post('search-global')
+  @UseGuards(AuthGuard)
+  async searchGlobal(
+    @Body() dto: AppointmentSearchDto,
+    @CurrentUser() currentUser: IUserEntity,
+  ) {
+    return this.appointmentService.searchV2(dto, currentUser);
+  }
 }
