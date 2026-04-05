@@ -41,7 +41,11 @@ const RecurringItemEntityResponse = {
           id: { type: 'number', example: 1 },
           name: { type: 'string', example: 'Annual vehicle service' },
           type: { type: 'string', example: 'vehicle' },
-          companyName: { type: 'string', example: 'ACME Motors', nullable: true },
+          companyName: {
+            type: 'string',
+            example: 'ACME Motors',
+            nullable: true,
+          },
           vendorId: { type: 'number', example: 2, nullable: true },
           servicePeriod: { type: 'number', example: 6 },
           servicePeriodUnit: {
@@ -80,7 +84,7 @@ export const CreateRecurringItemSwagger = () =>
             name: 'Annual vehicle service',
             type: 'vehicle',
             companyName: 'ACME Motors',
-            vendorId: 2,
+            // vendorId: 2,
             servicePeriod: 6,
             servicePeriodUnit: ServicePeriodUnit.MONTHS,
             servicePlaceAddress: '123 Main St',

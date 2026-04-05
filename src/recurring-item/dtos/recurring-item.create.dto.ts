@@ -129,7 +129,7 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
       .get(EntityList.RECURRING_ITEM)
       .search({ name: [this.name], type: [this.type] }, currentUser);
 
-    if (existingRecurringItems && existingRecurringItems.length === 0) {
+    if (existingRecurringItems && existingRecurringItems.length !== 0) {
       if (!existingEntity || existingEntity.id !== existingRecurringItems[0].id)
         errors.push({
           key: 'name',
