@@ -1,21 +1,29 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
-import { AppointmentStatus } from "src/common/enums/appointment-status.enum";
-import { AppointmentType } from "src/common/enums/appointment-type.enum";
-import { IAppointmentCreateDto } from "src/common/interfaces/dtos/appointment.dto.interface";
-import { IUserEntity } from "src/common/interfaces/entities/user.entity.interface";
-import { IDtoValidationError } from "src/common/types/dto-validation-error.interface";
-import { Nullable } from "src/common/types/types.generic";
-import { EntityList, EntityType } from "src/common/utils/entity.utils";
-import { RegistryService } from "src/shared/services/registry.service";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
+import { AppointmentType } from 'src/common/enums/appointment-type.enum';
+import { IAppointmentCreateDto } from 'src/common/interfaces/dtos/appointment.dto.interface';
+import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
+import { Nullable } from 'src/common/types/types.generic';
+import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { RegistryService } from 'src/shared/services/registry.service';
+import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 
-export class AppointmentCreateDto implements IAppointmentCreateDto   {
+export class AppointmentCreateDto implements IAppointmentCreateDto {
   @ApiProperty({
     type: Number,
     example: 1700000000000,
     description: 'Appointment date as epoch timestamp (bigint)',
   })
-  @IsNumber()
+  @IsPositive()
+  @IsValidDateCode()
   appointmentDate: number;
 
   @ApiProperty({
@@ -23,7 +31,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     example: 1,
     description: 'ID of the recurring item linked to this appointment',
   })
-  @IsNumber()
+  @IsPositive()
   recurringItemId: number;
 
   @ApiProperty({
@@ -31,8 +39,8 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     example: 1,
     description: 'ID of the user who owns this appointment',
   })
-  @IsNumber()
-  userid: number;
+  @IsPositive()
+  userId: number;
 
   @ApiProperty({
     example: AppointmentType.SERVICE,
@@ -51,7 +59,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     nullable: true,
   })
   @IsOptional()
-  @IsNumber()
+  @IsPositive()
   vendorId: Nullable<number>;
 
   @ApiProperty({
@@ -86,10 +94,23 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
 
-    const appointmentDateValidationResult =
-      await this.validateAppointmentDate(currentUser, existingEntity);
+    const appointmentDateValidationResult = await this.validateAppointmentDate(
+      currentUser,
+      existingEntity,
+    );
     if (appointmentDateValidationResult)
       errors.push(...appointmentDateValidationResult);
+
+    const userIdValidationResult = await this.validateUserId(currentUser);
+    if (userIdValidationResult) errors.push(...userIdValidationResult);
+
+    const vendorIdValidationResult = await this.validateVendorId(currentUser);
+    if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
+
+    const recurringItemIdValidationResult =
+      await this.validateRecurringItemId(currentUser);
+    if (recurringItemIdValidationResult)
+      errors.push(...recurringItemIdValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
@@ -123,11 +144,78 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     return errors.length > 0 ? errors : null;
   }
 
+  async validateUserId(currentUser: IUserEntity) {
+    const errors: IDtoValidationError[] = [];
+
+    const existingUserId = await this.registryService
+      .get(EntityList.USER)
+      .search(
+        {
+          id: [this.userId],
+        },
+        currentUser,
+      );
+    if (existingUserId.length === 0) {
+      errors.push({
+        key: 'userId',
+        message: `User with id: ${this.userId} does not exist. Please try with a valid user id`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateVendorId(currentUser: IUserEntity) {
+    const errors: IDtoValidationError[] = [];
+
+    if (this.vendorId) {
+      const existingVendorId = await this.registryService
+        .get(EntityList.VENDOR)
+        .search(
+          {
+            id: [this.vendorId],
+            userId: [this.userId],
+          },
+          currentUser,
+        );
+      if (existingVendorId.length === 0) {
+        errors.push({
+          key: 'vendorId',
+          message: `Vendor with id: ${this.vendorId} does not exist for current user. Please try with a valid vendor id.`,
+        });
+      }
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateRecurringItemId(currentUser: IUserEntity) {
+    const errors: IDtoValidationError[] = [];
+
+    const existingRecurringItemId = await this.registryService
+      .get(EntityList.RECURRING_ITEM)
+      .search(
+        {
+          id: [this.recurringItemId],
+          userId: [this.userId],
+        },
+        currentUser,
+      );
+    if (existingRecurringItemId.length === 0) {
+      errors.push({
+        key: 'recurringItemId',
+        message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
   toCreateDto(): IAppointmentCreateDto {
     return {
       appointmentDate: this.appointmentDate,
       recurringItemId: this.recurringItemId,
-      userid: this.userid,
+      userId: this.userId,
       appointmentType: this.appointmentType,
       vendorId: this.vendorId,
       appointmentStatus: this.appointmentStatus,

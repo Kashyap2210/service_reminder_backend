@@ -7,7 +7,7 @@ export interface IAppointmentEntity extends IAuditColumnEntity {
   id: number;
   appointmentDate: number;
   recurringItemId: number;
-  userid: number;
+  userId: number;
   appointmentType: AppointmentType;
   vendorId: Nullable<number>;
   appointmentStatus: AppointmentStatus;
