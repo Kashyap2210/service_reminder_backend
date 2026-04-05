@@ -6,13 +6,13 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { DateUtil } from 'src/common/utils/date.utils';
+import { DateCodeUtils } from 'src/common/utils/date-code.utils';
 
 @ValidatorConstraint({ name: 'IsYYYYMMDD', async: false })
 export class IsYYYYMMDDConstraint implements ValidatorConstraintInterface {
   validate(value: any, _args: ValidationArguments): boolean {
     if (typeof value !== 'number' && typeof value !== 'string') return false;
-    return DateUtil.isValidYYYYMMDD(value);
+    return new DateCodeUtils(value).isValidYYYYMMDD();
   }
 
   defaultMessage(_args: ValidationArguments): string {
