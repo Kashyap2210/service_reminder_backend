@@ -69,4 +69,24 @@ export class DateUtil {
   static isFuture(epoch: number): boolean {
     return epoch > Date.now();
   }
+
+  static isValidYYYYMMDD(value: number | string): boolean {
+    const str = String(value);
+
+    if (!/^\d{8}$/.test(str)) return false;
+
+    const year = parseInt(str.substring(0, 4), 10);
+    const month = parseInt(str.substring(4, 6), 10);
+    const day = parseInt(str.substring(6, 8), 10);
+
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    const date = new Date(year, month - 1, day);
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+    );
+  }
 }
