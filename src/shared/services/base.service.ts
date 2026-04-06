@@ -94,12 +94,10 @@ export abstract class BaseService<
     currentUser?: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<EntityType<T>[]> {
-    const response = await this.getRepository(entityManager).getByFilter(
+    return await this.getRepository(entityManager).getByFilter(
       filter,
       entityManager,
     );
-
-    return response;
   }
 
   async searchV2(
