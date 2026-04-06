@@ -1,21 +1,34 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
-import { AppointmentStatus } from "src/common/enums/appointment-status.enum";
-import { AppointmentType } from "src/common/enums/appointment-type.enum";
-import { IAppointmentCreateDto } from "src/common/interfaces/dtos/appointment.dto.interface";
-import { IUserEntity } from "src/common/interfaces/entities/user.entity.interface";
-import { IDtoValidationError } from "src/common/types/dto-validation-error.interface";
-import { Nullable } from "src/common/types/types.generic";
-import { EntityList, EntityType } from "src/common/utils/entity.utils";
-import { RegistryService } from "src/shared/services/registry.service";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
+import { AppointmentType } from 'src/common/enums/appointment-type.enum';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
+import {
+  IAppointmentCreateDto,
+  IAppointmentSearchDto,
+} from 'src/common/interfaces/dtos/appointment.dto.interface';
+import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
+import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
+import { Nullable } from 'src/common/types/types.generic';
+import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { RegistryService } from 'src/shared/services/registry.service';
+import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 
-export class AppointmentCreateDto implements IAppointmentCreateDto   {
+export class AppointmentCreateDto implements IAppointmentCreateDto {
   @ApiProperty({
     type: Number,
     example: 1700000000000,
     description: 'Appointment date as epoch timestamp (bigint)',
   })
-  @IsNumber()
+  @IsPositive()
+  @IsValidDateCode()
   appointmentDate: number;
 
   @ApiProperty({
@@ -23,7 +36,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     example: 1,
     description: 'ID of the recurring item linked to this appointment',
   })
-  @IsNumber()
+  @IsPositive()
   recurringItemId: number;
 
   @ApiProperty({
@@ -31,8 +44,8 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     example: 1,
     description: 'ID of the user who owns this appointment',
   })
-  @IsNumber()
-  userid: number;
+  @IsPositive()
+  userId: number;
 
   @ApiProperty({
     example: AppointmentType.SERVICE,
@@ -51,7 +64,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     nullable: true,
   })
   @IsOptional()
-  @IsNumber()
+  @IsPositive()
   vendorId: Nullable<number>;
 
   @ApiProperty({
@@ -78,6 +91,8 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
@@ -86,38 +101,114 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
 
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
+
     const appointmentDateValidationResult =
-      await this.validateAppointmentDate(currentUser, existingEntity);
+      await this.validateAppointmentDate(existingEntity);
     if (appointmentDateValidationResult)
       errors.push(...appointmentDateValidationResult);
+
+    const userIdValidationResult = await this.validateUserId();
+    if (userIdValidationResult) errors.push(...userIdValidationResult);
+
+    const vendorIdValidationResult = await this.validateVendorId();
+    if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
+
+    const recurringItemIdValidationResult =
+      await this.validateRecurringItemId();
+    if (recurringItemIdValidationResult)
+      errors.push(...recurringItemIdValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
 
   async validateAppointmentDate(
-    currentUser: IUserEntity,
     existingEntity?: EntityType<EntityList.APPOINTMENT>,
   ) {
     const errors: IDtoValidationError[] = [];
 
-    const existingAppointment = await this.registryService
-      .get(EntityList.APPOINTMENT)
-      .search(
-        {
-          recurringItemId: [this.recurringItemId],
-          appointmentDate: [this.appointmentDate],
-        },
-        currentUser,
-      );
+    // this will only have those appointment
+    // that will be scheduled for the same data & item
+    // recurringItemId: [this.recurringItemId],
+    // appointmentDate: [this.appointmentDate],
+    const existingAppointment = this.validationData.getEntityFromList(
+      EntityList.APPOINTMENT,
+    );
 
     if (existingAppointment && existingAppointment.length > 0) {
       // Only error if the found appointment is a DIFFERENT entity
       if (!existingEntity || existingEntity.id !== existingAppointment[0].id) {
         errors.push({
           key: 'appointmentDate',
-          message: `An appointment for recurring item ID: ${this.recurringItemId} on date: ${this.appointmentDate} already exists. Please verify the details & try again`,
+          message: `An appointment for recurring item ID: ${this.recurringItemId} on date: ${this.appointmentDate} already exists. Please verify the details & try again.`,
         });
       }
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateUserId() {
+    const errors: IDtoValidationError[] = [];
+
+    // const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    //   name: EntityList.USER,
+    //   include: {
+    //     id: [this.userId],
+    //   },
+    // };
+    const existingUserId = this.validationData.getEntityFromList(
+      EntityList.USER,
+    );
+    if (existingUserId.length === 0) {
+      errors.push({
+        key: 'userId',
+        message: `User with id: ${this.userId} does not exist. Please try with a valid user id.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateVendorId() {
+    const errors: IDtoValidationError[] = [];
+
+    if (this.vendorId) {
+      //  const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
+      //   {
+      //     name: EntityList.VENDOR,
+      //     include: { id: [this.vendorId], userId: [this.userId] },
+      //   };
+      const existingVendorId = this.validationData.getEntityFromList(
+        EntityList.VENDOR,
+      );
+      if (existingVendorId.length === 0) {
+        errors.push({
+          key: 'vendorId',
+          message: `Vendor with id: ${this.vendorId} does not exist for current user. Please try with a valid vendor id.`,
+        });
+      }
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateRecurringItemId() {
+    const errors: IDtoValidationError[] = [];
+
+    //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    //   {
+    //     name: EntityList.RECURRING_ITEM,
+    //     include: { id: [this.recurringItemId], userId: [this.userId] },
+    //   };
+    const existingRecurringItemId = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
+    if (existingRecurringItemId.length === 0) {
+      errors.push({
+        key: 'recurringItemId',
+        message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id.`,
+      });
     }
 
     return errors.length > 0 ? errors : null;
@@ -127,11 +218,52 @@ export class AppointmentCreateDto implements IAppointmentCreateDto   {
     return {
       appointmentDate: this.appointmentDate,
       recurringItemId: this.recurringItemId,
-      userid: this.userid,
+      userId: this.userId,
       appointmentType: this.appointmentType,
       vendorId: this.vendorId,
       appointmentStatus: this.appointmentStatus,
       checkPoints: this.checkPoints,
     };
+  }
+
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [this.userId],
+      },
+    };
+
+    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+      {
+        name: EntityList.RECURRING_ITEM,
+        include: { id: [this.recurringItemId], userId: [this.userId] },
+      };
+
+    const filter: IAppointmentSearchDto = {
+      recurringItemId: [this.recurringItemId],
+      appointmentDate: [this.appointmentDate],
+      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+    };
+
+    if (this.vendorId) {
+      const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
+        {
+          name: EntityList.VENDOR,
+          include: { id: [this.vendorId], userId: [this.userId] },
+        };
+      filter.entities = [
+        ...(filter.entities ?? []),
+        vendorEntityIncludeRelations,
+      ];
+    }
+
+    return new EntityFilterDataHelper(
+      await this.registryService
+        .get(EntityList.APPOINTMENT)
+        .searchV2(filter, currentUser),
+    );
   }
 }

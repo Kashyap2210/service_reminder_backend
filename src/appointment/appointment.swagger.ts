@@ -26,7 +26,7 @@ const BadRequestResponse = ApiBadRequestResponse({
           message: {
             type: 'string',
             example:
-              'An appointment for recurring item ID: 1 on date: 1700000000000 already exists.',
+              'An appointment for recurring item ID: 1 on date: 20260401 already exists.',
           },
         },
       },
@@ -41,9 +41,9 @@ const AppointmentEntityResponse = {
       {
         properties: {
           id: { type: 'number', example: 1 },
-          appointmentDate: { type: 'number', example: 1700000000000 },
+          appointmentDate: { type: 'number', example: 20260401 },
           recurringItemId: { type: 'number', example: 1 },
-          userid: { type: 'number', example: 1 },
+          userId: { type: 'number', example: 1 },
           appointmentType: {
             type: 'string',
             enum: Object.values(AppointmentType),
@@ -90,9 +90,9 @@ export const CreateAppointmentSwagger = () =>
         example1: {
           summary: 'Create a service appointment',
           value: {
-            appointmentDate: 1700000000000,
+            appointmentDate: 20260401,
             recurringItemId: 1,
-            userid: 1,
+            userId: 1,
             appointmentType: AppointmentType.SERVICE,
             vendorId: 2,
             appointmentStatus: AppointmentStatus.BOOKED,
@@ -161,7 +161,7 @@ export const SearchAppointmentsSwagger = () =>
         example2: {
           summary: 'Search by user and type',
           value: {
-            userid: [1],
+            userId: [1],
             appointmentType: [AppointmentType.SERVICE],
           },
         },

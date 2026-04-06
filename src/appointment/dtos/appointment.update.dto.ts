@@ -102,7 +102,7 @@ export class AppointmentUpdateDto
     return {
       appointmentDate: this.appointmentDate ?? undefined,
       recurringItemId: this.recurringItemId ?? undefined,
-      userid: this.userid ?? undefined,
+      userId: this.userId ?? undefined,
       appointmentType: this.appointmentType ?? undefined,
       vendorId: this.vendorId ?? undefined,
       appointmentStatus: this.appointmentStatus ?? undefined,

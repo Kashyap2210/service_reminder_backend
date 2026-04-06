@@ -3,8 +3,12 @@ import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
 import { AppointmentType } from 'src/common/enums/appointment-type.enum';
 import { IAppointmentSearchDto } from 'src/common/interfaces/dtos/appointment.dto.interface';
+import { BaseSearchDto } from 'src/shared/dtos/base.search.dto';
 
-export class AppointmentSearchDto implements IAppointmentSearchDto {
+export class AppointmentSearchDto
+  extends BaseSearchDto
+  implements IAppointmentSearchDto
+{
   @ApiPropertyOptional({
     type: [Number],
     example: [1],
@@ -39,7 +43,7 @@ export class AppointmentSearchDto implements IAppointmentSearchDto {
   })
   @IsOptional()
   @IsNumber({}, { each: true })
-  userid?: number[];
+  userId?: number[];
 
   @ApiPropertyOptional({
     enum: AppointmentType,
@@ -69,4 +73,16 @@ export class AppointmentSearchDto implements IAppointmentSearchDto {
   @IsOptional()
   @IsEnum(AppointmentStatus, { each: true })
   appointmentStatus?: AppointmentStatus[];
+
+  // @ApiPropertyOptional({
+  //   type: [Number],
+  //   example: [
+  //     {
+  //       name: EntityList.VENDOR,
+  //       id: [10],
+  //     },
+  //   ],
+  // })
+  // @IsOptional()
+  // entities?: IEntityFilterIncludeData<EntityList>[];
 }

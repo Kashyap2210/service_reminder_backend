@@ -22,7 +22,7 @@ export class AppointmentEntity
   recurringItemId: number;
 
   @Column({ type: 'int' })
-  userid: number;
+  userId: number;
 
   @Column({
     type: 'enum',

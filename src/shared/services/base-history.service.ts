@@ -4,7 +4,6 @@ import { IEntityCreateDto } from 'src/common/types/generic.dto.types';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { getObjectDiffingKeys } from 'src/common/utils/helper.fns';
 import { EntityManager } from 'typeorm';
-import { EntityManagerBaseService } from '../repositories/entity.base.manager';
 import { BaseService } from './base.service';
 
 export abstract class BaseHistoryService<
@@ -14,10 +13,6 @@ export abstract class BaseHistoryService<
   constructor(entityName: T) {
     super(entityName);
   }
-
-  abstract getRepository(
-    entityManager?: EntityManager,
-  ): EntityManagerBaseService<T>;
 
   async createHistoryEntity(
     currentUser: IUserEntity,

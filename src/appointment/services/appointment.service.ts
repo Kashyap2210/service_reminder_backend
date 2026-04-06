@@ -12,22 +12,16 @@ import { AppointmentCreateTransaction } from '../transactions/appointment.create
 import { AppointmentUpdateTransaction } from '../transactions/appointment.update.transaction';
 import { IAppointmentCreateTransactionInputData } from '../transactions/interfaces/appointment-create-transaction.interface';
 import { IAppointmentUpdateTransactionInputData } from '../transactions/interfaces/appointment-update-transaction.interface';
-import { AppointmentHistoryService } from './appointment-history.service';
 
 @Injectable()
 export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
   constructor(
     private readonly appointmentRepository: AppointmentRepository,
+
     private readonly appointmentCreateTransaction: AppointmentCreateTransaction,
     private readonly appointmentUpdateTransaction: AppointmentUpdateTransaction,
   ) {
     super(EntityList.APPOINTMENT);
-  }
-
-  get appointmentHistoryService(): AppointmentHistoryService {
-    return this.registryService.get(
-      EntityList.APPOINTMENT_HISTORY,
-    ) as AppointmentHistoryService;
   }
 
   getRepository(
@@ -39,7 +33,6 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
   async createAppointment(
     currentUser: IUserEntity,
     dto: AppointmentCreateDto,
-    entityManager?: EntityManager,
   ): Promise<EntityType<EntityList.APPOINTMENT>> {
     const validationResult = await dto.validate(
       currentUser,
@@ -62,7 +55,6 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     id: number,
     currentUser: IUserEntity,
     dto: AppointmentUpdateDto,
-    entityManager?: EntityManager,
   ): Promise<EntityType<EntityList.APPOINTMENT>> {
     let existingAppointment: IAppointmentEntity | null = null;
     const validationResult = await dto.validate(
