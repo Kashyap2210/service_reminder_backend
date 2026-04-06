@@ -9,7 +9,11 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { CronJobStatus } from 'src/common/enums/cronjob-status.enum';
-import { ICronJobCreateDto } from 'src/common/interfaces/dtos/cronjob.dto.interface';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
+import {
+  ICronJobCreateDto,
+  ICronJobSearchDto,
+} from 'src/common/interfaces/dtos/cronjob.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { Nullable } from 'src/common/types/types.generic';
@@ -84,13 +88,92 @@ export class CronJobCreateDto implements ICronJobCreateDto {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
     existingEntity?: EntityType<EntityList.CRONJOB>,
   ): Promise<IDtoValidationError[] | null> {
+    const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
-    return null;
+
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
+
+    const cronExpressionValidationResult = await this.validateCronExpression();
+    if (cronExpressionValidationResult)
+      errors.push(...cronExpressionValidationResult);
+
+    const nameValidationResult = await this.validateName(existingEntity);
+    if (nameValidationResult) errors.push(...nameValidationResult);
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateName(existingEntity?: EntityType<EntityList.CRONJOB>) {
+    const errors: IDtoValidationError[] = [];
+
+    const existingCronJob = this.validationData.getEntityFromList(
+      EntityList.CRONJOB,
+    );
+
+    if (existingCronJob && existingCronJob.length > 0) {
+      if (!existingEntity || existingEntity.id !== existingCronJob[0].id) {
+        errors.push({
+          key: 'name',
+          message: `Cron job with name: ${this.name} already exists. Please try again with a different name.`,
+        });
+      }
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateCronExpression() {
+    const errors: IDtoValidationError[] = [];
+
+    const fields = this.cronExpression?.trim().split(/\s+/) ?? [];
+    if (fields.length !== 5) {
+      errors.push({
+        key: 'cronExpression',
+        message:
+          'Invalid cron expression. Please use a valid 5-field cron format (minute hour day-of-month month day-of-week).',
+      });
+      return errors;
+    }
+
+    const [minute, hour, dayOfMonth, month, dayOfWeek] = fields;
+
+    const isValid =
+      this.isValidCronField(minute, 0, 59) &&
+      this.isValidCronField(hour, 0, 23) &&
+      this.isValidCronField(dayOfMonth, 1, 31) &&
+      this.isValidCronField(month, 1, 12) &&
+      this.isValidCronField(dayOfWeek, 0, 7);
+
+    if (!isValid) {
+      errors.push({
+        key: 'cronExpression',
+        message:
+          'Invalid cron expression. Please provide a valid expression with supported ranges and syntax.',
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const filter: ICronJobSearchDto = {
+      name: [this.name],
+    };
+
+    return new EntityFilterDataHelper(
+      await this.registryService
+        .get(EntityList.CRONJOB)
+        .searchV2(filter, currentUser),
+    );
   }
 
   toCreateDto(): ICronJobCreateDto {
@@ -103,5 +186,36 @@ export class CronJobCreateDto implements ICronJobCreateDto {
       status: this.status,
       error: this.error,
     };
+  }
+
+  private isValidCronField(value: string, min: number, max: number): boolean {
+    const segments = value.split(',');
+    if (segments.length === 0) return false;
+
+    return segments.every((segment) => {
+      const trimmedSegment = segment.trim();
+      if (!trimmedSegment) return false;
+
+      const [basePart, stepPart] = trimmedSegment.split('/');
+      if (stepPart !== undefined) {
+        if (!/^\d+$/.test(stepPart)) return false;
+        const step = Number(stepPart);
+        if (step <= 0) return false;
+      }
+
+      if (basePart === '*') return true;
+
+      if (/^\d+$/.test(basePart)) {
+        const n = Number(basePart);
+        return n >= min && n <= max;
+      }
+
+      if (/^\d+-\d+$/.test(basePart)) {
+        const [start, end] = basePart.split('-').map(Number);
+        return start >= min && end <= max && start <= end;
+      }
+
+      return false;
+    });
   }
 }
