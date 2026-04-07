@@ -16,13 +16,13 @@ export class ServiceEntity extends BaseEntity implements IServiceEntity {
   serviceDate: number;
 
   @Column({ type: 'int' })
-  recurringItemid: number;
+  recurringItemId: number;
 
   @Column({ type: 'int', nullable: true })
   appointmentId: Nullable<number>;
 
   @Column({ type: 'int' })
-  userid: number;
+  userId: number;
 
   @Column({
     type: 'enum',

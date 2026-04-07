@@ -6,11 +6,11 @@ import { Nullable } from 'src/common/types/types.generic';
 export interface IServiceEntity extends IAuditColumnEntity {
   id: number;
   serviceDate: number;
-  recurringItemid: number;
+  recurringItemId: number;
   appointmentId: Nullable<number>;
-  userid: number;
+  userId: number;
   serviceType: AppointmentType;
-  serviceStatus: ServiceStatus;
+  serviceStatus: ServiceStatus; 
   vendorId: Nullable<number>;
   serviceEstimate: Nullable<number>;
   serviceAmount: Nullable<number>;

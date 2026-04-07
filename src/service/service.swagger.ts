@@ -22,7 +22,7 @@ const BadRequestResponse = ApiBadRequestResponse({
       message: {
         type: 'object',
         properties: {
-          key: { type: 'string', example: 'userid' },
+          key: { type: 'string', example: 'userId' },
           message: {
             type: 'string',
             example: 'User with id: 1 does not exist.',
@@ -41,9 +41,9 @@ const ServiceEntityResponse = {
         properties: {
           id: { type: 'number', example: 1 },
           serviceDate: { type: 'number', example: 1700000000000 },
-          recurringItemid: { type: 'number', example: 1 },
+          recurringItemId: { type: 'number', example: 1 },
           appointmentId: { type: 'number', example: 1, nullable: true },
-          userid: { type: 'number', example: 1 },
+          userId: { type: 'number', example: 1 },
           serviceType: {
             type: 'string',
             enum: Object.values(AppointmentType),
@@ -85,9 +85,9 @@ export const CreateServiceSwagger = () =>
           summary: 'Create a service',
           value: {
             serviceDate: 1700000000000,
-            recurringItemid: 1,
+            recurringItemId: 1,
             appointmentId: null,
-            userid: 1,
+            userId: 1,
             serviceType: AppointmentType.SERVICE,
             serviceStatus: ServiceStatus.SERVICE_COMMENCED,
             vendorId: 2,
@@ -146,7 +146,7 @@ export const SearchServicesSwagger = () =>
         example1: {
           summary: 'Search by user',
           value: {
-            userid: [1],
+            userId: [1],
           },
         },
       },

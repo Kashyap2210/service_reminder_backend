@@ -30,7 +30,7 @@ export class ServiceSearchDto implements IServiceSearchDto {
   })
   @IsOptional()
   @IsNumber({}, { each: true })
-  recurringItemid?: number[];
+  recurringItemId?: number[];
 
   @ApiPropertyOptional({
     type: [Number],
@@ -48,7 +48,7 @@ export class ServiceSearchDto implements IServiceSearchDto {
   })
   @IsOptional()
   @IsNumber({}, { each: true })
-  userid?: number[];
+  userId?: number[];
 
   @ApiPropertyOptional({
     enum: AppointmentType,
