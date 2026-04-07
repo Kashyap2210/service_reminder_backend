@@ -13,7 +13,7 @@ export class NotificationUpdateDto
       'validate',
       'validateUserId',
       'validateRecurringItemId',
-      'validateAppointmentIfPresent',
+      'validateAppointmentId',
     ] as const),
   )
   implements INotificationUpdateDto
@@ -103,8 +103,8 @@ export class NotificationUpdateDto
 
   toUpdateDto(): INotificationUpdateDto {
     return {
-      userid: this.userid ?? undefined,
-      recurringItemid: this.recurringItemid ?? undefined,
+      userId: this.userId ?? undefined,
+      recurringItemId: this.recurringItemId ?? undefined,
       appointmentId: this.appointmentId ?? undefined,
       type: this.type ?? undefined,
       status: this.status ?? undefined,

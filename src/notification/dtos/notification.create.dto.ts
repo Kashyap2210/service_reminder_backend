@@ -11,12 +11,15 @@ import {
 } from 'class-validator';
 import { NotificationStatus } from 'src/common/enums/notification-status.enum';
 import { NotificationType } from 'src/common/enums/notification-type.enum';
-import { INotificationCreateDto } from 'src/common/interfaces/dtos/notification.dto.interface';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
 import {
-  INotificationPayload,
-} from 'src/common/interfaces/entities/notification.entity.interface';
+  INotificationCreateDto,
+  INotificationSearchDto,
+} from 'src/common/interfaces/dtos/notification.dto.interface';
+import { INotificationPayload } from 'src/common/interfaces/entities/notification.entity.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
+import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
 import { Nullable } from 'src/common/types/types.generic';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -46,22 +49,28 @@ export class NotificationPayloadDto implements INotificationPayload {
 export class NotificationCreateDto implements INotificationCreateDto {
   @ApiProperty({ type: Number, example: 1 })
   @IsNumber()
-  userid: number;
+  userId: number;
 
   @ApiProperty({ type: Number, example: 1 })
   @IsNumber()
-  recurringItemid: number;
+  recurringItemId: number;
 
   @ApiPropertyOptional({ type: Number, example: 1, nullable: true })
   @IsOptional()
   @IsNumber()
   appointmentId: Nullable<number>;
 
-  @ApiProperty({ enum: NotificationType, example: NotificationType.EMAIL_SERVICE_REMINDER })
+  @ApiProperty({
+    enum: NotificationType,
+    example: NotificationType.EMAIL_SERVICE_REMINDER,
+  })
   @IsEnum(NotificationType)
   type: NotificationType;
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.PENDING })
+  @ApiProperty({
+    enum: NotificationStatus,
+    example: NotificationStatus.PENDING,
+  })
   @IsEnum(NotificationStatus)
   status: NotificationStatus;
 
@@ -91,6 +100,8 @@ export class NotificationCreateDto implements INotificationCreateDto {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
@@ -98,69 +109,65 @@ export class NotificationCreateDto implements INotificationCreateDto {
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
-    const userValidationResult = await this.validateUserId(currentUser);
+    const userValidationResult = await this.validateUserId();
     if (userValidationResult) errors.push(...userValidationResult);
 
-    const recurringValidationResult =
-      await this.validateRecurringItemId(currentUser);
-    if (recurringValidationResult)
-      errors.push(...recurringValidationResult);
+    const recurringValidationResult = await this.validateRecurringItemId();
+    if (recurringValidationResult) errors.push(...recurringValidationResult);
 
-    const appointmentValidationResult =
-      await this.validateAppointmentIfPresent(currentUser);
+    const appointmentValidationResult = await this.validateAppointmentId();
     if (appointmentValidationResult)
       errors.push(...appointmentValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateUserId(currentUser: IUserEntity) {
+  async validateUserId() {
     const errors: IDtoValidationError[] = [];
 
-    const users = await this.registryService
-      .get(EntityList.USER)
-      .search({ id: [this.userid] }, currentUser);
+    const users = this.validationData.getEntityFromList(EntityList.USER);
 
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       errors.push({
         key: 'userid',
-        message: `User with id: ${this.userid} does not exist. Please verify the id & try again`,
+        message: `User with id: ${this.userId} does not exist. Please verify the id & try again`,
       });
     }
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateRecurringItemId(currentUser: IUserEntity) {
+  async validateRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    const items = await this.registryService
-      .get(EntityList.RECURRING_ITEM)
-      .search({ id: [this.recurringItemid] }, currentUser);
+    const items = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
 
-    if (!items || items.length === 0) {
+    if (items.length === 0) {
       errors.push({
         key: 'recurringItemid',
-        message: `Recurring item with id: ${this.recurringItemid} does not exist. Please verify the id & try again`,
+        message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
       });
     }
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateAppointmentIfPresent(currentUser: IUserEntity) {
+  async validateAppointmentId() {
     if (this.appointmentId == null) {
       return null;
     }
 
     const errors: IDtoValidationError[] = [];
 
-    const appointments = await this.registryService
-      .get(EntityList.APPOINTMENT)
-      .search({ id: [this.appointmentId] }, currentUser);
+    const appointments = this.validationData.getEntityFromList(
+      EntityList.APPOINTMENT,
+    );
 
-    if (!appointments || appointments.length === 0) {
+    if (appointments.length === 0) {
       errors.push({
         key: 'appointmentId',
         message: `Appointment with id: ${this.appointmentId} does not exist. Please verify the id & try again`,
@@ -170,10 +177,54 @@ export class NotificationCreateDto implements INotificationCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [this.userId],
+      },
+    };
+
+    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+      {
+        name: EntityList.RECURRING_ITEM,
+        include: { id: [this.recurringItemId], userId: [this.userId] },
+      };
+
+    const filter: INotificationSearchDto = {
+      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+    };
+
+    if (this.appointmentId != null) {
+      const appointmentEntityIncludeData: IEntityFilterIncludeData<EntityList.APPOINTMENT> =
+        {
+          name: EntityList.APPOINTMENT,
+          include: {
+            id: [this.appointmentId],
+            userId: [this.userId],
+            recurringItemId: [this.recurringItemId],
+          },
+        };
+
+      filter.entities = [
+        ...(filter.entities ?? []),
+        appointmentEntityIncludeData,
+      ];
+    }
+
+    return new EntityFilterDataHelper(
+      await this.registryService
+        .get(EntityList.NOTIFICATION)
+        .searchV2(filter, currentUser),
+    );
+  }
+
   toCreateDto(): INotificationCreateDto {
     return {
-      userid: this.userid,
-      recurringItemid: this.recurringItemid,
+      userId: this.userId,
+      recurringItemId: this.recurringItemId,
       appointmentId: this.appointmentId,
       type: this.type,
       status: this.status,

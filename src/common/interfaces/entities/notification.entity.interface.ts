@@ -12,8 +12,8 @@ export interface INotificationPayload {
 
 export interface INotificationEntity extends IAuditColumnEntity {
   id: number;
-  userid: number;
-  recurringItemid: number;
+  userId: number;
+  recurringItemId: number;
   appointmentId: Nullable<number>;
   type: NotificationType;
   status: NotificationStatus;
