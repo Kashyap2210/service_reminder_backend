@@ -7,12 +7,15 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
 import {
   IVendorCreateDto,
   IVendorEntityCreateDto,
+  IVendorSearchDto,
 } from 'src/common/interfaces/dtos/vendor.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
+import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
 import { Nullable } from 'src/common/types/types.generic';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -66,6 +69,8 @@ export class VendorCreateDto implements IVendorCreateDto {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
@@ -73,25 +78,23 @@ export class VendorCreateDto implements IVendorCreateDto {
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
-    const userValidationResult = await this.validateUserId(currentUser);
+    const userValidationResult = await this.validateUserId();
     if (userValidationResult) errors.push(...userValidationResult);
 
-    const recurringValidationResult =
-      await this.validateRecurringItemId(currentUser);
+    const recurringValidationResult = await this.validateRecurringItemId();
     if (recurringValidationResult) errors.push(...recurringValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateUserId(currentUser: IUserEntity) {
+  async validateUserId() {
     const errors: IDtoValidationError[] = [];
 
-    const users = await this.registryService
-      .get(EntityList.USER)
-      .search({ id: [this.userId] }, currentUser);
+    const users = this.validationData.getEntityFromList(EntityList.USER);
 
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       errors.push({
         key: 'userId',
         message: `User with id: ${this.userId} does not exist. Please verify the id & try again`,
@@ -101,14 +104,12 @@ export class VendorCreateDto implements IVendorCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateRecurringItemId(currentUser: IUserEntity) {
+  async validateRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    const items = await this.registryService
-      .get(EntityList.RECURRING_ITEM)
-      .search({ id: this.recurringItemIds }, currentUser);
+    const items = this.validationData.getEntityFromList(EntityList.RECURRING_ITEM);
 
-    if (!items || items.length === 0) {
+    if (items.length === 0 || items.length !== this.recurringItemIds.length) {
       errors.push({
         key: 'recurringItemId',
         message: `Recurring item with id: ${this.recurringItemIds} does not exist. Please verify the id & try again`,
@@ -126,6 +127,31 @@ export class VendorCreateDto implements IVendorCreateDto {
     //   }
 
     return errors.length > 0 ? errors : null;
+  }
+
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [this.userId],
+      },
+    };
+
+    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+      {
+        name: EntityList.RECURRING_ITEM,
+        include: { id: this.recurringItemIds, userId: [this.userId] },
+      };
+
+    const filter: IVendorSearchDto = {
+      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+    };
+
+    return new EntityFilterDataHelper(
+      await this.registryService.get(EntityList.VENDOR).searchV2(filter, currentUser),
+    );
   }
 
   toCreateDto(): IVendorEntityCreateDto {
