@@ -7,9 +7,14 @@ import {
   MaxLength,
 } from 'class-validator';
 import { ServicePeriodUnit } from 'src/common/enums/service-period-unit.enum';
-import { IRecurringItemCreateDto } from 'src/common/interfaces/dtos/recurring-item.dto.interface';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
+import {
+  IRecurringItemCreateDto,
+  IRecurringItemSearchDto,
+} from 'src/common/interfaces/dtos/recurring-item.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
+import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
 import { Nullable } from 'src/common/types/types.generic';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -95,6 +100,8 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
@@ -102,17 +109,16 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
-    const userIdValidationResult = await this.validateUserId(currentUser);
+    const userIdValidationResult = await this.validateUserId();
     if (userIdValidationResult) errors.push(...userIdValidationResult);
 
     // const vendorIdValidationResult = await this.validateVendorId(currentUser);
     // if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
 
-    const nameTypeCombineValidationResult = await this.validateNameTypeCombine(
-      currentUser,
-      existingEntity,
-    );
+    const nameTypeCombineValidationResult =
+      await this.validateNameTypeCombine(existingEntity);
     if (nameTypeCombineValidationResult)
       errors.push(...nameTypeCombineValidationResult);
 
@@ -120,14 +126,13 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   }
 
   async validateNameTypeCombine(
-    currentUser: IUserEntity,
     existingEntity?: EntityType<EntityList.RECURRING_ITEM>,
   ) {
     const errors: IDtoValidationError[] = [];
 
-    const existingRecurringItems = await this.registryService
-      .get(EntityList.RECURRING_ITEM)
-      .search({ name: [this.name], type: [this.type] }, currentUser);
+    const existingRecurringItems = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
 
     if (existingRecurringItems && existingRecurringItems.length !== 0) {
       if (!existingEntity || existingEntity.id !== existingRecurringItems[0].id)
@@ -140,14 +145,12 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateUserId(currentUser: IUserEntity) {
+  async validateUserId() {
     const errors: IDtoValidationError[] = [];
 
-    const users = await this.registryService
-      .get(EntityList.USER)
-      .search({ id: [this.userId] }, currentUser);
+    const users = this.validationData.getEntityFromList(EntityList.USER);
 
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       errors.push({
         key: 'userId',
         message: `User with id: ${this.userId} does not exist. Please verify the id & try again`,
@@ -155,6 +158,29 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
     }
 
     return errors.length > 0 ? errors : null;
+  }
+
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [this.userId],
+      },
+    };
+
+    const filter: IRecurringItemSearchDto = {
+      name: [this.name],
+      type: [this.type],
+      entities: [userEntityIncludeData],
+    };
+
+    return new EntityFilterDataHelper(
+      await this.registryService
+        .get(EntityList.RECURRING_ITEM)
+        .searchV2(filter, currentUser),
+    );
   }
 
   // async validateVendorId(currentUser: IUserEntity) {
