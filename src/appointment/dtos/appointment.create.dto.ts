@@ -110,9 +110,14 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     const userIdValidationResult = await this.validateUserId();
     if (userIdValidationResult) errors.push(...userIdValidationResult);
 
-    const vendorIdValidationResult =
+    const combineVendorIdRecurringItemIdValidationResult =
       await this.validateCombineVendorIdRecurringItemId();
-    if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
+    if (combineVendorIdRecurringItemIdValidationResult)
+      errors.push(...combineVendorIdRecurringItemIdValidationResult);
+
+    const vendorOwnershipValidationResult = await this.validateVendorIdUserId();
+    if (vendorOwnershipValidationResult)
+      errors.push(...vendorOwnershipValidationResult);
 
     // const recurringItemIdValidationResult =
     //   await this.validateRecurringItemId();
@@ -173,23 +178,6 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   async validateCombineVendorIdRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    if (this.vendorId) {
-      //  const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
-      //   {
-      //     name: EntityList.VENDOR,
-      //     include: { id: [this.vendorId], userId: [this.userId] },
-      //   };
-      const existingVendorId = this.validationData.getEntityFromList(
-        EntityList.VENDOR,
-      );
-      if (existingVendorId.length === 0) {
-        errors.push({
-          key: 'vendorId',
-          message: `Vendor with id: ${this.vendorId} does not exist for current user. Please try with a valid vendor id.`,
-        });
-      }
-    }
-
     //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
     //   {
     //     name: EntityList.RECURRING_ITEM,
@@ -240,6 +228,23 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
 
   //   return errors.length > 0 ? errors : null;
   // }
+
+  async validateVendorIdUserId() {
+    if (!this.vendorId) return null;
+
+    const errors: IDtoValidationError[] = [];
+
+    const vendors = this.validationData.getEntityFromList(EntityList.VENDOR);
+
+    if (vendors.length === 0) {
+      errors.push({
+        key: 'vendorId',
+        message: `Vendor does not exist or does not belong to the user.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
 
   toCreateDto(): IAppointmentCreateDto {
     return {

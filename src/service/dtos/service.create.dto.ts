@@ -133,11 +133,25 @@ export class ServiceCreateDto implements IServiceCreateDto {
     const userValidationResult = await this.validateUserId();
     if (userValidationResult) errors.push(...userValidationResult);
 
-    const recurringValidationResult = await this.validateRecurringItemId();
-    if (recurringValidationResult) errors.push(...recurringValidationResult);
+    const combineVendorIdRecurringItemIdValidationResult =
+      await this.validateCombineVendorIdRecurringItemId();
+    if (combineVendorIdRecurringItemIdValidationResult)
+      errors.push(...combineVendorIdRecurringItemIdValidationResult);
 
-    const vendorValidationResult = await this.validateVendorId();
-    if (vendorValidationResult) errors.push(...vendorValidationResult);
+    const recurringItemUserValidationResult =
+      await this.validateRecurringItemIdUserId();
+    if (recurringItemUserValidationResult)
+      errors.push(...recurringItemUserValidationResult);
+
+    // const recurringValidationResult = await this.validateRecurringItemId();
+    // if (recurringValidationResult) errors.push(...recurringValidationResult);
+
+    // const vendorValidationResult = await this.validateVendorId();
+    // if (vendorValidationResult) errors.push(...vendorValidationResult);
+
+    const serviceDateValidationResult = await this.validateServiceDate();
+    if (serviceDateValidationResult)
+      errors.push(...serviceDateValidationResult);
 
     const appointmentValidationResult = await this.validateAppointmentId();
     if (appointmentValidationResult)
@@ -161,22 +175,127 @@ export class ServiceCreateDto implements IServiceCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateRecurringItemId() {
+  async validateServiceDate() {
     const errors: IDtoValidationError[] = [];
 
-    const items = this.validationData.getEntityFromList(
-      EntityList.RECURRING_ITEM,
+    const existingServices = this.validationData.getEntityFromList(
+      EntityList.SERVICE,
     );
 
-    if (items.length === 0) {
+    if (existingServices.length > 0) {
       errors.push({
-        key: 'recurringItemid',
-        message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
+        key: 'serviceDate',
+        message: `A service already exists for this vendor and recurring item on the selected date.`,
       });
     }
 
     return errors.length > 0 ? errors : null;
   }
+
+  async validateRecurringItemIdUserId() {
+    const errors: IDtoValidationError[] = [];
+
+    const recurringItems = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
+
+    if (recurringItems.length === 0) {
+      errors.push({
+        key: 'recurringItemId',
+        message: `Recurring item with id: ${this.recurringItemId} does not exist for this user.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateCombineVendorIdRecurringItemId() {
+    const errors: IDtoValidationError[] = [];
+
+    if (this.vendorId) {
+      //  const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
+      //   {
+      //     name: EntityList.VENDOR,
+      //     include: { id: [this.vendorId], userId: [this.userId] },
+      //   };
+      const existingVendorId = this.validationData.getEntityFromList(
+        EntityList.VENDOR,
+      );
+      if (existingVendorId.length === 0) {
+        errors.push({
+          key: 'vendorId',
+          message: `Vendor with id: ${this.vendorId} does not exist for current user. Please try with a valid vendor id.`,
+        });
+      }
+    }
+
+    //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    //   {
+    //     name: EntityList.RECURRING_ITEM,
+    //     include: { id: [this.recurringItemId], userId: [this.userId] },
+    //   };
+    const existingRecurringItemId = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
+    if (existingRecurringItemId.length === 0) {
+      errors.push({
+        key: 'recurringItemId',
+        message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id.`,
+      });
+    }
+
+    const vendorRecurringItemIdMappings = this.validationData.getEntityFromList(
+      EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+    );
+    const allVendorsAllowedForThisRecurringITemId =
+      vendorRecurringItemIdMappings.map((mapping) => mapping.vendorId);
+    if (!allVendorsAllowedForThisRecurringITemId.includes(this.vendorId)) {
+      errors.push({
+        key: 'vendorId',
+        message: `The selected vendor is not linked to this recurring item. Please select an assigned vendor or update the vendor-item mapping.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateAppointmentOwnershipAndMapping() {
+    if (this.appointmentId == null) {
+      return null;
+    }
+
+    const errors: IDtoValidationError[] = [];
+
+    const appointments = this.validationData.getEntityFromList(
+      EntityList.APPOINTMENT,
+    );
+
+    if (appointments.length === 0) {
+      errors.push({
+        key: 'appointmentId',
+        message: `Appointment with id: ${this.appointmentId} does not exist for the selected user, item, and vendor.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  // async validateRecurringItemId() {
+  //   const errors: IDtoValidationError[] = [];
+
+  //   const items = this.validationData.getEntityFromList(
+  //     EntityList.RECURRING_ITEM,
+  //   );
+
+  //   if (items.length === 0) {
+  //     errors.push({
+  //       key: 'recurringItemid',
+  //       message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
+  //     });
+  //   }
+
+  //   return errors.length > 0 ? errors : null;
+  // }
 
   async validateAppointmentId() {
     if (this.appointmentId == null) {
@@ -199,20 +318,20 @@ export class ServiceCreateDto implements IServiceCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateVendorId() {
-    const errors: IDtoValidationError[] = [];
+  // async validateVendorId() {
+  //   const errors: IDtoValidationError[] = [];
 
-    const vendors = this.validationData.getEntityFromList(EntityList.VENDOR);
+  //   const vendors = this.validationData.getEntityFromList(EntityList.VENDOR);
 
-    if (vendors.length === 0) {
-      errors.push({
-        key: 'vendorId',
-        message: `Vendor with id: ${this.vendorId} does not exist. Please verify the id & try again`,
-      });
-    }
+  //   if (vendors.length === 0) {
+  //     errors.push({
+  //       key: 'vendorId',
+  //       message: `Vendor with id: ${this.vendorId} does not exist. Please verify the id & try again`,
+  //     });
+  //   }
 
-    return errors.length > 0 ? errors : null;
-  }
+  //   return errors.length > 0 ? errors : null;
+  // }
 
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
@@ -235,11 +354,33 @@ export class ServiceCreateDto implements IServiceCreateDto {
       include: { id: [this.vendorId] },
     };
 
+    const serviceEntityIncludeData: IEntityFilterIncludeData<EntityList.SERVICE> =
+      {
+        name: EntityList.SERVICE,
+        include: {
+          userId: [this.userId],
+          recurringItemId: [this.recurringItemId],
+          vendorId: [this.vendorId],
+          serviceDate: [this.serviceDate],
+        },
+      };
+
+    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterIncludeData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        include: {
+          vendorId: [this.vendorId],
+          recurringItemId: [this.recurringItemId],
+        },
+      };
+
     const filter: IServiceSearchDto = {
       entities: [
         userEntityIncludeData,
         recurringItemEntityIncludeData,
         vendorIncludeData,
+        serviceEntityIncludeData,
+        vendorRecurringItemMappingEntityIncludeData,
       ],
     };
 
@@ -251,6 +392,7 @@ export class ServiceCreateDto implements IServiceCreateDto {
             id: [this.appointmentId],
             userId: [this.userId],
             recurringItemId: [this.recurringItemId],
+            vendorId: [this.vendorId],
           },
         };
 
