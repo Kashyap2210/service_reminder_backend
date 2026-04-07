@@ -13,7 +13,7 @@ export class ServiceUpdateDto
       'validate',
       'validateUserId',
       'validateRecurringItemId',
-      'validateAppointmentIfPresent',
+      'validateAppointmentId',
     ] as const),
   )
   implements IServiceUpdateDto
@@ -58,14 +58,12 @@ export class ServiceUpdateDto
   ): Promise<IDtoValidationError[] | EntityType<EntityList.SERVICE>> {
     const errors: IDtoValidationError[] = [];
 
-    const existing = await this.registryService
-      .get(EntityList.SERVICE)
-      .search(
-        {
-          id: [existingEntityId],
-        },
-        currentUser,
-      );
+    const existing = await this.registryService.get(EntityList.SERVICE).search(
+      {
+        id: [existingEntityId],
+      },
+      currentUser,
+    );
 
     if (!existing || existing.length === 0) {
       errors.push({
@@ -102,9 +100,9 @@ export class ServiceUpdateDto
   toUpdateDto(): IServiceUpdateDto {
     return {
       serviceDate: this.serviceDate ?? undefined,
-      recurringItemid: this.recurringItemid ?? undefined,
+      recurringItemId: this.recurringItemId ?? undefined,
       appointmentId: this.appointmentId ?? undefined,
-      userid: this.userid ?? undefined,
+      userId: this.userId ?? undefined,
       serviceType: this.serviceType ?? undefined,
       serviceStatus: this.serviceStatus ?? undefined,
       vendorId: this.vendorId ?? undefined,
