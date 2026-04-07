@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, MaxLength } from 'class-validator';
 import { UserRole } from 'src/common/enums/user.role.enum';
-import { IUserCreateDto } from 'src/common/interfaces/dtos/user.dto.interface';
+import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
+import {
+  IUserCreateDto,
+  IUserSearchDto,
+} from 'src/common/interfaces/dtos/user.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
@@ -55,6 +59,8 @@ export class UserCreateDto implements IUserCreateDto {
 
   registryService: RegistryService;
 
+  validationData: EntityFilterDataHelper;
+
   async validate(
     currentUser: IUserEntity,
     registryService: RegistryService,
@@ -62,36 +68,23 @@ export class UserCreateDto implements IUserCreateDto {
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
     this.registryService = registryService;
+    this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
-    const contactNoValidationResult = await this.validateContactNo(
-      currentUser,
-      existingEntity,
-    );
+    const contactNoValidationResult = await this.validateContactNo(existingEntity);
     if (contactNoValidationResult) errors.push(...contactNoValidationResult);
 
-    const emailValidationResult = await this.validateEmail(
-      currentUser,
-      existingEntity,
-    );
+    const emailValidationResult = await this.validateEmail(existingEntity);
     if (emailValidationResult) errors.push(...emailValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateContactNo(
-    currentUser: IUserEntity,
-    existingEntity?: EntityType<EntityList.USER>,
-  ) {
+  async validateContactNo(existingEntity?: EntityType<EntityList.USER>) {
     const errors: IDtoValidationError[] = [];
 
-    const existingUserFromContactNo = await this.registryService
-      .get(EntityList.USER)
-      .search(
-        {
-          contactNo: [this.contactNo],
-        },
-        currentUser,
-      );
+    const existingUserFromContactNo = this.validationData
+      .getEntityFromList(EntityList.USER)
+      .filter((user) => user.contactNo === this.contactNo);
 
     if (existingUserFromContactNo && existingUserFromContactNo.length > 0) {
       // Only error if the found user is a DIFFERENT entity
@@ -109,20 +102,12 @@ export class UserCreateDto implements IUserCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateEmail(
-    currentUser: IUserEntity,
-    existingEntity?: EntityType<EntityList.USER>,
-  ) {
+  async validateEmail(existingEntity?: EntityType<EntityList.USER>) {
     const errors: IDtoValidationError[] = [];
 
-    const existingUserFromEmail = await this.registryService
-      .get(EntityList.USER)
-      .search(
-        {
-          email: [this.email],
-        },
-        currentUser,
-      );
+    const existingUserFromEmail = this.validationData
+      .getEntityFromList(EntityList.USER)
+      .filter((user) => user.email === this.email);
 
     if (existingUserFromEmail && existingUserFromEmail.length > 0) {
       // Only error if the found user is a DIFFERENT entity
@@ -138,6 +123,19 @@ export class UserCreateDto implements IUserCreateDto {
     }
 
     return errors.length > 0 ? errors : null;
+  }
+
+  async fetchDataForCombineValidation(
+    currentUser: IUserEntity,
+  ): Promise<EntityFilterDataHelper> {
+    const filter: IUserSearchDto = {
+      contactNo: [this.contactNo],
+      email: [this.email],
+    };
+
+    return new EntityFilterDataHelper(
+      await this.registryService.get(EntityList.USER).searchV2(filter, currentUser),
+    );
   }
 
   toCreateDto(): IUserCreateDto {
