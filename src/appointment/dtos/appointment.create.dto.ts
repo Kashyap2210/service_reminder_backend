@@ -60,12 +60,11 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     type: Number,
     example: 2,
     description: 'ID of the vendor associated with this appointment (optional)',
-    required: false,
+    required: true,
     nullable: true,
   })
-  @IsOptional()
   @IsPositive()
-  vendorId: Nullable<number>;
+  vendorId: number;
 
   @ApiProperty({
     example: AppointmentStatus.BOOKED,
@@ -111,13 +110,14 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     const userIdValidationResult = await this.validateUserId();
     if (userIdValidationResult) errors.push(...userIdValidationResult);
 
-    const vendorIdValidationResult = await this.validateVendorId();
+    const vendorIdValidationResult =
+      await this.validateCombineVendorIdRecurringItemId();
     if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
 
-    const recurringItemIdValidationResult =
-      await this.validateRecurringItemId();
-    if (recurringItemIdValidationResult)
-      errors.push(...recurringItemIdValidationResult);
+    // const recurringItemIdValidationResult =
+    //   await this.validateRecurringItemId();
+    // if (recurringItemIdValidationResult)
+    //   errors.push(...recurringItemIdValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
@@ -170,7 +170,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateVendorId() {
+  async validateCombineVendorIdRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
     if (this.vendorId) {
@@ -190,12 +190,6 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
       }
     }
 
-    return errors.length > 0 ? errors : null;
-  }
-
-  async validateRecurringItemId() {
-    const errors: IDtoValidationError[] = [];
-
     //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
     //   {
     //     name: EntityList.RECURRING_ITEM,
@@ -211,8 +205,42 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
       });
     }
 
+    const vendorRecurringItemIdMappings = this.validationData.getEntityFromList(
+      EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+    );
+    console.log('vendorRecurringItemIdMappings', vendorRecurringItemIdMappings);
+    const allVendorsAllowedForThisRecurringITemId =
+      vendorRecurringItemIdMappings.map((mapping) => mapping.vendorId);
+    if (!allVendorsAllowedForThisRecurringITemId.includes(this.vendorId)) {
+      errors.push({
+        key: 'vendorId',
+        message: `The selected vendor is not linked to this recurring item. Please select an assigned vendor or update the vendor-item mapping.`,
+      });
+    }
+
     return errors.length > 0 ? errors : null;
   }
+
+  // async validateRecurringItemId() {
+  //   const errors: IDtoValidationError[] = [];
+
+  //   //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+  //   //   {
+  //   //     name: EntityList.RECURRING_ITEM,
+  //   //     include: { id: [this.recurringItemId], userId: [this.userId] },
+  //   //   };
+  //   const existingRecurringItemId = this.validationData.getEntityFromList(
+  //     EntityList.RECURRING_ITEM,
+  //   );
+  //   if (existingRecurringItemId.length === 0) {
+  //     errors.push({
+  //       key: 'recurringItemId',
+  //       message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id.`,
+  //     });
+  //   }
+
+  //   return errors.length > 0 ? errors : null;
+  // }
 
   toCreateDto(): IAppointmentCreateDto {
     return {
@@ -242,10 +270,23 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
         include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
+    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterIncludeData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        include: {
+          vendorId: [this.vendorId],
+          recurringItemId: [this.recurringItemId],
+        },
+      };
+
     const filter: IAppointmentSearchDto = {
       recurringItemId: [this.recurringItemId],
       appointmentDate: [this.appointmentDate],
-      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+      entities: [
+        userEntityIncludeData,
+        recurringItemEntityIncludeData,
+        vendorRecurringItemMappingEntityIncludeData,
+      ],
     };
 
     if (this.vendorId) {
