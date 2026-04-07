@@ -118,16 +118,14 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
     // if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
 
     const nameTypeCombineValidationResult =
-      await this.validateNameTypeCombine(existingEntity);
+      await this.validateName(existingEntity);
     if (nameTypeCombineValidationResult)
       errors.push(...nameTypeCombineValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
 
-  async validateNameTypeCombine(
-    existingEntity?: EntityType<EntityList.RECURRING_ITEM>,
-  ) {
+  async validateName(existingEntity?: EntityType<EntityList.RECURRING_ITEM>) {
     const errors: IDtoValidationError[] = [];
 
     const existingRecurringItems = this.validationData.getEntityFromList(
@@ -138,7 +136,7 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
       if (!existingEntity || existingEntity.id !== existingRecurringItems[0].id)
         errors.push({
           key: 'name',
-          message: `Recurring Item with name: ${this.name} & type: ${this.type} already exists. Please try again with different details.`,
+          message: `Recurring Item with name: ${this.name} already exists. Please try again with different details.`,
         });
     }
 
@@ -172,7 +170,7 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
 
     const filter: IRecurringItemSearchDto = {
       name: [this.name],
-      type: [this.type],
+      // type: [this.type],
       entities: [userEntityIncludeData],
     };
 
