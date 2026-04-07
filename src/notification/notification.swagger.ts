@@ -25,7 +25,7 @@ const BadRequestResponse = ApiBadRequestResponse({
       message: {
         type: 'object',
         properties: {
-          key: { type: 'string', example: 'userid' },
+          key: { type: 'string', example: 'userId' },
           message: {
             type: 'string',
             example: 'User with id: 1 does not exist.',
@@ -43,8 +43,8 @@ const NotificationEntityResponse = {
       {
         properties: {
           id: { type: 'number', example: 1 },
-          userid: { type: 'number', example: 1 },
-          recurringItemid: { type: 'number', example: 1 },
+          userId: { type: 'number', example: 1 },
+          recurringItemId: { type: 'number', example: 1 },
           appointmentId: { type: 'number', example: 1, nullable: true },
           type: {
             type: 'string',
@@ -83,8 +83,8 @@ export const CreateNotificationSwagger = () =>
         example1: {
           summary: 'Email reminder',
           value: {
-            userid: 1,
-            recurringItemid: 1,
+            userId: 1,
+            recurringItemId: 1,
             appointmentId: null,
             type: NotificationType.EMAIL_SERVICE_REMINDER,
             status: NotificationStatus.PENDING,

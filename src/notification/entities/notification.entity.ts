@@ -19,10 +19,10 @@ export class NotificationEntity
   id: number;
 
   @Column({ type: 'int' })
-  userid: number;
+  userId: number;
 
   @Column({ type: 'int' })
-  recurringItemid: number;
+  recurringItemId: number;
 
   @Column({ type: 'int', nullable: true })
   appointmentId: Nullable<number>;

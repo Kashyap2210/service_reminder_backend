@@ -16,9 +16,7 @@ import {
   INotificationCreateDto,
   INotificationSearchDto,
 } from 'src/common/interfaces/dtos/notification.dto.interface';
-import {
-  INotificationPayload,
-} from 'src/common/interfaces/entities/notification.entity.interface';
+import { INotificationPayload } from 'src/common/interfaces/entities/notification.entity.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
@@ -51,22 +49,28 @@ export class NotificationPayloadDto implements INotificationPayload {
 export class NotificationCreateDto implements INotificationCreateDto {
   @ApiProperty({ type: Number, example: 1 })
   @IsNumber()
-  userid: number;
+  userId: number;
 
   @ApiProperty({ type: Number, example: 1 })
   @IsNumber()
-  recurringItemid: number;
+  recurringItemId: number;
 
   @ApiPropertyOptional({ type: Number, example: 1, nullable: true })
   @IsOptional()
   @IsNumber()
   appointmentId: Nullable<number>;
 
-  @ApiProperty({ enum: NotificationType, example: NotificationType.EMAIL_SERVICE_REMINDER })
+  @ApiProperty({
+    enum: NotificationType,
+    example: NotificationType.EMAIL_SERVICE_REMINDER,
+  })
   @IsEnum(NotificationType)
   type: NotificationType;
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.PENDING })
+  @ApiProperty({
+    enum: NotificationStatus,
+    example: NotificationStatus.PENDING,
+  })
   @IsEnum(NotificationStatus)
   status: NotificationStatus;
 
@@ -111,8 +115,7 @@ export class NotificationCreateDto implements INotificationCreateDto {
     if (userValidationResult) errors.push(...userValidationResult);
 
     const recurringValidationResult = await this.validateRecurringItemId();
-    if (recurringValidationResult)
-      errors.push(...recurringValidationResult);
+    if (recurringValidationResult) errors.push(...recurringValidationResult);
 
     const appointmentValidationResult = await this.validateAppointmentId();
     if (appointmentValidationResult)
@@ -129,7 +132,7 @@ export class NotificationCreateDto implements INotificationCreateDto {
     if (users.length === 0) {
       errors.push({
         key: 'userid',
-        message: `User with id: ${this.userid} does not exist. Please verify the id & try again`,
+        message: `User with id: ${this.userId} does not exist. Please verify the id & try again`,
       });
     }
 
@@ -139,12 +142,14 @@ export class NotificationCreateDto implements INotificationCreateDto {
   async validateRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    const items = this.validationData.getEntityFromList(EntityList.RECURRING_ITEM);
+    const items = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
 
     if (items.length === 0) {
       errors.push({
         key: 'recurringItemid',
-        message: `Recurring item with id: ${this.recurringItemid} does not exist. Please verify the id & try again`,
+        message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
       });
     }
 
@@ -158,7 +163,9 @@ export class NotificationCreateDto implements INotificationCreateDto {
 
     const errors: IDtoValidationError[] = [];
 
-    const appointments = this.validationData.getEntityFromList(EntityList.APPOINTMENT);
+    const appointments = this.validationData.getEntityFromList(
+      EntityList.APPOINTMENT,
+    );
 
     if (appointments.length === 0) {
       errors.push({
@@ -176,14 +183,14 @@ export class NotificationCreateDto implements INotificationCreateDto {
     const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
-        id: [this.userid],
+        id: [this.userId],
       },
     };
 
     const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
-        include: { id: [this.recurringItemid], userId: [this.userid] },
+        include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
     const filter: INotificationSearchDto = {
@@ -196,8 +203,8 @@ export class NotificationCreateDto implements INotificationCreateDto {
           name: EntityList.APPOINTMENT,
           include: {
             id: [this.appointmentId],
-            userId: [this.userid],
-            recurringItemId: [this.recurringItemid],
+            userId: [this.userId],
+            recurringItemId: [this.recurringItemId],
           },
         };
 
@@ -216,8 +223,8 @@ export class NotificationCreateDto implements INotificationCreateDto {
 
   toCreateDto(): INotificationCreateDto {
     return {
-      userid: this.userid,
-      recurringItemid: this.recurringItemid,
+      userId: this.userId,
+      recurringItemId: this.recurringItemId,
       appointmentId: this.appointmentId,
       type: this.type,
       status: this.status,

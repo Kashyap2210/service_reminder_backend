@@ -13,12 +13,12 @@ export class NotificationSearchDto implements INotificationSearchDto {
   @ApiPropertyOptional({ type: [Number], example: [1] })
   @IsOptional()
   @IsNumber({}, { each: true })
-  userid?: number[];
+  userId?: number[];
 
   @ApiPropertyOptional({ type: [Number], example: [1] })
   @IsOptional()
   @IsNumber({}, { each: true })
-  recurringItemid?: number[];
+  recurringItemId?: number[];
 
   @ApiPropertyOptional({ type: [Number], example: [1] })
   @IsOptional()
