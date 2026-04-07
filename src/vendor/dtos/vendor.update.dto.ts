@@ -90,9 +90,16 @@ export class VendorUpdateDto
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
 
+    const allRecurringItemsIdsOfCurrentVendor = (
+      await this.registryService
+        .get(EntityList.VENDOR_RECURRING_ITEM_MAPPING)
+        .search({ vendorId: [existingEntity.id] }, currentUser)
+    ).map((mapping) => mapping.recurringItemId);
+
     const createDto = Object.assign(new VendorCreateDto(), {
       ...existingEntity,
       ...this,
+      recurringItemIds: allRecurringItemsIdsOfCurrentVendor,
     });
     const createDtoValidationResult = await createDto.validate(
       currentUser,

@@ -80,11 +80,43 @@ export class VendorCreateDto implements IVendorCreateDto {
     this.registryService = registryService;
     this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
+    const combineContactNumberEmailNameValidationResult =
+      await this.validateContactNumberEmailNameCombine(existingEntity);
+    if (combineContactNumberEmailNameValidationResult)
+      errors.push(...combineContactNumberEmailNameValidationResult);
+
     const userValidationResult = await this.validateUserId();
     if (userValidationResult) errors.push(...userValidationResult);
 
     const recurringValidationResult = await this.validateRecurringItemId();
     if (recurringValidationResult) errors.push(...recurringValidationResult);
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateContactNumberEmailNameCombine(
+    existingEntity?: EntityType<EntityList.VENDOR>,
+  ): Promise<IDtoValidationError[] | null> {
+    const errors: IDtoValidationError[] = [];
+
+    const paramForValidation: (keyof IVendorCreateDto)[] = [
+      'name',
+      'contactNo',
+      'email',
+    ];
+    for (const param of paramForValidation) {
+      const relevantVendor = this.validationData
+        .getEntityFromList(EntityList.VENDOR)
+        .filter((vendor) => vendor[param] === this[param]);
+
+      if (relevantVendor.length > 0) {
+        if (!existingEntity || existingEntity.id !== relevantVendor[0].id)
+          errors.push({
+            key: `${param}`,
+            message: `Vendor with ${param}: '${this[param]}' already exists please try with a valid value.`,
+          });
+      }
+    }
 
     return errors.length > 0 ? errors : null;
   }
@@ -107,7 +139,9 @@ export class VendorCreateDto implements IVendorCreateDto {
   async validateRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    const items = this.validationData.getEntityFromList(EntityList.RECURRING_ITEM);
+    const items = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
 
     if (items.length === 0 || items.length !== this.recurringItemIds.length) {
       errors.push({
@@ -150,7 +184,9 @@ export class VendorCreateDto implements IVendorCreateDto {
     };
 
     return new EntityFilterDataHelper(
-      await this.registryService.get(EntityList.VENDOR).searchV2(filter, currentUser),
+      await this.registryService
+        .get(EntityList.VENDOR)
+        .searchV2(filter, currentUser),
     );
   }
 
