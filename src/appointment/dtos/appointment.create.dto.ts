@@ -208,7 +208,6 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     const vendorRecurringItemIdMappings = this.validationData.getEntityFromList(
       EntityList.VENDOR_RECURRING_ITEM_MAPPING,
     );
-    console.log('vendorRecurringItemIdMappings', vendorRecurringItemIdMappings);
     const allVendorsAllowedForThisRecurringITemId =
       vendorRecurringItemIdMappings.map((mapping) => mapping.vendorId);
     if (!allVendorsAllowedForThisRecurringITemId.includes(this.vendorId)) {

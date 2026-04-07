@@ -40,7 +40,7 @@ const ServiceEntityResponse = {
       {
         properties: {
           id: { type: 'number', example: 1 },
-          serviceDate: { type: 'number', example: 1700000000000 },
+          serviceDate: { type: 'number', example: 20260604 },
           recurringItemId: { type: 'number', example: 1 },
           appointmentId: { type: 'number', example: 1, nullable: true },
           userId: { type: 'number', example: 1 },
@@ -84,7 +84,7 @@ export const CreateServiceSwagger = () =>
         example1: {
           summary: 'Create a service',
           value: {
-            serviceDate: 1700000000000,
+            serviceDate: 20260604,
             recurringItemId: 1,
             appointmentId: null,
             userId: 1,

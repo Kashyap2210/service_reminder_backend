@@ -19,14 +19,16 @@ import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
 import { Nullable } from 'src/common/types/types.generic';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
+import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 
 export class ServiceCreateDto implements IServiceCreateDto {
   @ApiProperty({
     type: Number,
-    example: 1700000000000,
+    example: 20260604,
     description: 'Service date as epoch timestamp (bigint)',
   })
   @IsNumber()
+  @IsValidDateCode()
   serviceDate: number;
 
   @ApiProperty({
@@ -76,12 +78,10 @@ export class ServiceCreateDto implements IServiceCreateDto {
     type: Number,
     example: 2,
     description: 'Vendor id (optional)',
-    required: false,
-    nullable: true,
+    required: true,
   })
-  @IsOptional()
   @IsNumber()
-  vendorId: Nullable<number>;
+  vendorId: number;
 
   @ApiProperty({
     type: Number,
@@ -136,8 +136,10 @@ export class ServiceCreateDto implements IServiceCreateDto {
     const recurringValidationResult = await this.validateRecurringItemId();
     if (recurringValidationResult) errors.push(...recurringValidationResult);
 
-    const appointmentValidationResult =
-      await this.validateAppointmentId();
+    const vendorValidationResult = await this.validateVendorId();
+    if (vendorValidationResult) errors.push(...vendorValidationResult);
+
+    const appointmentValidationResult = await this.validateAppointmentId();
     if (appointmentValidationResult)
       errors.push(...appointmentValidationResult);
 
@@ -197,6 +199,21 @@ export class ServiceCreateDto implements IServiceCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
+  async validateVendorId() {
+    const errors: IDtoValidationError[] = [];
+
+    const vendors = this.validationData.getEntityFromList(EntityList.VENDOR);
+
+    if (vendors.length === 0) {
+      errors.push({
+        key: 'vendorId',
+        message: `Vendor with id: ${this.vendorId} does not exist. Please verify the id & try again`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
@@ -213,8 +230,17 @@ export class ServiceCreateDto implements IServiceCreateDto {
         include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
+    const vendorIncludeData: IEntityFilterIncludeData<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+      include: { id: [this.vendorId] },
+    };
+
     const filter: IServiceSearchDto = {
-      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+      entities: [
+        userEntityIncludeData,
+        recurringItemEntityIncludeData,
+        vendorIncludeData,
+      ],
     };
 
     if (this.appointmentId != null) {

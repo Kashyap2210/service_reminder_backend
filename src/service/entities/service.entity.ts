@@ -37,8 +37,8 @@ export class ServiceEntity extends BaseEntity implements IServiceEntity {
   })
   serviceStatus: ServiceStatus;
 
-  @Column({ type: 'int', nullable: true })
-  vendorId: Nullable<number>;
+  @Column({ type: 'int' })
+  vendorId: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   serviceEstimate: Nullable<number>;
