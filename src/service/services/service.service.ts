@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { ServiceModel } from 'src/common/models/service.entity.model';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
@@ -8,10 +9,10 @@ import { EntityManager } from 'typeorm';
 import { ServiceCreateDto } from '../dtos/service.create.dto';
 import { ServiceUpdateDto } from '../dtos/service.update.dto';
 import { ServiceRepository } from '../repositories/service.repository';
-import { ServiceCreateTransaction } from '../transactions/service.create.transaction';
-import { ServiceUpdateTransaction } from '../transactions/service.update.transaction';
 import { IServiceCreateTransactionInputData } from '../transactions/interfaces/service-create-transaction.interface';
 import { IServiceUpdateTransactionInputData } from '../transactions/interfaces/service-update-transaction.interface';
+import { ServiceCreateTransaction } from '../transactions/service.create.transaction';
+import { ServiceUpdateTransaction } from '../transactions/service.update.transaction';
 import { ServiceHistoryService } from './service-history.service';
 
 @Injectable()
@@ -70,18 +71,23 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       this.registryService,
       id,
     );
-    if (validationResult) {
-      if (Array.isArray(validationResult)) {
-        const errors = validationResult;
-        throw new BadRequestException(errors[0]);
-      } else if (typeof validationResult === 'object') {
-        existingService = validationResult;
-      }
+    if (validationResult && Array.isArray(validationResult)) {
+      const errors = validationResult;
+      throw new BadRequestException(errors[0]);
     }
+    existingService = validationResult;
+    const existingServiceEntityModel = ServiceModel.fromEntity(
+      existingService!,
+    );
+
+    const nextStatus = existingServiceEntityModel.getNextStatus(
+      currentUser,
+      dto.action,
+    );
 
     const data: IServiceUpdateTransactionInputData = {
       id,
-      dto: dto.toUpdateDto(),
+      dto: dto.toUpdateDto(nextStatus),
       currentUser,
       existingEntity: existingService!,
     };

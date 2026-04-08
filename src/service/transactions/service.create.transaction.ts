@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
+import { ServiceStatus } from 'src/common/enums/service-status.enum';
 import { EntityList } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
@@ -41,7 +42,7 @@ export class ServiceCreateTransaction extends BaseTransaction<
 
     const instance = await this.serviceService.getInstanceBase(
       currentUser,
-      dto,
+      { ...dto, serviceStatus: ServiceStatus.SCHEDULED },
       manager,
     );
 

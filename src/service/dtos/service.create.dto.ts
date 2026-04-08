@@ -7,7 +7,6 @@ import {
   MaxLength,
 } from 'class-validator';
 import { AppointmentType } from 'src/common/enums/appointment-type.enum';
-import { ServiceStatus } from 'src/common/enums/service-status.enum';
 import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
 import {
   IServiceCreateDto,
@@ -66,13 +65,13 @@ export class ServiceCreateDto implements IServiceCreateDto {
   @IsEnum(AppointmentType)
   serviceType: AppointmentType;
 
-  @ApiProperty({
-    example: ServiceStatus.SERVICE_COMMENCED,
-    enum: ServiceStatus,
-    description: 'Service status',
-  })
-  @IsEnum(ServiceStatus)
-  serviceStatus: ServiceStatus;
+  // @ApiProperty({
+  //   example: ServiceStatus.SERVICE_STARTED,
+  //   enum: ServiceStatus,
+  //   description: 'Service status',
+  // })
+  // @IsEnum(ServiceStatus)
+  // serviceStatus: ServiceStatus;
 
   @ApiProperty({
     type: Number,
@@ -416,7 +415,6 @@ export class ServiceCreateDto implements IServiceCreateDto {
       appointmentId: this.appointmentId,
       userId: this.userId,
       serviceType: this.serviceType,
-      serviceStatus: this.serviceStatus,
       vendorId: this.vendorId,
       serviceEstimate: this.serviceEstimate,
       serviceAmount: this.serviceAmount,

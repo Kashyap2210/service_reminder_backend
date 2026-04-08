@@ -1,4 +1,7 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
+import { ServiceAction } from 'src/common/enums/service-action.enum';
+import { ServiceStatus } from 'src/common/enums/service-status.enum';
 import { IServiceUpdateDto } from 'src/common/interfaces/dtos/service.dto.interface';
 import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
@@ -18,6 +21,15 @@ export class ServiceUpdateDto
   )
   implements IServiceUpdateDto
 {
+  @ApiProperty({
+    enum: ServiceAction,
+    enumName: 'ServiceAction',
+    description: 'Action to be performed on the appointment',
+    example: ServiceAction.EDIT, // adjust based on your enum
+  })
+  @IsEnum(ServiceAction)
+  action: ServiceAction;
+
   registryService: RegistryService;
 
   async validate(
@@ -97,14 +109,14 @@ export class ServiceUpdateDto
     return errors.length > 0 ? errors : null;
   }
 
-  toUpdateDto(): IServiceUpdateDto {
+  toUpdateDto(nextStatus: ServiceStatus): IServiceUpdateDto {
     return {
       serviceDate: this.serviceDate ?? undefined,
       recurringItemId: this.recurringItemId ?? undefined,
       appointmentId: this.appointmentId ?? undefined,
       userId: this.userId ?? undefined,
       serviceType: this.serviceType ?? undefined,
-      serviceStatus: this.serviceStatus ?? undefined,
+      serviceStatus: nextStatus,
       vendorId: this.vendorId ?? undefined,
       serviceEstimate: this.serviceEstimate ?? undefined,
       serviceAmount: this.serviceAmount ?? undefined,
