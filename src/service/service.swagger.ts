@@ -52,7 +52,7 @@ const ServiceEntityResponse = {
           serviceStatus: {
             type: 'string',
             enum: Object.values(ServiceStatus),
-            example: ServiceStatus.SERVICE_COMMENCED,
+            example: ServiceStatus.SERVICE_STARTED,
           },
           vendorId: { type: 'number', example: 2, nullable: true },
           serviceEstimate: { type: 'number', example: 199.99, nullable: true },
@@ -89,7 +89,7 @@ export const CreateServiceSwagger = () =>
             appointmentId: null,
             userId: 1,
             serviceType: AppointmentType.SERVICE,
-            serviceStatus: ServiceStatus.SERVICE_COMMENCED,
+            serviceStatus: ServiceStatus.SERVICE_STARTED,
             vendorId: 2,
             serviceEstimate: 199.99,
             serviceAmount: null,

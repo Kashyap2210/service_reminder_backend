@@ -33,7 +33,7 @@ export class ServiceEntity extends BaseEntity implements IServiceEntity {
   @Column({
     type: 'enum',
     enum: ServiceStatus,
-    default: ServiceStatus.SERVICE_COMMENCED,
+    default: ServiceStatus.SERVICE_STARTED,
   })
   serviceStatus: ServiceStatus;
 

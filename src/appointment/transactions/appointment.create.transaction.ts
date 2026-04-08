@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
 import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
 import { EntityList } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -24,7 +25,9 @@ export class AppointmentCreateTransaction extends BaseTransaction<
   }
 
   get appointmentService(): AppointmentService {
-    return this.registryService.get(EntityList.APPOINTMENT) as AppointmentService;
+    return this.registryService.get(
+      EntityList.APPOINTMENT,
+    ) as AppointmentService;
   }
 
   get appointmentHistoryService(): AppointmentHistoryService {
@@ -41,7 +44,7 @@ export class AppointmentCreateTransaction extends BaseTransaction<
 
     const appointmentInstance = await this.appointmentService.getInstanceBase(
       currentUser,
-      dto,
+      { ...dto, appointmentStatus: AppointmentStatus.BOOKED },
       manager,
     );
 

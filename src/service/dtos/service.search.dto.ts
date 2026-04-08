@@ -63,7 +63,7 @@ export class ServiceSearchDto implements IServiceSearchDto {
   @ApiPropertyOptional({
     enum: ServiceStatus,
     isArray: true,
-    example: [ServiceStatus.SERVICE_COMMENCED],
+    example: [ServiceStatus.SERVICE_STARTED],
     description: 'Service status(es)',
   })
   @IsOptional()

@@ -6,8 +6,10 @@ import {
 } from 'src/common/types/generic.dto.types';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 
-export interface IAppointmentCreateDto extends IEntityCreateDto<
-  EntityType<EntityList.APPOINTMENT>
+export type IAppointmentCreateDtoExclude = 'appointmentStatus';
+export interface IAppointmentCreateDto extends Omit<
+  IEntityCreateDto<EntityType<EntityList.APPOINTMENT>>,
+  IAppointmentCreateDtoExclude
 > {}
 
 export interface IAppointmentUpdateDto extends IEntityUpdateDto<

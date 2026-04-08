@@ -6,7 +6,6 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
 import { AppointmentType } from 'src/common/enums/appointment-type.enum';
 import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
 import {
@@ -66,14 +65,14 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   @IsPositive()
   vendorId: number;
 
-  @ApiProperty({
-    example: AppointmentStatus.BOOKED,
-    description: 'Status of the appointment',
-    enum: AppointmentStatus,
-    required: true,
-  })
-  @IsEnum(AppointmentStatus)
-  appointmentStatus: AppointmentStatus;
+  // @ApiProperty({
+  //   example: AppointmentStatus.BOOKED,
+  //   description: 'Status of the appointment',
+  //   enum: AppointmentStatus,
+  //   required: true,
+  // })
+  // @IsEnum(AppointmentStatus)
+  // appointmentStatus: AppointmentStatus;
 
   @ApiProperty({
     type: String,
@@ -253,7 +252,6 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
       userId: this.userId,
       appointmentType: this.appointmentType,
       vendorId: this.vendorId,
-      appointmentStatus: this.appointmentStatus,
       checkPoints: this.checkPoints,
     };
   }
