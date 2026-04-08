@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IAppointmentEntity } from 'src/common/interfaces/entities/appointment.entity.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { AppointmentModel } from 'src/common/models/appointment.entity.model';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
@@ -62,18 +63,25 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       this.registryService,
       id,
     );
-    if (validationResult) {
-      if (Array.isArray(validationResult)) {
-        const errors = validationResult;
-        throw new BadRequestException(errors[0]);
-      } else if (typeof validationResult === 'object') {
-        existingAppointment = validationResult;
-      }
+    if (validationResult && Array.isArray(validationResult)) {
+      const errors = validationResult;
+      throw new BadRequestException(errors[0]);
     }
+    existingAppointment = validationResult;
+
+    const existingAppointmentEntityModel = AppointmentModel.fromEntity(
+      existingAppointment!,
+    );
+    const nextStatus = existingAppointmentEntityModel.getNextStatus(
+      currentUser,
+      dto.action,
+    );
 
     const data: IAppointmentUpdateTransactionInputData = {
       id,
-      dto: dto.toUpdateDto(),
+      dto: {
+        ...dto.toUpdateDto(nextStatus),
+      },
       currentUser,
       existingEntity: existingAppointment!, // <== Appointment will always be there as we throw error from dto
     };

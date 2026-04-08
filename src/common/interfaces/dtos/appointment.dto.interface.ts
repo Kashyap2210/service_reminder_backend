@@ -1,3 +1,4 @@
+import { AppointmentAction } from 'src/common/enums/appointment-action.enum';
 import {
   IEntityCreateDto,
   IEntityFilterData,
@@ -11,7 +12,9 @@ export interface IAppointmentCreateDto extends IEntityCreateDto<
 
 export interface IAppointmentUpdateDto extends IEntityUpdateDto<
   EntityType<EntityList.APPOINTMENT>
-> {}
+> {
+  action?: AppointmentAction;
+}
 
 export interface IAppointmentSearchDto extends IEntityFilterData<
   EntityType<EntityList.APPOINTMENT>

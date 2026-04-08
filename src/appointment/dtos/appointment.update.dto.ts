@@ -1,10 +1,13 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
+import { AppointmentAction } from 'src/common/enums/appointment-action.enum';
 import { IAppointmentUpdateDto } from 'src/common/interfaces/dtos/appointment.dto.interface';
 import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
 import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { AppointmentCreateDto } from './appointment.create.dto';
+import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
 
 export class AppointmentUpdateDto
   extends PartialType(
@@ -16,6 +19,15 @@ export class AppointmentUpdateDto
   implements IAppointmentUpdateDto
 {
   registryService: RegistryService;
+
+  @ApiProperty({
+    enum: AppointmentAction,
+    enumName: 'AppointmentAction',
+    description: 'Action to be performed on the appointment',
+    example: AppointmentAction.EDIT, // adjust based on your enum
+  })
+  @IsEnum(AppointmentAction)
+  action: AppointmentAction;
 
   async validate(
     currentUser: IUserEntity,
@@ -98,14 +110,14 @@ export class AppointmentUpdateDto
     return errors.length > 0 ? errors : null;
   }
 
-  toUpdateDto(): IAppointmentUpdateDto {
+  toUpdateDto(nextStatus: AppointmentStatus): IAppointmentUpdateDto {
     return {
       appointmentDate: this.appointmentDate ?? undefined,
       recurringItemId: this.recurringItemId ?? undefined,
       userId: this.userId ?? undefined,
       appointmentType: this.appointmentType ?? undefined,
       vendorId: this.vendorId ?? undefined,
-      appointmentStatus: this.appointmentStatus ?? undefined,
+      appointmentStatus: nextStatus,
       checkPoints: this.checkPoints ?? undefined,
     };
   }
