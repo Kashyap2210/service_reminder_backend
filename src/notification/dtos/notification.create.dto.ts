@@ -148,8 +148,8 @@ export class NotificationCreateDto implements INotificationCreateDto {
 
     if (items.length === 0) {
       errors.push({
-        key: 'recurringItemid',
-        message: `Recurring item with id: ${this.recurringItemId} does not exist. Please verify the id & try again`,
+        key: 'recurringItemId',
+        message: `Recurring item does not exist or does not belong to the user.`,
       });
     }
 

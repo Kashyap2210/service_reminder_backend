@@ -88,8 +88,19 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       }
     }
 
-    const { mappingsToCreate, mappingsToDelete } =
-      await this.getMappingsToCreateDelete(currentUser, dto, entityManager);
+    let mappingsToCreate: number[] = [];
+    let mappingsToDelete: number[] = [];
+
+    if (dto.recurringItemIds?.length > 0) {
+      const mappings = await this.getMappingsToCreateDelete(
+        currentUser,
+        id,
+        dto,
+        entityManager,
+      );
+      mappingsToCreate = mappings.mappingsToCreate;
+      mappingsToDelete = mappings.mappingsToDelete;
+    }
 
     const data: IVendorUpdateTransactionInputData = {
       id,
@@ -132,15 +143,14 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     mappingsToDeleteIds: number[],
     entityManager?: EntityManager,
   ) {
-    return this.deleteByIdsBase(
-      currentUser,
-      mappingsToDeleteIds,
-      entityManager,
-    );
+    return this.registryService
+      .get(EntityList.VENDOR_RECURRING_ITEM_MAPPING)
+      .deleteByIdsBase(currentUser, mappingsToDeleteIds, entityManager);
   }
 
   async getMappingsToCreateDelete(
     currentUser: IUserEntity,
+    vendorId: number,
     dto: VendorUpdateDto,
     entityManager?: EntityManager,
   ): Promise<{
@@ -150,30 +160,27 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     const existingVendorRecurringItemMappings =
       await this.vendorRecurringItemMappingService.search(
         {
-          recurringItemId: dto.recurringItemIds,
+          vendorId: [vendorId],
         },
         currentUser,
         entityManager,
       );
-    const {
-      present,
-      added: mappingsToCreate,
-      deleted,
-    } = diffArrays(
-      dto.recurringItemIds,
+    const { present, added, deleted } = diffArrays(
       existingVendorRecurringItemMappings.map(
         (mapping) => mapping.recurringItemId,
       ),
+      dto.recurringItemIds,
     );
-    const mappingsToDelete: number[] = [];
+
+    let mappingsToDelete: number[] = [];
     if (deleted.length > 0) {
-      existingVendorRecurringItemMappings.filter((mapping) =>
-        deleted.includes(mapping.id),
-      );
+      mappingsToDelete = existingVendorRecurringItemMappings
+        .filter((mapping) => deleted.includes(mapping.recurringItemId))
+        .map((mapping) => mapping.id);
     }
 
     return {
-      mappingsToCreate,
+      mappingsToCreate: added,
       mappingsToDelete,
     };
   }

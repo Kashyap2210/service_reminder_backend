@@ -60,12 +60,11 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     type: Number,
     example: 2,
     description: 'ID of the vendor associated with this appointment (optional)',
-    required: false,
+    required: true,
     nullable: true,
   })
-  @IsOptional()
   @IsPositive()
-  vendorId: Nullable<number>;
+  vendorId: number;
 
   @ApiProperty({
     example: AppointmentStatus.BOOKED,
@@ -111,13 +110,19 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     const userIdValidationResult = await this.validateUserId();
     if (userIdValidationResult) errors.push(...userIdValidationResult);
 
-    const vendorIdValidationResult = await this.validateVendorId();
-    if (vendorIdValidationResult) errors.push(...vendorIdValidationResult);
+    const combineVendorIdRecurringItemIdValidationResult =
+      await this.validateCombineVendorIdRecurringItemId();
+    if (combineVendorIdRecurringItemIdValidationResult)
+      errors.push(...combineVendorIdRecurringItemIdValidationResult);
 
-    const recurringItemIdValidationResult =
-      await this.validateRecurringItemId();
-    if (recurringItemIdValidationResult)
-      errors.push(...recurringItemIdValidationResult);
+    const vendorOwnershipValidationResult = await this.validateVendorIdUserId();
+    if (vendorOwnershipValidationResult)
+      errors.push(...vendorOwnershipValidationResult);
+
+    // const recurringItemIdValidationResult =
+    //   await this.validateRecurringItemId();
+    // if (recurringItemIdValidationResult)
+    //   errors.push(...recurringItemIdValidationResult);
 
     return errors.length > 0 ? errors : null;
   }
@@ -170,30 +175,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateVendorId() {
-    const errors: IDtoValidationError[] = [];
-
-    if (this.vendorId) {
-      //  const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
-      //   {
-      //     name: EntityList.VENDOR,
-      //     include: { id: [this.vendorId], userId: [this.userId] },
-      //   };
-      const existingVendorId = this.validationData.getEntityFromList(
-        EntityList.VENDOR,
-      );
-      if (existingVendorId.length === 0) {
-        errors.push({
-          key: 'vendorId',
-          message: `Vendor with id: ${this.vendorId} does not exist for current user. Please try with a valid vendor id.`,
-        });
-      }
-    }
-
-    return errors.length > 0 ? errors : null;
-  }
-
-  async validateRecurringItemId() {
+  async validateCombineVendorIdRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
     //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
@@ -208,6 +190,56 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
       errors.push({
         key: 'recurringItemId',
         message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id.`,
+      });
+    }
+
+    const vendorRecurringItemIdMappings = this.validationData.getEntityFromList(
+      EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+    );
+    const allVendorsAllowedForThisRecurringITemId =
+      vendorRecurringItemIdMappings.map((mapping) => mapping.vendorId);
+    if (!allVendorsAllowedForThisRecurringITemId.includes(this.vendorId)) {
+      errors.push({
+        key: 'vendorId',
+        message: `The selected vendor is not linked to this recurring item. Please select an assigned vendor or update the vendor-item mapping.`,
+      });
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  // async validateRecurringItemId() {
+  //   const errors: IDtoValidationError[] = [];
+
+  //   //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+  //   //   {
+  //   //     name: EntityList.RECURRING_ITEM,
+  //   //     include: { id: [this.recurringItemId], userId: [this.userId] },
+  //   //   };
+  //   const existingRecurringItemId = this.validationData.getEntityFromList(
+  //     EntityList.RECURRING_ITEM,
+  //   );
+  //   if (existingRecurringItemId.length === 0) {
+  //     errors.push({
+  //       key: 'recurringItemId',
+  //       message: `Recurring Item with id: ${this.recurringItemId} does not exists for current user. Please try with a valid recurring item id.`,
+  //     });
+  //   }
+
+  //   return errors.length > 0 ? errors : null;
+  // }
+
+  async validateVendorIdUserId() {
+    if (!this.vendorId) return null;
+
+    const errors: IDtoValidationError[] = [];
+
+    const vendors = this.validationData.getEntityFromList(EntityList.VENDOR);
+
+    if (vendors.length === 0) {
+      errors.push({
+        key: 'vendorId',
+        message: `Vendor does not exist or does not belong to the user.`,
       });
     }
 
@@ -242,10 +274,23 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
         include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
+    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterIncludeData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        include: {
+          vendorId: [this.vendorId],
+          recurringItemId: [this.recurringItemId],
+        },
+      };
+
     const filter: IAppointmentSearchDto = {
       recurringItemId: [this.recurringItemId],
       appointmentDate: [this.appointmentDate],
-      entities: [userEntityIncludeData, recurringItemEntityIncludeData],
+      entities: [
+        userEntityIncludeData,
+        recurringItemEntityIncludeData,
+        vendorRecurringItemMappingEntityIncludeData,
+      ],
     };
 
     if (this.vendorId) {

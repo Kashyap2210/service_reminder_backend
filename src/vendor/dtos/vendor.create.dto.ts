@@ -80,11 +80,43 @@ export class VendorCreateDto implements IVendorCreateDto {
     this.registryService = registryService;
     this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
+    const combineContactNumberEmailNameValidationResult =
+      await this.validateContactNumberEmailNameCombine(existingEntity);
+    if (combineContactNumberEmailNameValidationResult)
+      errors.push(...combineContactNumberEmailNameValidationResult);
+
     const userValidationResult = await this.validateUserId();
     if (userValidationResult) errors.push(...userValidationResult);
 
     const recurringValidationResult = await this.validateRecurringItemId();
     if (recurringValidationResult) errors.push(...recurringValidationResult);
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  async validateContactNumberEmailNameCombine(
+    existingEntity?: EntityType<EntityList.VENDOR>,
+  ): Promise<IDtoValidationError[] | null> {
+    const errors: IDtoValidationError[] = [];
+
+    const paramForValidation: (keyof IVendorCreateDto)[] = [
+      'name',
+      'contactNo',
+      'email',
+    ];
+    for (const param of paramForValidation) {
+      const relevantVendor = this.validationData
+        .getEntityFromList(EntityList.VENDOR)
+        .filter((vendor) => vendor[param] === this[param]);
+
+      if (relevantVendor.length > 0) {
+        if (!existingEntity || existingEntity.id !== relevantVendor[0].id)
+          errors.push({
+            key: `${param}`,
+            message: `Vendor with ${param}: '${this[param]}' already exists please try with a valid value.`,
+          });
+      }
+    }
 
     return errors.length > 0 ? errors : null;
   }
@@ -107,27 +139,52 @@ export class VendorCreateDto implements IVendorCreateDto {
   async validateRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    const items = this.validationData.getEntityFromList(EntityList.RECURRING_ITEM);
+    const items = this.validationData.getEntityFromList(
+      EntityList.RECURRING_ITEM,
+    );
 
-    if (items.length === 0 || items.length !== this.recurringItemIds.length) {
+    const validIds = items.map((item) => item.id);
+    const invalidIds = this.recurringItemIds.filter(
+      (id) => !validIds.includes(id),
+    );
+
+    if (invalidIds.length > 0) {
       errors.push({
-        key: 'recurringItemId',
-        message: `Recurring item with id: ${this.recurringItemIds} does not exist. Please verify the id & try again`,
+        key: 'recurringItemIds',
+        message: `Invalid recurring item ids: ${invalidIds.join(
+          ', ',
+        )}. Ensure they exist and belong to the user.`,
       });
     }
 
-    // const existingVendorForRecurringItem = await this.registryService
-    //   .get(EntityList.VENDOR)
-    //   .search({ recurringItemId: [this.recurringItemId] }, currentUser);
-    //   if(existingVendorForRecurringItem && existingVendorForRecurringItem.length> 0 ){
-    //     errors.push({
-    //       key: 'recurringItemId',
-    //       message: `A vendor already exists for the ${items[0].name}. If you wish you can update the recurring item to`
-    //     })
-    //   }
-
     return errors.length > 0 ? errors : null;
   }
+  // async validateRecurringItemId() {
+  //   const errors: IDtoValidationError[] = [];
+
+  //   const items = this.validationData.getEntityFromList(
+  //     EntityList.RECURRING_ITEM,
+  //   );
+
+  //   if (items.length === 0 || items.length !== this.recurringItemIds.length) {
+  //     errors.push({
+  //       key: 'recurringItemId',
+  //       message: `Recurring item with id: ${this.recurringItemIds} does not exist. Please verify the id & try again`,
+  //     });
+  //   }
+
+  //   // const existingVendorForRecurringItem = await this.registryService
+  //   //   .get(EntityList.VENDOR)
+  //   //   .search({ recurringItemId: [this.recurringItemId] }, currentUser);
+  //   //   if(existingVendorForRecurringItem && existingVendorForRecurringItem.length> 0 ){
+  //   //     errors.push({
+  //   //       key: 'recurringItemId',
+  //   //       message: `A vendor already exists for the ${items[0].name}. If you wish you can update the recurring item to`
+  //   //     })
+  //   //   }
+
+  //   return errors.length > 0 ? errors : null;
+  // }
 
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
@@ -150,7 +207,9 @@ export class VendorCreateDto implements IVendorCreateDto {
     };
 
     return new EntityFilterDataHelper(
-      await this.registryService.get(EntityList.VENDOR).searchV2(filter, currentUser),
+      await this.registryService
+        .get(EntityList.VENDOR)
+        .searchV2(filter, currentUser),
     );
   }
 

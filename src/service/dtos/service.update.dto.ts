@@ -12,7 +12,7 @@ export class ServiceUpdateDto
     OmitType(ServiceCreateDto, [
       'validate',
       'validateUserId',
-      'validateRecurringItemId',
+      // 'validateRecurringItemId',
       'validateAppointmentId',
     ] as const),
   )

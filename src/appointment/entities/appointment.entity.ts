@@ -30,8 +30,8 @@ export class AppointmentEntity
   })
   appointmentType: AppointmentType;
 
-  @Column({ type: 'int', nullable: true })
-  vendorId: Nullable<number>;
+  @Column({ type: 'int', nullable: false })
+  vendorId: number;
 
   @Column({
     type: 'enum',

@@ -10,8 +10,8 @@ export interface IServiceEntity extends IAuditColumnEntity {
   appointmentId: Nullable<number>;
   userId: number;
   serviceType: AppointmentType;
-  serviceStatus: ServiceStatus; 
-  vendorId: Nullable<number>;
+  serviceStatus: ServiceStatus;
+  vendorId: number;
   serviceEstimate: Nullable<number>;
   serviceAmount: Nullable<number>;
   invoiceDocument: Nullable<string>;
