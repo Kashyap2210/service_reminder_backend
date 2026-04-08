@@ -157,8 +157,6 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     mappingsToCreate: number[];
     mappingsToDelete: number[];
   }> {
-    console.log('updateDto', dto);
-
     const existingVendorRecurringItemMappings =
       await this.vendorRecurringItemMappingService.search(
         {
@@ -167,10 +165,6 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
         currentUser,
         entityManager,
       );
-    console.log(
-      'existingVendorRecurringItemMappings',
-      existingVendorRecurringItemMappings,
-    );
     const { present, added, deleted } = diffArrays(
       existingVendorRecurringItemMappings.map(
         (mapping) => mapping.recurringItemId,
@@ -178,18 +172,12 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       dto.recurringItemIds,
     );
 
-    console.log('added', added);
-    console.log('deleted', deleted);
-
     let mappingsToDelete: number[] = [];
     if (deleted.length > 0) {
       mappingsToDelete = existingVendorRecurringItemMappings
         .filter((mapping) => deleted.includes(mapping.recurringItemId))
         .map((mapping) => mapping.id);
     }
-
-    console.log('mappingsToCreate', added);
-    console.log('mappingsToDelete', mappingsToDelete);
 
     return {
       mappingsToCreate: added,
