@@ -6,17 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ServicePeriodUnit } from 'src/common/enums/service-period-unit.enum';
-import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
-import {
-  IRecurringItemCreateDto,
-  IRecurringItemSearchDto,
-} from 'src/common/interfaces/dtos/recurring-item.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
-import { Nullable } from 'src/common/types/types.generic';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, IRecurringItemCreateDto, IRecurringItemSearchDto, IUserEntity, Nullable, ServicePeriodUnit } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class RecurringItemCreateDto implements IRecurringItemCreateDto {

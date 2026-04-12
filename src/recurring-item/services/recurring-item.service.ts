@@ -1,7 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { IRecurringItemEntity } from 'src/common/interfaces/entities/recurring-item.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -13,6 +10,7 @@ import { RecurringItemUpdateTransaction } from '../transactions/recurring-item.u
 import { IRecurringItemCreateTransactionInputData } from '../transactions/interfaces/recurring-item-create-transaction.interface';
 import { IRecurringItemUpdateTransactionInputData } from '../transactions/interfaces/recurring-item-update-transaction.interface';
 import { RecurringItemHistoryService } from './recurring-item-history.service';
+import { EntityList, EntityType, IRecurringItemEntity, IUserEntity } from 'service_reminder_common';
 
 @Injectable()
 export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM> {

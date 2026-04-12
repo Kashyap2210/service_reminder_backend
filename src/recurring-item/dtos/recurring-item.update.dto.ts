@@ -1,11 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
-import { IRecurringItemUpdateDto } from 'src/common/interfaces/dtos/recurring-item.dto.interface';
-import { IRecurringItemEntity } from 'src/common/interfaces/entities/recurring-item.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { RecurringItemCreateDto } from './recurring-item.create.dto';
+import { EntityList, EntityType, IDtoValidationError, IRecurringItemEntity, IRecurringItemUpdateDto, IUserEntity } from 'service_reminder_common';
 
 export class RecurringItemUpdateDto
   extends PartialType(
