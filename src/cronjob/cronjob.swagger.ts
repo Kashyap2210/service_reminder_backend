@@ -7,7 +7,7 @@ import {
   ApiOperation,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { CronJobStatus } from 'src/common/enums/cronjob-status.enum';
+import { CronJobStatus } from 'service_reminder_common';
 import { CronJobCreateDto } from './dtos/cronjob.create.dto';
 import { CronJobSearchDto } from './dtos/cronjob.search.dto';
 import { CronJobUpdateDto } from './dtos/cronjob.update.dto';

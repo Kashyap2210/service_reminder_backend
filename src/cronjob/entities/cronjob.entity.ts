@@ -1,10 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { CronJobStatus } from '../../common/enums/cronjob-status.enum';
-import { ICronJobEntity } from '../../common/interfaces/entities/cronjob.entity.interface';
-import { Nullable } from '../../common/types/types.generic';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
+import { CronJobStatus, EntityList, ICronJobEntity, Nullable } from 'service_reminder_common';
 
 @Entity({ name: EntityList.CRONJOB, schema: dbSchemaName })
 export class CronJobEntity extends BaseEntity implements ICronJobEntity {

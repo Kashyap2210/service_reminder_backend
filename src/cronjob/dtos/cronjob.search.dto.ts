@@ -1,7 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { CronJobStatus } from 'src/common/enums/cronjob-status.enum';
-import { ICronJobSearchDto } from 'src/common/interfaces/dtos/cronjob.dto.interface';
+import { CronJobStatus, ICronJobSearchDto } from 'service_reminder_common';
 
 export class CronJobSearchDto implements ICronJobSearchDto {
   @ApiPropertyOptional({
