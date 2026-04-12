@@ -1,6 +1,4 @@
-// interfaces/user-create-transaction.interface.ts
-import { IUserCreateDto } from 'src/common/interfaces/dtos/user.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IUserCreateDto, IUserEntity } from "service_reminder_common";
 
 export interface IUserCreateTransactionInputData {
   dto: IUserCreateDto;
