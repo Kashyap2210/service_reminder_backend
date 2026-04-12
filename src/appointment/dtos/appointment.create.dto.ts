@@ -6,7 +6,18 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AppointmentType, EntityFilterDataHelper, EntityList, EntityType, IAppointmentCreateDto, IAppointmentSearchDto, IDtoValidationError, IEntityFilterIncludeData, IUserEntity, Nullable } from 'service_reminder_common';
+import {
+  AppointmentType,
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IAppointmentCreateDto,
+  IAppointmentSearchDto,
+  IDtoValidationError,
+  IEntityFilterIncludeData,
+  IUserEntity,
+  Nullable,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 

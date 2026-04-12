@@ -1,10 +1,6 @@
-import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IEntityCreateDto } from 'src/common/types/generic.dto.types';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
-import { getObjectDiffingKeys } from 'src/common/utils/helper.fns';
 import { EntityManager } from 'typeorm';
 import { BaseService } from './base.service';
+import { EntityHistoryOperation, EntityList, EntityType, getObjectDiffingKeys, IEntityCreateDto, IUserEntity } from 'service_reminder_common';
 
 export abstract class BaseHistoryService<
   T extends EntityList, // T will be the history entity class

@@ -1,12 +1,13 @@
 import { BadRequestException, Inject, OnModuleInit } from '@nestjs/common';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
 import {
+  EntityList,
+  EntityType,
   IEntityCreateDto,
   IEntityFilterData,
   IEntityUpdateDto,
   ISearchV2Response,
-} from 'src/common/types/generic.dto.types';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+  IUserEntity,
+} from 'service_reminder_common';
 import { DataSource, EntityManager } from 'typeorm';
 import { EntityManagerBaseService } from '../repositories/entity.base.manager';
 import { RegistryService } from './registry.service';
