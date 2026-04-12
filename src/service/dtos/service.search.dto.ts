@@ -1,8 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { AppointmentType } from 'src/common/enums/appointment-type.enum';
-import { ServiceStatus } from 'src/common/enums/service-status.enum';
-import { IServiceSearchDto } from 'src/common/interfaces/dtos/service.dto.interface';
+import { AppointmentType, IServiceSearchDto, ServiceStatus } from 'service_reminder_common';
 
 export class ServiceSearchDto implements IServiceSearchDto {
   @ApiPropertyOptional({
