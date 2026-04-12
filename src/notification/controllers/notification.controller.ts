@@ -8,22 +8,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { INotificationEntity } from 'src/common/interfaces/entities/notification.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import {
+  EntityList,
+  INotificationEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { NotificationCreateDto } from '../dtos/notification.create.dto';
 import { NotificationSearchDto } from '../dtos/notification.search.dto';
 import { NotificationUpdateDto } from '../dtos/notification.update.dto';
-import { NotificationService } from '../services/notification.service';
 import {
   CreateNotificationSwagger,
   DeleteNotificationSwagger,
   SearchNotificationsSwagger,
   UpdateNotificationSwagger,
 } from '../notification.swagger';
+import { NotificationService } from '../services/notification.service';
 
 @ApiTags(EntityList.NOTIFICATION)
 @Controller(EntityList.NOTIFICATION)

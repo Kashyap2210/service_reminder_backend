@@ -1,6 +1,4 @@
-import { INotificationCreateDto } from 'src/common/interfaces/dtos/notification.dto.interface';
-import { INotificationEntity } from 'src/common/interfaces/entities/notification.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { INotificationCreateDto, INotificationEntity, IUserEntity } from "service_reminder_common";
 
 export interface INotificationCreateTransactionInputData {
   dto: INotificationCreateDto;

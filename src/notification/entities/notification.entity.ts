@@ -1,14 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { NotificationStatus } from '../../common/enums/notification-status.enum';
-import { NotificationType } from '../../common/enums/notification-type.enum';
-import {
-  INotificationEntity,
-  INotificationPayload,
-} from '../../common/interfaces/entities/notification.entity.interface';
-import { Nullable } from '../../common/types/types.generic';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
+import { EntityList, INotificationEntity, INotificationPayload, NotificationStatus, NotificationType, Nullable } from 'service_reminder_common';
 
 @Entity({ name: EntityList.NOTIFICATION, schema: dbSchemaName })
 export class NotificationEntity

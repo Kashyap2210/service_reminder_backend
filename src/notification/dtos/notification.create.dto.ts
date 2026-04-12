@@ -9,19 +9,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { NotificationStatus } from 'src/common/enums/notification-status.enum';
-import { NotificationType } from 'src/common/enums/notification-type.enum';
-import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
-import {
-  INotificationCreateDto,
-  INotificationSearchDto,
-} from 'src/common/interfaces/dtos/notification.dto.interface';
-import { INotificationPayload } from 'src/common/interfaces/entities/notification.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
-import { Nullable } from 'src/common/types/types.generic';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, INotificationCreateDto, INotificationPayload, INotificationSearchDto, IUserEntity, NotificationStatus, NotificationType, Nullable } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class NotificationPayloadDto implements INotificationPayload {

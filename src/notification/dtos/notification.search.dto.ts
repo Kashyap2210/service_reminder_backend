@@ -1,8 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { NotificationStatus } from 'src/common/enums/notification-status.enum';
-import { NotificationType } from 'src/common/enums/notification-type.enum';
-import { INotificationSearchDto } from 'src/common/interfaces/dtos/notification.dto.interface';
+import {
+  INotificationSearchDto,
+  NotificationStatus,
+  NotificationType,
+} from 'service_reminder_common';
 
 export class NotificationSearchDto implements INotificationSearchDto {
   @ApiPropertyOptional({ type: [Number], example: [1] })

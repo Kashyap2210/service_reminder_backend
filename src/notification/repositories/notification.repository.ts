@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { INotificationEntity } from 'src/common/interfaces/entities/notification.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { NotificationEntity } from '../entities/notification.entity';
+import { EntityList, INotificationEntity } from 'service_reminder_common';
 
 @Injectable()
 export class NotificationRepository extends EntityManagerBaseService<EntityList.NOTIFICATION> {
