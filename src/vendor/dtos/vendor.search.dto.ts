@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { IVendorSearchDto } from 'src/common/interfaces/dtos/vendor.dto.interface';
+import { IVendorSearchDto } from 'service_reminder_common';
 
 export class VendorSearchDto implements IVendorSearchDto {
   @ApiPropertyOptional({

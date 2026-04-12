@@ -1,6 +1,8 @@
-import { INotificationUpdateDto } from 'src/common/interfaces/dtos/notification.dto.interface';
-import { INotificationEntity } from 'src/common/interfaces/entities/notification.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import {
+  INotificationEntity,
+  INotificationUpdateDto,
+  IUserEntity,
+} from 'service_reminder_common';
 
 export interface INotificationUpdateTransactionInputData {
   id: number;
@@ -9,5 +11,4 @@ export interface INotificationUpdateTransactionInputData {
   existingEntity: INotificationEntity;
 }
 
-export interface INotificationUpdateTransactionOutputData
-  extends INotificationEntity {}
+export interface INotificationUpdateTransactionOutputData extends INotificationEntity {}

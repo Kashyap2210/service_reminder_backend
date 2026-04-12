@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';

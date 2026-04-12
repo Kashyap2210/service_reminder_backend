@@ -1,7 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { ServicePeriodUnit } from 'src/common/enums/service-period-unit.enum';
-import { IRecurringItemSearchDto } from 'src/common/interfaces/dtos/recurring-item.dto.interface';
+import { IRecurringItemSearchDto, ServicePeriodUnit } from 'service_reminder_common';
 
 export class RecurringItemSearchDto implements IRecurringItemSearchDto {
   @ApiPropertyOptional({

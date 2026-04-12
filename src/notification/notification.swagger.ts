@@ -7,8 +7,6 @@ import {
   ApiOperation,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { NotificationStatus } from 'src/common/enums/notification-status.enum';
-import { NotificationType } from 'src/common/enums/notification-type.enum';
 import {
   NotificationCreateDto,
   NotificationPayloadDto,
@@ -16,6 +14,7 @@ import {
 import { NotificationSearchDto } from './dtos/notification.search.dto';
 import { NotificationUpdateDto } from './dtos/notification.update.dto';
 import { NotificationEntity } from './entities/notification.entity';
+import { NotificationStatus, NotificationType } from 'service_reminder_common';
 
 const BadRequestResponse = ApiBadRequestResponse({
   description: 'Validation failed',

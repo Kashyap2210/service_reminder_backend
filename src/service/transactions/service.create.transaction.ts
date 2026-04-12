@@ -1,7 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
-import { ServiceStatus } from 'src/common/enums/service-status.enum';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -11,6 +8,7 @@ import {
   IServiceCreateTransactionInputData,
   IServiceCreateTransactionOutputData,
 } from './interfaces/service-create-transaction.interface';
+import { EntityHistoryOperation, EntityList, ServiceStatus } from 'service_reminder_common';
 
 @Injectable()
 export class ServiceCreateTransaction extends BaseTransaction<

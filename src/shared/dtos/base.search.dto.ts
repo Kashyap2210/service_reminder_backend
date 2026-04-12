@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, ValidateNested } from 'class-validator';
-import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList, IEntityFilterIncludeData } from 'service_reminder_common';
 
 export class EntityFilterIncludeDataDto {
   @IsEnum(EntityList)

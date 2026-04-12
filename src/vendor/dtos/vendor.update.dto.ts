@@ -1,12 +1,8 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
-import { IVendorEntityUpdateDto } from 'src/common/interfaces/dtos/vendor.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { VendorCreateDto } from './vendor.create.dto';
+import { EntityList, EntityType, IDtoValidationError, IUserEntity, IVendorEntity, IVendorEntityUpdateDto } from 'service_reminder_common';
 
 export class VendorUpdateDto
   extends PartialType(

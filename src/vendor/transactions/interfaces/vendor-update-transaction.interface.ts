@@ -1,5 +1,4 @@
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
+import { IUserEntity, IVendorEntity } from 'service_reminder_common';
 import { VendorUpdateDto } from 'src/vendor/dtos/vendor.update.dto';
 
 export interface IVendorUpdateTransactionInputData {

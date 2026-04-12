@@ -8,16 +8,7 @@ import {
   MaxLength,
   ValidateIf,
 } from 'class-validator';
-import { CronJobStatus } from 'src/common/enums/cronjob-status.enum';
-import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
-import {
-  ICronJobCreateDto,
-  ICronJobSearchDto,
-} from 'src/common/interfaces/dtos/cronjob.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { Nullable } from 'src/common/types/types.generic';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { CronJobStatus, EntityFilterDataHelper, EntityList, EntityType, ICronJobCreateDto, ICronJobSearchDto, IDtoValidationError, IUserEntity, Nullable } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class CronJobCreateDto implements ICronJobCreateDto {

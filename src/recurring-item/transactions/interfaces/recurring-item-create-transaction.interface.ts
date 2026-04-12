@@ -1,6 +1,4 @@
-import { IRecurringItemCreateDto } from 'src/common/interfaces/dtos/recurring-item.dto.interface';
-import { IRecurringItemEntity } from 'src/common/interfaces/entities/recurring-item.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IRecurringItemCreateDto, IRecurringItemEntity, IUserEntity } from "service_reminder_common";
 
 export interface IRecurringItemCreateTransactionInputData {
   dto: IRecurringItemCreateDto;

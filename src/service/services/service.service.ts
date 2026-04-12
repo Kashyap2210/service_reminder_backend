@@ -1,8 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { ServiceModel } from 'src/common/models/service.entity.model';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -14,6 +10,7 @@ import { IServiceUpdateTransactionInputData } from '../transactions/interfaces/s
 import { ServiceCreateTransaction } from '../transactions/service.create.transaction';
 import { ServiceUpdateTransaction } from '../transactions/service.update.transaction';
 import { ServiceHistoryService } from './service-history.service';
+import { EntityList, EntityType, IServiceEntity, IUserEntity, ServiceModel } from 'service_reminder_common';
 
 @Injectable()
 export class ServiceService extends BaseService<EntityList.SERVICE> {

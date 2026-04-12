@@ -1,13 +1,16 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { AppointmentAction } from 'src/common/enums/appointment-action.enum';
-import { IAppointmentUpdateDto } from 'src/common/interfaces/dtos/appointment.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import {
+  AppointmentAction,
+  AppointmentStatus,
+  EntityList,
+  EntityType,
+  IAppointmentUpdateDto,
+  IDtoValidationError,
+  IUserEntity,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { AppointmentCreateDto } from './appointment.create.dto';
-import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
 
 export class AppointmentUpdateDto
   extends PartialType(

@@ -1,10 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  IEntityCreateDto,
-  IEntityFilterData,
-  IEntityUpdateDto,
-} from 'src/common/types/generic.dto.types';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { EntityList, EntityType, IEntityCreateDto, IEntityFilterData, IEntityUpdateDto } from 'service_reminder_common';
 import {
   DeepPartial,
   EntityManager,

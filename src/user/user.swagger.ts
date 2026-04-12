@@ -8,11 +8,11 @@ import {
   ApiOperation,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { UserRole } from 'src/common/enums/user.role.enum';
 import { UserCreateDto } from './dtos/user.create.dto';
 import { UserSearchDto } from './dtos/user.search.dto';
 import { UserUpdateDto } from './dtos/user.update.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserRole } from 'service_reminder_common';
 
 const BadRequestResponse = ApiBadRequestResponse({
   description: 'Validation failed',

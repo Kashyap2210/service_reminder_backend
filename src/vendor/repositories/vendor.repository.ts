@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { VendorEntity } from '../entities/vendor.entity';
+import { EntityList, IVendorEntity } from 'service_reminder_common';
 
 @Injectable()
 export class VendorRepository extends EntityManagerBaseService<EntityList.VENDOR> {

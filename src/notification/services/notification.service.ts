@@ -1,7 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { INotificationEntity } from 'src/common/interfaces/entities/notification.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -12,6 +9,7 @@ import { NotificationCreateTransaction } from '../transactions/notification.crea
 import { NotificationUpdateTransaction } from '../transactions/notification.update.transaction';
 import { INotificationCreateTransactionInputData } from '../transactions/interfaces/notification-create-transaction.interface';
 import { INotificationUpdateTransactionInputData } from '../transactions/interfaces/notification-update-transaction.interface';
+import { EntityList, EntityType, INotificationEntity, IUserEntity } from 'service_reminder_common';
 
 @Injectable()
 export class NotificationService extends BaseService<EntityList.NOTIFICATION> {

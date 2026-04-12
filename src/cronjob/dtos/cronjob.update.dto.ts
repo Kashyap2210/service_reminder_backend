@@ -1,11 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
-import { ICronJobUpdateDto } from 'src/common/interfaces/dtos/cronjob.dto.interface';
-import { ICronJobEntity } from 'src/common/interfaces/entities/cronjob.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { CronJobCreateDto } from './cronjob.create.dto';
+import { EntityList, EntityType, ICronJobEntity, ICronJobUpdateDto, IDtoValidationError, IUserEntity } from 'service_reminder_common';
 
 export class CronJobUpdateDto
   extends PartialType(OmitType(CronJobCreateDto, ['validate'] as const))

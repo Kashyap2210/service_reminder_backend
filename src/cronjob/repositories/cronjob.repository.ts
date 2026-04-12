@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ICronJobEntity } from 'src/common/interfaces/entities/cronjob.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList, ICronJobEntity } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { CronJobEntity } from '../entities/cronjob.entity';
 

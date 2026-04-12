@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseHistoryService } from 'src/shared/services/base-history.service';
 import { EntityManager } from 'typeorm';
 import { UserHistoryRepository } from '../repositories/user-history.repository';
+import { EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class UserHistoryService extends BaseHistoryService<

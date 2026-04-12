@@ -6,7 +6,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { DateCodeUtils } from 'src/common/utils/date-code.utils';
+import { DateCodeUtils } from 'service_reminder_common';
 
 @ValidatorConstraint({ name: 'IsYYYYMMDD', async: false })
 export class IsYYYYMMDDConstraint implements ValidatorConstraintInterface {

@@ -6,17 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AppointmentType } from 'src/common/enums/appointment-type.enum';
-import { EntityFilterDataHelper } from 'src/common/helpers/entity-filter-data.helper';
-import {
-  IServiceCreateDto,
-  IServiceSearchDto,
-} from 'src/common/interfaces/dtos/service.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { IEntityFilterIncludeData } from 'src/common/types/generic.dto.types';
-import { Nullable } from 'src/common/types/types.generic';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import { AppointmentType, EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, IServiceCreateDto, IServiceSearchDto, IUserEntity, Nullable } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 

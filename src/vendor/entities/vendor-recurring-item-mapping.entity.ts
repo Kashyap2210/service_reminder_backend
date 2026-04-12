@@ -1,8 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IVendorRecurringItemMapping } from '../../common/interfaces/entities/vendor-recurring-item-mapping.entity.interface';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
+import { EntityList, IVendorRecurringItemMapping } from 'service_reminder_common';
 
 @Entity({
   name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,

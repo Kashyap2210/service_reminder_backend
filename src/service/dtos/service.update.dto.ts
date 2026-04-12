@@ -1,14 +1,8 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { ServiceAction } from 'src/common/enums/service-action.enum';
-import { ServiceStatus } from 'src/common/enums/service-status.enum';
-import { IServiceUpdateDto } from 'src/common/interfaces/dtos/service.dto.interface';
-import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IDtoValidationError } from 'src/common/types/dto-validation-error.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { ServiceCreateDto } from './service.create.dto';
+import { EntityList, EntityType, IDtoValidationError, IServiceEntity, IServiceUpdateDto, IUserEntity, ServiceAction, ServiceStatus } from 'service_reminder_common';
 
 export class ServiceUpdateDto
   extends PartialType(

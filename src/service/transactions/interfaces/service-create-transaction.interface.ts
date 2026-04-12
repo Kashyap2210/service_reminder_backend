@@ -1,6 +1,4 @@
-import { IServiceCreateDto } from 'src/common/interfaces/dtos/service.dto.interface';
-import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IServiceCreateDto, IServiceEntity, IUserEntity } from "service_reminder_common";
 
 export interface IServiceCreateTransactionInputData {
   dto: IServiceCreateDto;

@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ICronJobEntity } from 'src/common/interfaces/entities/cronjob.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
+import {
+  EntityList,
+  EntityType,
+  ICronJobEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { IVendorRecurringItemMappingCreateDto } from 'src/common/interfaces/dtos/vendor-recurring-item-mapping.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import {
+  EntityList,
+  IUserEntity,
+  IVendorRecurringItemMappingCreateDto,
+} from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';

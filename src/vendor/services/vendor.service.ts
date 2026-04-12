@@ -1,9 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { IVendorRecurringItemMappingCreateDto } from 'src/common/interfaces/dtos/vendor-recurring-item-mapping.dto.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { IVendorEntity } from 'src/common/interfaces/entities/vendor.entity.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
-import { diffArrays } from 'src/common/utils/helper.fns';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -16,6 +11,7 @@ import { VendorCreateTransaction } from '../transactions/vendor.create.transacti
 import { VendorUpdateTransaction } from '../transactions/vendor.update.transaction';
 import { VendorHistoryService } from './vendor-history.service';
 import { VendorRecurringItemMappingService } from './vendor-recurring-item-mapping.service';
+import { diffArrays, EntityList, EntityType, IUserEntity, IVendorEntity, IVendorRecurringItemMappingCreateDto } from 'service_reminder_common';
 
 @Injectable()
 export class VendorService extends BaseService<EntityList.VENDOR> {

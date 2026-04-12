@@ -2,9 +2,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from 'src/common/enums/user.role.enum';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -16,6 +13,7 @@ import { IUserUpdateTransactionInputData } from '../transactions/interfaces/user
 import { UserCreateTransaction } from '../transactions/user.create.transaction';
 import { UserUpdateTransaction } from '../transactions/user.update.transaction';
 import { UserHistoryService } from './user-history.service';
+import { EntityList, EntityType, IUserEntity, UserRole } from 'service_reminder_common';
 
 @Injectable()
 export class UserService extends BaseService<EntityList.USER> {

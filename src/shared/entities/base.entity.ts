@@ -1,5 +1,5 @@
+import { DateUtil } from 'service_reminder_common';
 import { BeforeInsert, BeforeUpdate, Column } from 'typeorm';
-import { DateUtil } from '../../common/utils/date.utils';
 
 export abstract class BaseEntity {
   @Column({ type: 'bigint' })

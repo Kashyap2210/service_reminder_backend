@@ -6,8 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserRole } from 'src/common/enums/user.role.enum';
-import { IUserSearchDto } from 'src/common/interfaces/dtos/user.dto.interface';
+import { IUserSearchDto, UserRole } from 'service_reminder_common';
 
 export class UserSearchDto implements IUserSearchDto {
   @ApiPropertyOptional({

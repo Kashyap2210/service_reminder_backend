@@ -8,9 +8,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IServiceEntity } from 'src/common/interfaces/entities/service.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -24,6 +21,7 @@ import {
   SearchServicesSwagger,
   UpdateServiceSwagger,
 } from '../service.swagger';
+import { EntityList, IServiceEntity, IUserEntity } from 'service_reminder_common';
 
 @ApiTags(EntityList.SERVICE)
 @Controller(EntityList.SERVICE)

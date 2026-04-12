@@ -7,7 +7,7 @@ import {
   ApiOperation,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { ServicePeriodUnit } from 'src/common/enums/service-period-unit.enum';
+import { ServicePeriodUnit } from 'service_reminder_common';
 import { RecurringItemCreateDto } from './dtos/recurring-item.create.dto';
 import { RecurringItemSearchDto } from './dtos/recurring-item.search.dto';
 import { RecurringItemUpdateDto } from './dtos/recurring-item.update.dto';
