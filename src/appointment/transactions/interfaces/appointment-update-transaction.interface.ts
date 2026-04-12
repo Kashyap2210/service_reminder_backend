@@ -1,6 +1,4 @@
-import { IAppointmentUpdateDto } from 'src/common/interfaces/dtos/appointment.dto.interface';
-import { IAppointmentEntity } from 'src/common/interfaces/entities/appointment.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
+import { IAppointmentEntity, IAppointmentUpdateDto, IUserEntity } from "service_reminder_common";
 
 export interface IAppointmentUpdateTransactionInputData {
   id: number;

@@ -1,11 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { AppointmentStatus } from '../../common/enums/appointment-status.enum';
-import { AppointmentType } from '../../common/enums/appointment-type.enum';
-import { IAppointmentEntity } from '../../common/interfaces/entities/appointment.entity.interface';
-import { Nullable } from '../../common/types/types.generic';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
+import { AppointmentStatus, AppointmentType, EntityList, IAppointmentEntity, Nullable } from 'service_reminder_common';
 
 @Entity({ name: EntityList.APPOINTMENT, schema: dbSchemaName })
 export class AppointmentEntity

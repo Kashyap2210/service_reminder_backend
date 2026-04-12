@@ -1,7 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
-import { EntityHistoryOperation } from 'src/common/enums/entity-history-operation.enum';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -11,6 +8,7 @@ import {
   IAppointmentCreateTransactionInputData,
   IAppointmentCreateTransactionOutputData,
 } from './interfaces/appointment-create-transaction.interface';
+import { AppointmentStatus, EntityHistoryOperation, EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class AppointmentCreateTransaction extends BaseTransaction<

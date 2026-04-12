@@ -7,12 +7,11 @@ import {
   ApiOperation,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { AppointmentStatus } from 'src/common/enums/appointment-status.enum';
-import { AppointmentType } from 'src/common/enums/appointment-type.enum';
 import { AppointmentCreateDto } from './dtos/appointment.create.dto';
 import { AppointmentSearchDto } from './dtos/appointment.search.dto';
 import { AppointmentUpdateDto } from './dtos/appointment.update.dto';
 import { AppointmentEntity } from './entities/appointment.entity';
+import { AppointmentStatus, AppointmentType } from 'service_reminder_common';
 
 const BadRequestResponse = ApiBadRequestResponse({
   description: 'Validation failed',

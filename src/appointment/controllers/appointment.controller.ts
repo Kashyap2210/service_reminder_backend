@@ -8,9 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IAppointmentEntity } from 'src/common/interfaces/entities/appointment.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList, IAppointmentEntity, IUserEntity } from 'service_reminder_common';
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';

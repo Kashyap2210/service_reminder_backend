@@ -1,8 +1,10 @@
 // src/appointments/entities/appointment-history.entity.ts
+import {
+  EntityHistoryOperation,
+  EntityList,
+  IBaseHistoryEntity,
+} from 'service_reminder_common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { EntityHistoryOperation } from '../../common/enums/entity-history-operation.enum';
-import { IBaseHistoryEntity } from '../../common/interfaces/entities/base-history.entity.interface';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
 

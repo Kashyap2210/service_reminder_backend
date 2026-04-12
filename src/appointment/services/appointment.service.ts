@@ -1,8 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { IAppointmentEntity } from 'src/common/interfaces/entities/appointment.entity.interface';
-import { IUserEntity } from 'src/common/interfaces/entities/user.entity.interface';
-import { AppointmentModel } from 'src/common/models/appointment.entity.model';
-import { EntityList, EntityType } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -13,6 +9,7 @@ import { AppointmentCreateTransaction } from '../transactions/appointment.create
 import { AppointmentUpdateTransaction } from '../transactions/appointment.update.transaction';
 import { IAppointmentCreateTransactionInputData } from '../transactions/interfaces/appointment-create-transaction.interface';
 import { IAppointmentUpdateTransactionInputData } from '../transactions/interfaces/appointment-update-transaction.interface';
+import { AppointmentModel, EntityList, EntityType, IAppointmentEntity, IUserEntity } from 'service_reminder_common';
 
 @Injectable()
 export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {

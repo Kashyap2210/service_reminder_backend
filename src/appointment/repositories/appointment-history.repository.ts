@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IBaseHistoryEntity } from 'src/common/interfaces/entities/base-history.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
+import { EntityList, IBaseHistoryEntity } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { AppointmentHistoryEntity } from '../entities/appointment-history.entity';
 
