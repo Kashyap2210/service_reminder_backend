@@ -1,9 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { EntityHistoryOperation } from '../../common/enums/entity-history-operation.enum';
-import { IVendorHistoryEntity } from '../../common/interfaces/entities/vendor-history.entity.interface';
-import { EntityList } from '../../common/utils/entity.utils';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
+import { EntityHistoryOperation, EntityList, IVendorHistoryEntity } from 'service_reminder_common';
 
 @Entity({ name: EntityList.VENDOR_HISTORY, schema: dbSchemaName })
 export class VendorHistoryEntity

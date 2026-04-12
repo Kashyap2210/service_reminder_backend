@@ -40,7 +40,11 @@ const VendorEntityResponse = {
           id: { type: 'number', example: 1 },
           name: { type: 'string', example: 'ACME Service Center' },
           contactNo: { type: 'string', example: '+1234567890' },
-          email: { type: 'string', example: 'vendor@example.com', nullable: true },
+          email: {
+            type: 'string',
+            example: 'vendor@example.com',
+            nullable: true,
+          },
           recurringItemId: { type: 'number', example: 1 },
           userId: { type: 'number', example: 1 },
           createdOn: { type: 'number', example: 1700000000000 },

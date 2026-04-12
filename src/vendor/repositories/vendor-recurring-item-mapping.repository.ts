@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { IVendorRecurringItemMapping } from 'src/common/interfaces/entities/vendor-recurring-item-mapping.entity.interface';
-import { EntityList } from 'src/common/utils/entity.utils';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { VendorRecurringItemMappingEntity } from '../entities/vendor-recurring-item-mapping.entity';
+import { EntityList, IVendorRecurringItemMapping } from 'service_reminder_common';
 
 @Injectable()
 export class VendorRecurringItemMappingRepository extends EntityManagerBaseService<EntityList.VENDOR_RECURRING_ITEM_MAPPING> {
