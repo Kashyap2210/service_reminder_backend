@@ -5,8 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ILoginResponse } from 'src/common/interfaces/login.response.interface';
-import { ILoginDto } from 'src/common/login.dto.interface';
+import { ILoginDto, ILoginResponse } from 'service_reminder_common';
 import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
 

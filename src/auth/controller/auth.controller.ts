@@ -12,10 +12,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ILoginResponse } from 'src/common/interfaces/login.response.interface';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { LoginDto } from '../dto/login.dto';
 import { AuthService } from '../service/auth.service';
+import { ILoginResponse } from 'service_reminder_common';
 
 @ApiTags('auth')
 @Controller('auth')
