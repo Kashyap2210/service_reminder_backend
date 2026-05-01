@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailModule } from 'src/mail/mail.module';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { SharedModule } from 'src/shared/shared.module';
 import { UserModule } from 'src/user/user.module';
 import { RecurringItemController } from './controllers/recurring-item.controller';
@@ -17,6 +19,7 @@ import { RecurringItemUpdateTransaction } from './transactions/recurring-item.up
     TypeOrmModule.forFeature([RecurringItemEntity, RecurringItemHistoryEntity]),
     SharedModule,
     UserModule,
+    MailModule,
   ],
   providers: [
     RecurringItemService,
@@ -25,6 +28,7 @@ import { RecurringItemUpdateTransaction } from './transactions/recurring-item.up
     RecurringItemHistoryRepository,
     RecurringItemCreateTransaction,
     RecurringItemUpdateTransaction,
+    EnvVariablesConfig,
   ],
   controllers: [RecurringItemController],
   exports: [RecurringItemService],

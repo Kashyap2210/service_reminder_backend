@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailModule } from 'src/mail/mail.module';
 import { RecurringItemModule } from 'src/recurring-item/recurring-item.module';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { SharedModule } from 'src/shared/shared.module';
 import { UserModule } from 'src/user/user.module';
 import { VendorController } from './controllers/vendor.controller';
@@ -26,6 +28,7 @@ import { VendorUpdateTransaction } from './transactions/vendor.update.transactio
     SharedModule,
     UserModule,
     RecurringItemModule,
+    MailModule,
   ],
   providers: [
     VendorService,
@@ -36,6 +39,7 @@ import { VendorUpdateTransaction } from './transactions/vendor.update.transactio
     VendorUpdateTransaction,
     VendorRecurringItemMappingService,
     VendorRecurringItemMappingRepository,
+    EnvVariablesConfig,
   ],
   controllers: [VendorController],
   exports: [VendorService],
