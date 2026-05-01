@@ -93,10 +93,7 @@ export class MailService {
    * @param templateData - Dummy data to populate the template
    * @returns Rendered HTML string
    */
-  previewTemplate<T extends Record<string, any>>(
-    templateName: EmailTemplate,
-    templateData: T,
-  ): string {
+  previewTemplate<T>(templateName: EmailTemplate, templateData: T): string {
     // this.logger.log(
     //   `[previewTemplate] Rendering preview | template=${templateName}`,
     // );
