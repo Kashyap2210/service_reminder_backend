@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Created</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .content {
+      padding: 30px 20px;
+    }
+    .greeting {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .vendor-info {
+      background-color: #f9f9f9;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .vendor-info-item {
+      margin: 10px 0;
+      font-size: 14px;
+      color: #555;
+    }
+    .vendor-info-item strong {
+      color: #333;
+      display: inline-block;
+      width: 120px;
+    }
+    .vendor-details {
+      background-color: #f0f7ff;
+      border: 1px solid #d4e8ff;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .vendor-details h3 {
+      color: #667eea;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    .detail-label {
+      color: #666;
+      font-weight: 600;
+    }
+    .detail-value {
+      color: #333;
+      text-align: right;
+    }
+    .message {
+      background-color: #fffbea;
+      border: 1px solid #ffe082;
+      border-radius: 4px;
+      padding: 12px 15px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #856404;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      color: #999;
+    }
+    .button {
+      display: inline-block;
+      background-color: #667eea;
+      color: white;
+      padding: 12px 30px;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    .button:hover {
+      background-color: #5568d3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏢 Vendor Created</h1>
+      <p>A new vendor has been added to your account</p>
+    </div>
+    
+    <div class="content">
+      <div class="greeting">
+        <p>Hello <strong>{{userName}}</strong>,</p>
+        <p>A new vendor has been successfully created and added to your service providers. You can now schedule services with this vendor.</p>
+      </div>
+
+      <div class="vendor-info">
+        <div class="vendor-info-item">
+          <strong>Name:</strong> {{name}}
+        </div>
+        {{#if contactNo}}
+        <div class="vendor-info-item">
+          <strong>Contact:</strong> {{contactNo}}
+        </div>
+        {{/if}}
+        {{#if email}}
+        <div class="vendor-info-item">
+          <strong>Email:</strong> {{email}}
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="vendor-details">
+        <h3>🏪 Vendor Information</h3>
+        <div class="detail-row">
+          <span class="detail-label">Vendor Name:</span>
+          <span class="detail-value">{{name}}</span>
+        </div>
+        {{#if contactNo}}
+        <div class="detail-row">
+          <span class="detail-label">Contact Number:</span>
+          <span class="detail-value">{{contactNo}}</span>
+        </div>
+        {{/if}}
+        {{#if email}}
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">{{email}}</span>
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="message">
+        ✓ Vendor profile has been created successfully. You are now ready to schedule appointments and services with this vendor.
+      </div>
+
+      <p style="margin-top: 20px; font-size: 14px; color: #555;">
+        You can manage this vendor's information anytime from your account settings or contact the vendor directly using the information provided above.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>© {{year}} Service Reminder App. All rights reserved.</p>
+      <p>This is an automated email. Please do not reply to this message.</p>
+    </div>
+  </div>
+</body>
+</html>
