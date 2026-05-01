@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
+import { MailModule } from 'src/mail/mail.module';
 import { SharedModule } from 'src/shared/shared.module';
 import { UserController } from './controllers/user.controller';
 import { UserHistoryEntity } from './entities/user-history.entity';
@@ -17,6 +18,7 @@ import { UserUpdateTransaction } from './transactions/user.update.transaction';
     TypeOrmModule.forFeature([UserEntity, UserHistoryEntity]),
     SharedModule,
     AuthModule,
+    MailModule,
   ],
   providers: [
     UserService,

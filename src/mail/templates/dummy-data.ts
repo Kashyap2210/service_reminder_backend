@@ -1,7 +1,12 @@
 import { EmailTemplate } from '../utils/email-template.enum';
-import { ServiceReminderData } from './template-interfaces/service-reminder.interface';
+import { IUserSignUp } from './template-interfaces/user-signup.interface';
 
-export const dummyData: Record<EmailTemplate, ServiceReminderData> = {
+// type EmailTemplateData = {
+//   [EmailTemplate.SERVICE_REMINDER]: IServiceReminder;
+//   [EmailTemplate.USER_SIGNUP]: IUserSignUp;
+// };
+
+export const dummyData = {
   [EmailTemplate.SERVICE_REMINDER]: {
     userName: 'John Doe',
     serviceName: 'Annual Car Service',
@@ -15,4 +20,10 @@ export const dummyData: Record<EmailTemplate, ServiceReminderData> = {
     reminderMessage:
       'Please arrive 5-10 minutes early to check in. Bring your vehicle keys and ownership documents.',
   },
+  [EmailTemplate.USER_SIGNUP]: {
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    contactNo: '+1 (555) 123-4567',
+    year: new Date().getFullYear(),
+  } satisfies IUserSignUp,
 };

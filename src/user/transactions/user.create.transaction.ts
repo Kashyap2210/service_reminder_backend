@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -8,7 +9,6 @@ import {
   IUserCreateTransactionInputData,
   IUserCreateTransactionOutputData,
 } from './interfaces/user-create-transaction.interface';
-import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class UserCreateTransaction extends BaseTransaction<
@@ -56,6 +56,8 @@ export class UserCreateTransaction extends BaseTransaction<
       undefined, // ← no newEntity on create, stores full snapshot
       manager,
     );
+
+    await this.userService.sendUserCreateNotification(createdUser);
 
     return createdUser;
   }
