@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EntityHistoryOperation, EntityList, ServiceStatus } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
 import { ServiceHistoryService } from '../services/service-history.service';
 import { ServiceService } from '../services/service.service';
 import {
-  IServiceCreateTransactionInputData,
-  IServiceCreateTransactionOutputData,
+    IServiceCreateTransactionInputData,
+    IServiceCreateTransactionOutputData,
 } from './interfaces/service-create-transaction.interface';
-import { EntityHistoryOperation, EntityList, ServiceStatus } from 'service_reminder_common';
 
 @Injectable()
 export class ServiceCreateTransaction extends BaseTransaction<
@@ -53,6 +53,8 @@ export class ServiceCreateTransaction extends BaseTransaction<
       undefined,
       manager,
     );
+
+    await this.serviceService.sendServiceCreatedNotification(created);
 
     return created;
   }

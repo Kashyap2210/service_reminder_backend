@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
 import { RecurringItemHistoryService } from '../services/recurring-item-history.service';
 import { RecurringItemService } from '../services/recurring-item.service';
 import {
-  IRecurringItemCreateTransactionInputData,
-  IRecurringItemCreateTransactionOutputData,
+    IRecurringItemCreateTransactionInputData,
+    IRecurringItemCreateTransactionOutputData,
 } from './interfaces/recurring-item-create-transaction.interface';
-import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class RecurringItemCreateTransaction extends BaseTransaction<
@@ -54,6 +54,10 @@ export class RecurringItemCreateTransaction extends BaseTransaction<
       EntityHistoryOperation.CREATE,
       undefined,
       manager,
+    );
+
+    await this.recurringItemService.sendRecurringItemCreatedNotification(
+      created,
     );
 
     return created;
