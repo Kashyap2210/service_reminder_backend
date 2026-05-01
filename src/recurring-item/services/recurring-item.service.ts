@@ -1,21 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { DateCodeUtils, EntityList, EntityType, IRecurringItemEntity, IUserEntity } from 'service_reminder_common';
+import { MailService } from 'src/mail/services/mail.service';
+import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { IRecurringItemCreated } from 'src/mail/templates/template-interfaces/recurring-item-created.interface';
+import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { RecurringItemCreateDto } from '../dtos/recurring-item.create.dto';
 import { RecurringItemUpdateDto } from '../dtos/recurring-item.update.dto';
 import { RecurringItemRepository } from '../repositories/recurring-item.repository';
-import { RecurringItemCreateTransaction } from '../transactions/recurring-item.create.transaction';
-import { RecurringItemUpdateTransaction } from '../transactions/recurring-item.update.transaction';
 import { IRecurringItemCreateTransactionInputData } from '../transactions/interfaces/recurring-item-create-transaction.interface';
 import { IRecurringItemUpdateTransactionInputData } from '../transactions/interfaces/recurring-item-update-transaction.interface';
+import { RecurringItemCreateTransaction } from '../transactions/recurring-item.create.transaction';
+import { RecurringItemUpdateTransaction } from '../transactions/recurring-item.update.transaction';
 import { RecurringItemHistoryService } from './recurring-item-history.service';
-import { EntityList, EntityType, IRecurringItemEntity, IUserEntity } from 'service_reminder_common';
 
 @Injectable()
 export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM> {
   constructor(
     private readonly recurringItemRepository: RecurringItemRepository,
+    private readonly mailService: MailService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
     private readonly recurringItemCreateTransaction: RecurringItemCreateTransaction,
     private readonly recurringItemUpdateTransaction: RecurringItemUpdateTransaction,
   ) {
@@ -93,5 +100,32 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     entityManager?: EntityManager,
   ): Promise<boolean> {
     return this.recurringItemRepository.deleteById(id, entityManager);
+  }
+
+  async sendRecurringItemCreatedNotification(
+    recurringItem: IRecurringItemEntity,
+  ) {
+    const mailData: IMailData = {
+      toEmail: [recurringItem.user.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Recurring Item Created',
+    };
+
+    const recurringItemCreatedTemplateData: IRecurringItemCreated = {
+      name: recurringItem.name,
+      type: recurringItem.type,
+      companyName: recurringItem.companyName,
+      servicePeriod: recurringItem.servicePeriod.toString(),
+      servicePeriodUnit: recurringItem.servicePeriodUnit,
+      servicePlaceAddress: recurringItem.servicePlaceAddress,
+      userName: recurringItem.user.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.RECURRING_ITEM_CREATED,
+      mailData,
+      recurringItemCreatedTemplateData,
+    );
   }
 }

@@ -1,6 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { DateCodeUtils, EntityList, EntityType, IServiceEntity, IUserEntity, ServiceModel } from 'service_reminder_common';
+import { MailService } from 'src/mail/services/mail.service';
+import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { IServiceCreated } from 'src/mail/templates/template-interfaces/service-created.interface';
+import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { ServiceCreateDto } from '../dtos/service.create.dto';
 import { ServiceUpdateDto } from '../dtos/service.update.dto';
@@ -10,12 +16,13 @@ import { IServiceUpdateTransactionInputData } from '../transactions/interfaces/s
 import { ServiceCreateTransaction } from '../transactions/service.create.transaction';
 import { ServiceUpdateTransaction } from '../transactions/service.update.transaction';
 import { ServiceHistoryService } from './service-history.service';
-import { EntityList, EntityType, IServiceEntity, IUserEntity, ServiceModel } from 'service_reminder_common';
 
 @Injectable()
 export class ServiceService extends BaseService<EntityList.SERVICE> {
   constructor(
     private readonly serviceRepository: ServiceRepository,
+    private readonly mailService: MailService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
     private readonly serviceCreateTransaction: ServiceCreateTransaction,
     private readonly serviceUpdateTransaction: ServiceUpdateTransaction,
   ) {
@@ -98,5 +105,36 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     entityManager?: EntityManager,
   ): Promise<boolean> {
     return this.serviceRepository.deleteById(id, entityManager);
+  }
+
+  async sendServiceCreatedNotification(service: IServiceEntity) {
+    const mailData: IMailData = {
+      toEmail: [service.user.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Service Created',
+    };
+
+    const formattedDate = new Date(service.serviceDate).toLocaleDateString(
+      'en-US',
+      { year: 'numeric', month: 'long', day: 'numeric' },
+    );
+
+    const serviceCreatedTemplateData: IServiceCreated = {
+      serviceDate: formattedDate,
+      serviceType: service.serviceType,
+      serviceStatus: service.serviceStatus,
+      vendorName: service.vendor?.name || '',
+      recurringItemName: service.recurringItem?.name,
+      serviceEstimate: service.serviceEstimate,
+      serviceAmount: service.serviceAmount,
+      userName: service.user.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.SERVICE_CREATED,
+      mailData,
+      serviceCreatedTemplateData,
+    );
   }
 }
