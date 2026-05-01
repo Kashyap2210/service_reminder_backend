@@ -2,8 +2,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import {
+  DateCodeUtils,
+  EntityList,
+  EntityType,
+  IUserEntity,
+  UserRole,
+} from 'service_reminder_common';
+import { MailService } from 'src/mail/services/mail.service';
+import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { IUserSignUp } from 'src/mail/templates/template-interfaces/user-signup.interface';
+import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { UserCreateDto } from '../dtos/user.create.dto';
 import { UserUpdateDto } from '../dtos/user.update.dto';
@@ -13,13 +25,14 @@ import { IUserUpdateTransactionInputData } from '../transactions/interfaces/user
 import { UserCreateTransaction } from '../transactions/user.create.transaction';
 import { UserUpdateTransaction } from '../transactions/user.update.transaction';
 import { UserHistoryService } from './user-history.service';
-import { EntityList, EntityType, IUserEntity, UserRole } from 'service_reminder_common';
 
 @Injectable()
 export class UserService extends BaseService<EntityList.USER> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
+    private readonly mailServie: MailService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
 
     private readonly userCreateTransaction: UserCreateTransaction,
     private readonly userUpdateTransaction: UserUpdateTransaction,
@@ -125,5 +138,26 @@ export class UserService extends BaseService<EntityList.USER> {
       )
     )[0];
     return systemUser;
+  }
+
+  async sendUserCreateNotification(newUser: IUserEntity) {
+    const mailData: IMailData = {
+      toEmail: [newUser.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Registration Successful',
+    };
+
+    const userSignUpTemplateData: IUserSignUp = {
+      name: newUser.name,
+      email: newUser.email,
+      contactNo: newUser.contactNo,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailServie.sendNotification(
+      EmailTemplate.USER_SIGNUP,
+      mailData,
+      userSignUpTemplateData,
+    );
   }
 }

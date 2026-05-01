@@ -9,6 +9,7 @@ import { MailService } from './services/mail.service';
 
 @Module({
   imports: [
+    MailModule,
     MailerModule.forRootAsync({
       imports: [SharedModule],
       inject: [EnvVariablesConfig],
@@ -37,7 +38,7 @@ import { MailService } from './services/mail.service';
     }),
   ],
   controllers: [MailController],
-  providers: [MailService],
+  providers: [MailService, EnvVariablesConfig],
   exports: [MailService],
 })
 export class MailModule {}

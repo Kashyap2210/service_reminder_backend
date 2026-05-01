@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Service Reminder</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 28px;
+        margin-bottom: 5px;
+      }
+      .header p {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+      .content {
+        padding: 30px 20px;
+      }
+      .greeting {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+      .account-info {
+        background-color: #f9f9f9;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      .account-info-item {
+        margin: 10px 0;
+        font-size: 14px;
+        color: #555;
+      }
+      .account-info-item strong {
+        color: #333;
+        display: inline-block;
+        width: 120px;
+      }
+      .account-details {
+        background-color: #f0f7ff;
+        border: 1px solid #d4e8ff;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .account-details h3 {
+        color: #667eea;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        font-size: 14px;
+      }
+      .detail-label {
+        color: #666;
+        font-weight: 600;
+      }
+      .detail-value {
+        color: #333;
+        text-align: right;
+      }
+      .role-badge {
+        display: inline-block;
+        background-color: #667eea;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 99px;
+        letter-spacing: 0.5px;
+      }
+      .message {
+        background-color: #fffbea;
+        border: 1px solid #ffe082;
+        border-radius: 4px;
+        padding: 12px 15px;
+        margin: 20px 0;
+        font-size: 14px;
+        color: #856404;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #999;
+      }
+      .button {
+        display: inline-block;
+        background-color: #667eea;
+        color: white;
+        padding: 12px 30px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 15px;
+        font-weight: 600;
+      }
+      .button:hover {
+        background-color: #5568d3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🎉 Welcome Aboard!</h1>
+        <p>Your account has been created successfully</p>
+      </div>
+
+      <div class="content">
+        <!-- Greeting -->
+        <div class="greeting">
+          <p>Hello <strong>{{name}}</strong>,</p>
+          <p>
+            We're excited to have you on Service Reminder. Your account is ready
+            to go. Here's a summary of your details.
+          </p>
+        </div>
+
+        <!-- Basic Info Block (same left-border card as service reminder) -->
+        <div class="account-info">
+          <div class="account-info-item">
+            <strong>Full Name:</strong> {{name}}
+          </div>
+          <div class="account-info-item"><strong>Email:</strong> {{email}}</div>
+          <div class="account-info-item">
+            <strong>Contact No:</strong> {{contactNo}}
+          </div>
+        </div>
+
+        <!-- Account Details Card (same blue card as appointment details) -->
+        <div class="account-details">
+          <h3>🪪 Account Details</h3>
+          <div class="detail-row">
+            <span class="detail-label">Registered Email:</span>
+            <span class="detail-value">{{email}}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Contact Number:</span>
+            <span class="detail-value">{{contactNo}}</span>
+          </div>
+          <!-- <div class="detail-row">
+          <span class="detail-label">Account Role:</span>
+          <span class="detail-value">
+            <span class="role-badge">{{role}}</span>
+          </span>
+        </div> -->
+        </div>
+
+        <!-- Optional email verification warning (same yellow message block) -->
+        <!-- {{#if verificationUrl}}
+        <div class="message">
+          ⚠️ Your email address is not yet verified. Please
+          <a href="{{verificationUrl}}" style="color: #856404; font-weight: 600"
+            >click here to verify</a
+          >
+          your email to unlock all features.
+        </div>
+        {{/if}} -->
+
+        <!-- CTA -->
+        <!-- <p style="margin-top: 20px; font-size: 14px; color: #555">
+          You can log in anytime using your registered email address. If you did
+          not create this account, please contact our support team immediately.
+        </p>
+        <div style="text-align: center">
+          <a href="{{loginUrl}}" class="button">Log In to Your Account</a>
+        </div> -->
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>© {{year}} Service Reminder App. All rights reserved.</p>
+        <p>This is an automated email. Please do not reply to this message.</p>
+      </div>
+    </div>
+  </body>
+</html>
