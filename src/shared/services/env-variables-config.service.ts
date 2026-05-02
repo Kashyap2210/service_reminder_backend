@@ -40,6 +40,10 @@ export class EnvVariablesConfig {
     return value;
   }
 
+  getEnviornment() {
+    return this.configService.get<string>('NODE_ENV');
+  }
+
   // Getters (optional, you could also expose properties directly)
   get mailHost(): string {
     return this._mailHost;
