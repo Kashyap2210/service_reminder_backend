@@ -1,4 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  EntityList,
+  EntityType,
+  IServiceEntity,
+  IUserEntity,
+  ServiceModel,
+} from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -10,7 +17,6 @@ import { IServiceUpdateTransactionInputData } from '../transactions/interfaces/s
 import { ServiceCreateTransaction } from '../transactions/service.create.transaction';
 import { ServiceUpdateTransaction } from '../transactions/service.update.transaction';
 import { ServiceHistoryService } from './service-history.service';
-import { EntityList, EntityType, IServiceEntity, IUserEntity, ServiceModel } from 'service_reminder_common';
 
 @Injectable()
 export class ServiceService extends BaseService<EntityList.SERVICE> {
@@ -73,7 +79,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       throw new BadRequestException(errors[0]);
     }
     existingService = validationResult;
-    const existingServiceEntityModel = ServiceModel.fromEntity(
+    const existingServiceEntityModel = ServiceModel.populateFromEntity(
       existingService!,
     );
 
