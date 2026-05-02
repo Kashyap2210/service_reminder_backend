@@ -7,7 +7,18 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, IUserEntity, IVendorCreateDto, IVendorEntityCreateDto, IVendorSearchDto, Nullable } from 'service_reminder_common';
+import {
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IEntityFilterIncludeData,
+  IUserEntity,
+  IVendorCreateDto,
+  IVendorEntityCreateDto,
+  IVendorSearchDto,
+  Nullable,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class VendorCreateDto implements IVendorCreateDto {

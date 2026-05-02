@@ -1,4 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  AppointmentModel,
+  EntityList,
+  EntityType,
+  IAppointmentEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
@@ -9,7 +16,6 @@ import { AppointmentCreateTransaction } from '../transactions/appointment.create
 import { AppointmentUpdateTransaction } from '../transactions/appointment.update.transaction';
 import { IAppointmentCreateTransactionInputData } from '../transactions/interfaces/appointment-create-transaction.interface';
 import { IAppointmentUpdateTransactionInputData } from '../transactions/interfaces/appointment-update-transaction.interface';
-import { AppointmentModel, EntityList, EntityType, IAppointmentEntity, IUserEntity } from 'service_reminder_common';
 
 @Injectable()
 export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
@@ -66,7 +72,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     }
     existingAppointment = validationResult;
 
-    const existingAppointmentEntityModel = AppointmentModel.fromEntity(
+    const existingAppointmentEntityModel = AppointmentModel.populateFromEntity(
       existingAppointment!,
     );
     const nextStatus = existingAppointmentEntityModel.getNextStatus(
