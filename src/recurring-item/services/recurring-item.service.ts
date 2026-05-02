@@ -115,6 +115,40 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     recurringItem: IRecurringItemEntity,
     entityManager?: EntityManager,
   ): Promise<void> {
+    const userEntity = await this.getSupportingEntities(
+      recurringItem,
+      currentUser,
+      entityManager,
+    );
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Recurring Item Created',
+    };
+
+    const recurringItemCreatedTemplateData: IRecurringItemCreated = {
+      name: recurringItem.name,
+      type: recurringItem.type,
+      companyName: recurringItem.companyName ?? undefined,
+      servicePeriod: recurringItem.servicePeriod.toString(),
+      servicePeriodUnit: recurringItem.servicePeriodUnit,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.RECURRING_ITEM_CREATED,
+      mailData,
+      recurringItemCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    recurringItem: IRecurringItemEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
     const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
@@ -138,27 +172,6 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
       key: 'id',
       value: recurringItem.userId,
     });
-
-    const mailData: IMailData = {
-      toEmail: [userEntity.email],
-      fromEmail: this.envVariablesConfig.mailFrom,
-      subject: 'Recurring Item Created',
-    };
-
-    const recurringItemCreatedTemplateData: IRecurringItemCreated = {
-      name: recurringItem.name,
-      type: recurringItem.type,
-      companyName: recurringItem.companyName ?? undefined,
-      servicePeriod: recurringItem.servicePeriod.toString(),
-      servicePeriodUnit: recurringItem.servicePeriodUnit,
-      userName: userEntity.name,
-      year: DateCodeUtils.getCurrentYear(),
-    };
-
-    await this.mailService.sendNotification(
-      EmailTemplate.RECURRING_ITEM_CREATED,
-      mailData,
-      recurringItemCreatedTemplateData,
-    );
+    return userEntity;
   }
 }

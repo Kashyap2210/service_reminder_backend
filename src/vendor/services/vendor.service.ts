@@ -203,6 +203,39 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     vendor: IVendorEntity,
     entityManager?: EntityManager,
   ): Promise<void> {
+    const userEntity = await this.getSupportingEntities(
+      vendor,
+      currentUser,
+      entityManager,
+    );
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Vendor Created',
+    };
+
+    const vendorCreatedTemplateData: IVendorCreated = {
+      name: vendor.name,
+      contactNo: vendor.contactNo,
+      email: vendor.email ?? undefined,
+      address: vendor.address,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.VENDOR_CREATED,
+      mailData,
+      vendorCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    vendor: IVendorEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
     const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
@@ -226,26 +259,6 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       key: 'id',
       value: vendor.userId,
     });
-
-    const mailData: IMailData = {
-      toEmail: [userEntity.email],
-      fromEmail: this.envVariablesConfig.mailFrom,
-      subject: 'Vendor Created',
-    };
-
-    const vendorCreatedTemplateData: IVendorCreated = {
-      name: vendor.name,
-      contactNo: vendor.contactNo,
-      email: vendor.email ?? undefined,
-      address: vendor.address,
-      userName: userEntity.name,
-      year: DateCodeUtils.getCurrentYear(),
-    };
-
-    await this.mailService.sendNotification(
-      EmailTemplate.VENDOR_CREATED,
-      mailData,
-      vendorCreatedTemplateData,
-    );
+    return userEntity;
   }
 }

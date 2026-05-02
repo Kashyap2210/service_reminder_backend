@@ -121,6 +121,41 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     service: IServiceEntity,
     entityManager?: EntityManager,
   ): Promise<void> {
+    const { userEntity, vendorEntity, recurringItemEntity } =
+      await this.getSupportingEntities(service, currentUser, entityManager);
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Service Created',
+    };
+
+    const serviceCreatedTemplateData: IServiceCreated = {
+      serviceDate: new DateCodeUtils(service.serviceDate).toLongDateString(),
+      serviceType: service.serviceType,
+      serviceStatus: service.serviceStatus,
+      vendorName: vendorEntity?.name || '',
+      recurringItemName: recurringItemEntity?.name || '',
+      serviceEstimate: service.serviceEstimate
+        ? `${service.serviceEstimate}`
+        : undefined,
+      serviceAmount: service.serviceAmount ?? undefined,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.SERVICE_CREATED,
+      mailData,
+      serviceCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    service: IServiceEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
     const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
@@ -181,31 +216,6 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
         value: service.recurringItemId,
       },
     );
-
-    const mailData: IMailData = {
-      toEmail: [userEntity.email],
-      fromEmail: this.envVariablesConfig.mailFrom,
-      subject: 'Service Created',
-    };
-
-    const serviceCreatedTemplateData: IServiceCreated = {
-      serviceDate: new DateCodeUtils(service.serviceDate).toLongDateString(),
-      serviceType: service.serviceType,
-      serviceStatus: service.serviceStatus,
-      vendorName: vendorEntity?.name || '',
-      recurringItemName: recurringItemEntity?.name || '',
-      serviceEstimate: service.serviceEstimate
-        ? `${service.serviceEstimate}`
-        : undefined,
-      serviceAmount: service.serviceAmount ?? undefined,
-      userName: userEntity.name,
-      year: DateCodeUtils.getCurrentYear(),
-    };
-
-    await this.mailService.sendNotification(
-      EmailTemplate.SERVICE_CREATED,
-      mailData,
-      serviceCreatedTemplateData,
-    );
+    return { userEntity, vendorEntity, recurringItemEntity };
   }
 }

@@ -115,6 +115,42 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     appointment: IAppointmentEntity,
     entityManager?: EntityManager,
   ): Promise<void> {
+    const { userEntity, vendorEntity, recurringItemEntity } =
+      await this.getSupportingEntities(appointment, currentUser, entityManager);
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Appointment Confirmation',
+    };
+
+    const formattedDate = new DateCodeUtils(
+      appointment.appointmentDate,
+    ).toLongDateString();
+
+    const appointmentCreatedTemplateData: IAppointmentCreated = {
+      appointmentDate: formattedDate,
+      appointmentType: appointment.appointmentType,
+      appointmentStatus: appointment.appointmentStatus,
+      vendorName: vendorEntity.name || '',
+      vendorAddress: vendorEntity.address || '',
+      recurringItemName: recurringItemEntity.name,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.APPOINTMENT_CREATED,
+      mailData,
+      appointmentCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    appointment: IAppointmentEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
     const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
@@ -159,7 +195,6 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       value: appointment.userId,
     });
     // console.log('userEntity', userEntity);
-
     const vendorEntity = searchResHelper.getEntityModelByFilter(
       EntityList.VENDOR,
       {
@@ -175,32 +210,6 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
         value: appointment.recurringItemId,
       },
     );
-
-    const mailData: IMailData = {
-      toEmail: [userEntity.email],
-      fromEmail: this.envVariablesConfig.mailFrom,
-      subject: 'Appointment Confirmation',
-    };
-
-    const formattedDate = new DateCodeUtils(
-      appointment.appointmentDate,
-    ).toLongDateString();
-
-    const appointmentCreatedTemplateData: IAppointmentCreated = {
-      appointmentDate: formattedDate,
-      appointmentType: appointment.appointmentType,
-      appointmentStatus: appointment.appointmentStatus,
-      vendorName: vendorEntity.name || '',
-      vendorAddress: vendorEntity.address || '',
-      recurringItemName: recurringItemEntity.name,
-      userName: userEntity.name,
-      year: DateCodeUtils.getCurrentYear(),
-    };
-
-    await this.mailService.sendNotification(
-      EmailTemplate.APPOINTMENT_CREATED,
-      mailData,
-      appointmentCreatedTemplateData,
-    );
+    return { userEntity, vendorEntity, recurringItemEntity };
   }
 }
