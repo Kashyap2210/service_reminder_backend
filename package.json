@@ -22,7 +22,8 @@
     "migration:run": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:run",
     "migration:revert": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:revert",
     "migration:create": "typeorm-ts-node-commonjs migration:create",
-    "link:start": "npm link service_reminder_common && npm run start:dev"
+    "link:start": "npm link service_reminder_common && npm run start:dev",
+    "link:common": "npm link service_reminder_common"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.11.2",
