@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import * as path from 'path';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { IMailData } from '../templates/template-interfaces/mail-data.interface';
 import { EmailTemplate } from '../utils/email-template.enum';
 
@@ -10,7 +11,10 @@ import { EmailTemplate } from '../utils/email-template.enum';
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
+  ) {}
 
   async sendNotification<T>(
     templateName: EmailTemplate,
@@ -66,8 +70,21 @@ export class MailService {
     // );
 
     try {
+      // console.log(this.envVariablesConfig.getEnviornment() === 'development');
+      // console.log(this.envVariablesConfig.mailTo);
+      // console.log(fromEmail);
+      // console.log(
+      //   this.envVariablesConfig.getEnviornment() === 'development'
+      //     ? [this.envVariablesConfig.mailTo]
+      //     : toEmail,
+      // );
+
       const response = await this.mailerService.sendMail({
-        to: toEmail,
+        to:
+          this.envVariablesConfig.getEnviornment() === 'development'
+            ? [this.envVariablesConfig.mailTo]
+            : toEmail,
+        // toEmail,
         from: fromEmail,
         subject,
         html,
