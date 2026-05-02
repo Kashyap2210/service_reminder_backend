@@ -1,6 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  DateCodeUtils,
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IEntityFilterIncludeData,
+  IUserEntity,
+  IVendorEntity,
+  IVendorRecurringItemMappingCreateDto,
+  diffArrays,
+} from 'service_reminder_common';
+import { MailService } from 'src/mail/services/mail.service';
+import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { IVendorCreated } from 'src/mail/templates/template-interfaces/vendor-created.interface';
+import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { VendorCreateDto } from '../dtos/vendor.create.dto';
 import { VendorUpdateDto } from '../dtos/vendor.update.dto';
@@ -11,12 +27,13 @@ import { VendorCreateTransaction } from '../transactions/vendor.create.transacti
 import { VendorUpdateTransaction } from '../transactions/vendor.update.transaction';
 import { VendorHistoryService } from './vendor-history.service';
 import { VendorRecurringItemMappingService } from './vendor-recurring-item-mapping.service';
-import { diffArrays, EntityList, EntityType, IUserEntity, IVendorEntity, IVendorRecurringItemMappingCreateDto } from 'service_reminder_common';
 
 @Injectable()
 export class VendorService extends BaseService<EntityList.VENDOR> {
   constructor(
     private readonly vendorRepository: VendorRepository,
+    private readonly mailService: MailService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
     private readonly vendorCreateTransaction: VendorCreateTransaction,
     private readonly vendorUpdateTransaction: VendorUpdateTransaction,
   ) {
@@ -179,5 +196,69 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       mappingsToCreate: added,
       mappingsToDelete,
     };
+  }
+
+  async sendVendorCreatedNotification(
+    currentUser: IUserEntity,
+    vendor: IVendorEntity,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const userEntity = await this.getSupportingEntities(
+      vendor,
+      currentUser,
+      entityManager,
+    );
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Vendor Created',
+    };
+
+    const vendorCreatedTemplateData: IVendorCreated = {
+      name: vendor.name,
+      contactNo: vendor.contactNo,
+      email: vendor.email ?? undefined,
+      address: vendor.address,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.VENDOR_CREATED,
+      mailData,
+      vendorCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    vendor: IVendorEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
+    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [vendor.userId],
+        columnKeys: ['id', 'name', 'email'],
+      },
+    };
+
+    const searchResponse = await this.searchV2(
+      {
+        id: [-1],
+        entities: [userEntityInclude],
+      },
+      currentUser,
+      entityManager,
+    );
+
+    const searchResHelper = new EntityFilterDataHelper(searchResponse);
+
+    const userEntity = searchResHelper.getEntityModelByFilter(EntityList.USER, {
+      key: 'id',
+      value: vendor.userId,
+    });
+    return userEntity;
   }
 }

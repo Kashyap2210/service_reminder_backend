@@ -39,6 +39,10 @@ const VendorEntityResponse = {
         properties: {
           id: { type: 'number', example: 1 },
           name: { type: 'string', example: 'ACME Service Center' },
+          address: {
+            type: 'string',
+            example: '123 Auto Street, Service City, SC 12345',
+          }, // add this
           contactNo: { type: 'string', example: '+1234567890' },
           email: {
             type: 'string',
@@ -71,8 +75,9 @@ export const CreateVendorSwagger = () =>
           value: {
             name: 'ACME Service Center',
             contactNo: '+1234567890',
+            address: '123 Auto Street, Service City, SC 12345', // add this
             email: 'vendor@example.com',
-            recurringItemId: 1,
+            recurringItemIds: [1],
             userId: 1,
           },
         },

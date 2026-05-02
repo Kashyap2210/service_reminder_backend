@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailModule } from 'src/mail/mail.module';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { SharedModule } from 'src/shared/shared.module';
 import { UserModule } from 'src/user/user.module';
 import { AppointmentController } from './controllers/appointment.controller';
@@ -17,6 +19,7 @@ import { AppointmentUpdateTransaction } from './transactions/appointment.update.
     TypeOrmModule.forFeature([AppointmentEntity, AppointmentHistoryEntity]),
     SharedModule,
     UserModule,
+    MailModule,
   ],
   providers: [
     AppointmentService,
@@ -25,6 +28,7 @@ import { AppointmentUpdateTransaction } from './transactions/appointment.update.
     AppointmentHistoryRepository,
     AppointmentCreateTransaction,
     AppointmentUpdateTransaction,
+    EnvVariablesConfig,
   ],
   controllers: [AppointmentController],
 })

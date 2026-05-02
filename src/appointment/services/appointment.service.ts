@@ -1,13 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   AppointmentModel,
+  DateCodeUtils,
+  EntityFilterDataHelper,
   EntityList,
   EntityType,
   IAppointmentEntity,
+  IEntityFilterIncludeData,
   IUserEntity,
 } from 'service_reminder_common';
+import { MailService } from 'src/mail/services/mail.service';
+import { IAppointmentCreated } from 'src/mail/templates/template-interfaces/appointment-created.interface';
+import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService } from 'src/shared/services/base.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
@@ -21,6 +29,8 @@ import { IAppointmentUpdateTransactionInputData } from '../transactions/interfac
 export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
   constructor(
     private readonly appointmentRepository: AppointmentRepository,
+    private readonly mailService: MailService,
+    private readonly envVariablesConfig: EnvVariablesConfig,
 
     private readonly appointmentCreateTransaction: AppointmentCreateTransaction,
     private readonly appointmentUpdateTransaction: AppointmentUpdateTransaction,
@@ -98,5 +108,108 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     entityManager?: EntityManager,
   ): Promise<boolean> {
     return this.appointmentRepository.deleteById(id, entityManager);
+  }
+
+  async sendAppointmentCreatedNotification(
+    currentUser: IUserEntity,
+    appointment: IAppointmentEntity,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const { userEntity, vendorEntity, recurringItemEntity } =
+      await this.getSupportingEntities(appointment, currentUser, entityManager);
+
+    const mailData: IMailData = {
+      toEmail: [userEntity.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Appointment Confirmation',
+    };
+
+    const formattedDate = new DateCodeUtils(
+      appointment.appointmentDate,
+    ).toLongDateString();
+
+    const appointmentCreatedTemplateData: IAppointmentCreated = {
+      appointmentDate: formattedDate,
+      appointmentType: appointment.appointmentType,
+      appointmentStatus: appointment.appointmentStatus,
+      vendorName: vendorEntity.name || '',
+      vendorAddress: vendorEntity.address || '',
+      recurringItemName: recurringItemEntity.name,
+      userName: userEntity.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailService.sendNotification(
+      EmailTemplate.APPOINTMENT_CREATED,
+      mailData,
+      appointmentCreatedTemplateData,
+    );
+  }
+
+  private async getSupportingEntities(
+    appointment: IAppointmentEntity,
+    currentUser: IUserEntity,
+    entityManager?: EntityManager,
+  ) {
+    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [appointment.userId],
+        columnKeys: ['id', 'name', 'email'],
+      },
+    };
+
+    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+      include: {
+        id: [appointment.vendorId],
+        columnKeys: ['id', 'name', 'address'],
+      },
+    };
+
+    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+      {
+        name: EntityList.RECURRING_ITEM,
+        include: {
+          id: [appointment.recurringItemId],
+          columnKeys: ['id', 'name'],
+        },
+      };
+
+    const searchResponse = await this.searchV2(
+      {
+        id: [-1],
+        entities: [
+          userEntityInclude,
+          vendorEntityInclude,
+          recurringItemEntityInclude,
+        ],
+      },
+      currentUser,
+      entityManager,
+    );
+    const searchResHelper = new EntityFilterDataHelper(searchResponse);
+    // console.log('searchResHelper', searchResHelper);
+    const userEntity = searchResHelper.getEntityModelByFilter(EntityList.USER, {
+      key: 'id',
+      value: appointment.userId,
+    });
+    // console.log('userEntity', userEntity);
+    const vendorEntity = searchResHelper.getEntityModelByFilter(
+      EntityList.VENDOR,
+      {
+        key: 'id',
+        value: appointment.vendorId,
+      },
+    );
+
+    const recurringItemEntity = searchResHelper.getEntityModelByFilter(
+      EntityList.RECURRING_ITEM,
+      {
+        key: 'id',
+        value: appointment.recurringItemId,
+      },
+    );
+    return { userEntity, vendorEntity, recurringItemEntity };
   }
 }

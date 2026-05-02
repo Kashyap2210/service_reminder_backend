@@ -15,6 +15,7 @@ import {
   IEntityFilterIncludeData,
   IUserEntity,
   IVendorCreateDto,
+  IVendorEntity,
   IVendorEntityCreateDto,
   IVendorSearchDto,
   Nullable,
@@ -50,6 +51,15 @@ export class VendorCreateDto implements IVendorCreateDto {
   @IsEmail()
   @MaxLength(256)
   email: Nullable<string>;
+
+  @ApiProperty({
+    type: String,
+    example: '123 Auto Street, Service City, SC 12345',
+    description: 'Vendor address',
+  })
+  @IsString()
+  @MaxLength(255)
+  address: string;
 
   @ApiProperty({
     type: [Number],
@@ -100,15 +110,16 @@ export class VendorCreateDto implements IVendorCreateDto {
   ): Promise<IDtoValidationError[] | null> {
     const errors: IDtoValidationError[] = [];
 
-    const paramForValidation: (keyof IVendorCreateDto)[] = [
+    const paramForValidation: (keyof IVendorCreateDto & string)[] = [
       'name',
       'contactNo',
       'email',
+      'address',
     ];
     for (const param of paramForValidation) {
       const relevantVendor = this.validationData
         .getEntityFromList(EntityList.VENDOR)
-        .filter((vendor) => vendor[param] === this[param]);
+        .filter((vendor: IVendorEntity) => vendor[param] === this[param]);
 
       if (relevantVendor.length > 0) {
         if (!existingEntity || existingEntity.id !== relevantVendor[0].id)
@@ -219,6 +230,7 @@ export class VendorCreateDto implements IVendorCreateDto {
       name: this.name,
       contactNo: this.contactNo,
       email: this.email,
+      address: this.address,
       // recurringItemId: this.recurringItemId,
       userId: this.userId,
     };

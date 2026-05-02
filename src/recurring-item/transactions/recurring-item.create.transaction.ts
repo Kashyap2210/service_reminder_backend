@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -8,7 +9,6 @@ import {
   IRecurringItemCreateTransactionInputData,
   IRecurringItemCreateTransactionOutputData,
 } from './interfaces/recurring-item-create-transaction.interface';
-import { EntityHistoryOperation, EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class RecurringItemCreateTransaction extends BaseTransaction<
@@ -46,13 +46,22 @@ export class RecurringItemCreateTransaction extends BaseTransaction<
       manager,
     );
 
-    const created = await this.recurringItemService.createBase(instance, manager);
+    const created = await this.recurringItemService.createBase(
+      instance,
+      manager,
+    );
 
     await this.recurringItemHistoryService.createHistoryEntity(
       currentUser,
       created,
       EntityHistoryOperation.CREATE,
       undefined,
+      manager,
+    );
+
+    await this.recurringItemService.sendRecurringItemCreatedNotification(
+      currentUser,
+      created,
       manager,
     );
 

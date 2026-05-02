@@ -1,7 +1,12 @@
+import {
+  EntityList,
+  IRecurringItemEntity,
+  Nullable,
+  ServicePeriodUnit,
+} from 'service_reminder_common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
-import { EntityList, IRecurringItemEntity, Nullable, ServicePeriodUnit } from 'service_reminder_common';
 
 @Entity({ name: EntityList.RECURRING_ITEM, schema: dbSchemaName })
 export class RecurringItemEntity
@@ -32,8 +37,8 @@ export class RecurringItemEntity
   })
   servicePeriodUnit: ServicePeriodUnit;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  servicePlaceAddress: Nullable<string>;
+  // @Column({ type: 'varchar', length: 255, nullable: true })
+  // servicePlaceAddress: Nullable<string>;
 
   @Column({ type: 'int' })
   userId: number;

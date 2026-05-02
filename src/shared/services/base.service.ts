@@ -59,7 +59,7 @@ export abstract class BaseService<
     entity: EntityType<T>,
     entityManager?: EntityManager,
   ): Promise<EntityType<T>> {
-    return this.getRepository(entityManager).create(entity);
+    return this.getRepository(entityManager).create(entity, entityManager);
   }
 
   async updateByIdBase(
@@ -124,16 +124,14 @@ export abstract class BaseService<
                 ),
               )
             : {};
-          const results = await this.registryService
-            .get(name)
-            .search(
-              {
-                ...cleanEntityFilter,
-                ...(columnKeys?.length ? { columnKeys } : undefined),
-              },
-              currentUser,
-              entityManager,
-            );
+          const results = await this.registryService.get(name).search(
+            {
+              ...cleanEntityFilter,
+              ...(columnKeys?.length ? { columnKeys } : undefined),
+            },
+            currentUser,
+            entityManager,
+          );
 
           // @ts-ignore — runtime type is correct, TS can't narrow through Map<EntityList, BaseService<EntityList>>
           mainResponse[name] = results;

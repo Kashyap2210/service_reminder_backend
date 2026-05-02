@@ -1,7 +1,7 @@
+import { EntityList, IVendorEntity, Nullable } from 'service_reminder_common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
-import { EntityList, IVendorEntity, Nullable } from 'service_reminder_common';
 
 @Entity({ name: EntityList.VENDOR, schema: dbSchemaName })
 export class VendorEntity extends BaseEntity implements IVendorEntity {
@@ -16,6 +16,9 @@ export class VendorEntity extends BaseEntity implements IVendorEntity {
 
   @Column({ type: 'varchar', nullable: true })
   email: Nullable<string>;
+
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  address: string;
 
   // @Column({ type: 'int' })
   // recurringItemId: number;

@@ -1,7 +1,13 @@
+import {
+  AppointmentType,
+  EntityList,
+  IServiceEntity,
+  Nullable,
+  ServiceStatus,
+} from 'service_reminder_common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
-import { AppointmentType, EntityList, IServiceEntity, Nullable, ServiceStatus } from 'service_reminder_common';
 
 @Entity({ name: EntityList.SERVICE, schema: dbSchemaName })
 export class ServiceEntity extends BaseEntity implements IServiceEntity {
