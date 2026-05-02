@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DateCodeUtils, EntityList, EntityType, IServiceEntity, IUserEntity, ServiceModel } from 'service_reminder_common';
+import {
+  EntityList,
+  EntityType,
+  IServiceEntity,
+  IUserEntity,
+  ServiceModel,
+} from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
 import { IServiceCreated } from 'src/mail/templates/template-interfaces/service-created.interface';
@@ -80,7 +86,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       throw new BadRequestException(errors[0]);
     }
     existingService = validationResult;
-    const existingServiceEntityModel = ServiceModel.fromEntity(
+    const existingServiceEntityModel = ServiceModel.populateFromEntity(
       existingService!,
     );
 

@@ -116,7 +116,7 @@ export abstract class BaseService<
 
     if (entities?.length && this.registryService) {
       await Promise.all(
-        entities.map(async ({ name, include: entityFilter }) => {
+        entities.map(async ({ name, include: entityFilter, columnKeys }) => {
           const cleanEntityFilter = entityFilter
             ? Object.fromEntries(
                 Object.entries(entityFilter).filter(
@@ -126,7 +126,14 @@ export abstract class BaseService<
             : {};
           const results = await this.registryService
             .get(name)
-            .search(cleanEntityFilter, currentUser, entityManager);
+            .search(
+              {
+                ...cleanEntityFilter,
+                ...(columnKeys?.length ? { columnKeys } : undefined),
+              },
+              currentUser,
+              entityManager,
+            );
 
           // @ts-ignore — runtime type is correct, TS can't narrow through Map<EntityList, BaseService<EntityList>>
           mainResponse[name] = results;

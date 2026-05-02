@@ -1,5 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DateCodeUtils, EntityList, EntityType, IAppointmentEntity, IUserEntity } from 'service_reminder_common';
+import {
+  AppointmentModel,
+  DateCodeUtils,
+  EntityList,
+  EntityType,
+  IAppointmentEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
 import { IAppointmentCreated } from 'src/mail/templates/template-interfaces/appointment-created.interface';
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
@@ -15,7 +22,6 @@ import { AppointmentCreateTransaction } from '../transactions/appointment.create
 import { AppointmentUpdateTransaction } from '../transactions/appointment.update.transaction';
 import { IAppointmentCreateTransactionInputData } from '../transactions/interfaces/appointment-create-transaction.interface';
 import { IAppointmentUpdateTransactionInputData } from '../transactions/interfaces/appointment-update-transaction.interface';
-import { AppointmentModel } from 'service_reminder_common';
 
 @Injectable()
 export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
@@ -74,7 +80,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     }
     existingAppointment = validationResult;
 
-    const existingAppointmentEntityModel = AppointmentModel.fromEntity(
+    const existingAppointmentEntityModel = AppointmentModel.populateFromEntity(
       existingAppointment!,
     );
     const nextStatus = existingAppointmentEntityModel.getNextStatus(
@@ -109,10 +115,13 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       subject: 'Appointment Confirmation',
     };
 
-    const formattedDate = new Date(appointment.appointmentDate).toLocaleDateString(
-      'en-US',
-      { year: 'numeric', month: 'long', day: 'numeric' },
-    );
+    const formattedDate = new Date(
+      appointment.appointmentDate,
+    ).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
 
     const appointmentCreatedTemplateData: IAppointmentCreated = {
       appointmentDate: formattedDate,
