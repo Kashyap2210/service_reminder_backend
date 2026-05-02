@@ -17,6 +17,9 @@ export class VendorEntity extends BaseEntity implements IVendorEntity {
   @Column({ type: 'varchar', nullable: true })
   email: Nullable<string>;
 
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  address: string;
+
   // @Column({ type: 'int' })
   // recurringItemId: number;
 

@@ -237,6 +237,7 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       name: vendor.name,
       contactNo: vendor.contactNo,
       email: vendor.email ?? undefined,
+      address: vendor.address,
       userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),
     };

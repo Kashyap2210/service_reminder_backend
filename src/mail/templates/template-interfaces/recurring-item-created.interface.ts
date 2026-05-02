@@ -4,7 +4,6 @@ export interface IRecurringItemCreated {
   companyName?: string;
   servicePeriod: string;
   servicePeriodUnit: string;
-  servicePlaceAddress?: string;
   userName: string;
   year: number;
 }

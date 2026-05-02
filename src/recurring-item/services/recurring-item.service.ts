@@ -151,7 +151,6 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
       companyName: recurringItem.companyName ?? undefined,
       servicePeriod: recurringItem.servicePeriod.toString(),
       servicePeriodUnit: recurringItem.servicePeriodUnit,
-      servicePlaceAddress: recurringItem.servicePlaceAddress ?? undefined,
       userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),
     };

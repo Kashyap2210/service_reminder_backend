@@ -127,7 +127,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       name: EntityList.VENDOR,
       include: {
         id: [appointment.vendorId],
-        columnKeys: ['id', 'name'],
+        columnKeys: ['id', 'name', 'address'],
       },
     };
 
@@ -191,6 +191,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       appointmentType: appointment.appointmentType,
       appointmentStatus: appointment.appointmentStatus,
       vendorName: vendorEntity.name || '',
+      vendorAddress: vendorEntity.address || '',
       recurringItemName: recurringItemEntity.name,
       userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),

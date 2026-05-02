@@ -68,19 +68,6 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   servicePeriodUnit: ServicePeriodUnit;
 
   @ApiProperty({
-    type: String,
-    example: '123 Main St',
-    description: 'Service location address (optional)',
-    required: false,
-    nullable: true,
-    maxLength: 255,
-  })
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  servicePlaceAddress: Nullable<string>;
-
-  @ApiProperty({
     type: Number,
     example: 1,
     description: 'Owning user id',
@@ -197,7 +184,6 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
       // vendorId: this.vendorId,
       servicePeriod: this.servicePeriod,
       servicePeriodUnit: this.servicePeriodUnit,
-      servicePlaceAddress: this.servicePlaceAddress,
       userId: this.userId,
     };
   }

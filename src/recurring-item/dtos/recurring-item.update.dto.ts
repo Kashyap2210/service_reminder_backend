@@ -107,7 +107,6 @@ export class RecurringItemUpdateDto
       // vendorId: this.vendorId ?? undefined,
       servicePeriod: this.servicePeriod ?? undefined,
       servicePeriodUnit: this.servicePeriodUnit ?? undefined,
-      servicePlaceAddress: this.servicePlaceAddress ?? undefined,
       userId: this.userId ?? undefined,
     };
   }

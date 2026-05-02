@@ -37,8 +37,8 @@ export class RecurringItemEntity
   })
   servicePeriodUnit: ServicePeriodUnit;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  servicePlaceAddress: Nullable<string>;
+  // @Column({ type: 'varchar', length: 255, nullable: true })
+  // servicePlaceAddress: Nullable<string>;
 
   @Column({ type: 'int' })
   userId: number;

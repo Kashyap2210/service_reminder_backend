@@ -68,15 +68,7 @@ export class RecurringItemSearchDto implements IRecurringItemSearchDto {
   servicePeriodUnit?: ServicePeriodUnit[];
 
   @ApiPropertyOptional({
-    type: [String],
-    example: ['123 Main St'],
-    description: 'Service place address(es)',
-  })
-  @IsOptional()
-  @IsString({ each: true })
-  servicePlaceAddress?: string[];
 
-  @ApiPropertyOptional({
     type: [Number],
     example: [1],
     description: 'Owning user id(s)',
