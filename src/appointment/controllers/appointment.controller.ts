@@ -8,7 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { EntityList, IAppointmentEntity, IUserEntity } from 'service_reminder_common';
+import {
+  EntityFilterDataHelper,
+  EntityList,
+  IAppointmentEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';
@@ -82,6 +87,13 @@ export class AppointmentController {
     @Body() dto: AppointmentSearchDto,
     @CurrentUser() currentUser: IUserEntity,
   ) {
-    return this.appointmentService.searchV2(dto, currentUser);
+    const serachRes = await this.appointmentService.searchV2(dto, currentUser);
+
+    const searchResConverted = new EntityFilterDataHelper(
+      serachRes,
+    ).getEntityModelsMap();
+    console.log('searchResConverted', searchResConverted);
+
+    return searchResConverted;
   }
 }

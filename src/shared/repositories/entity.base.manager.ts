@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { EntityList, EntityType, IEntityCreateDto, IEntityFilterData, IEntityUpdateDto } from 'service_reminder_common';
+import {
+  EntityList,
+  EntityType,
+  IEntityCreateDto,
+  IEntityFilterData,
+  IEntityUpdateDto,
+} from 'service_reminder_common';
 import {
   DeepPartial,
   EntityManager,
@@ -78,12 +84,14 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
   ): Promise<EntityType<T>[]> {
     console.log('filter from entity-base-manager for getByFilter', filter);
 
+    const { columnKeys, entities, ...rest } = filter;
+
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;
 
     let query = repository.createQueryBuilder(tableName);
 
-    for (const [property, value] of Object.entries(filter)) {
+    for (const [property, value] of Object.entries(rest)) {
       if (value === undefined || value === null) continue;
       const normalizedValue = Array.isArray(value) ? value : [value];
       if (normalizedValue.length === 0) continue;
@@ -93,7 +101,18 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
       });
     }
 
-    return query.getMany();
+    if (columnKeys && columnKeys.length > 0) {
+      query = query.select(
+        columnKeys.map(
+          (col: keyof EntityType<T>) => `${tableName}.${String(col)}`,
+        ),
+      );
+    }
+
+    const result = await query.getMany();
+    // console.log('result', result);
+
+    return result;
   }
 
   // Create instance without saving
