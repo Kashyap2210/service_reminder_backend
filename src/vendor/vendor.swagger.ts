@@ -72,7 +72,7 @@ export const CreateVendorSwagger = () =>
             name: 'ACME Service Center',
             contactNo: '+1234567890',
             email: 'vendor@example.com',
-            recurringItemId: 1,
+            recurringItemIds: [1],
             userId: 1,
           },
         },

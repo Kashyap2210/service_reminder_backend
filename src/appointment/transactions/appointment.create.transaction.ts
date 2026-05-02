@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AppointmentStatus, EntityHistoryOperation, EntityList } from 'service_reminder_common';
+import {
+  AppointmentStatus,
+  EntityHistoryOperation,
+  EntityList,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -60,7 +64,9 @@ export class AppointmentCreateTransaction extends BaseTransaction<
     );
 
     await this.appointmentService.sendAppointmentCreatedNotification(
+      currentUser,
       createdAppointment,
+      manager,
     );
 
     return createdAppointment;

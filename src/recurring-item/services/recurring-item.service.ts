@@ -1,5 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DateCodeUtils, EntityList, EntityType, IRecurringItemEntity, IUserEntity } from 'service_reminder_common';
+import {
+  DateCodeUtils,
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IEntityFilterIncludeData,
+  IRecurringItemEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
 import { IRecurringItemCreated } from 'src/mail/templates/template-interfaces/recurring-item-created.interface';
@@ -103,10 +111,36 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
   }
 
   async sendRecurringItemCreatedNotification(
+    currentUser: IUserEntity,
     recurringItem: IRecurringItemEntity,
-  ) {
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [recurringItem.userId],
+        columnKeys: ['id', 'name', 'email'],
+      },
+    };
+
+    const searchResponse = await this.searchV2(
+      {
+        id: [-1],
+        entities: [userEntityInclude],
+      },
+      currentUser,
+      entityManager,
+    );
+
+    const searchResHelper = new EntityFilterDataHelper(searchResponse);
+
+    const userEntity = searchResHelper.getEntityModelByFilter(EntityList.USER, {
+      key: 'id',
+      value: recurringItem.userId,
+    });
+
     const mailData: IMailData = {
-      toEmail: [recurringItem.user.email],
+      toEmail: [userEntity.email],
       fromEmail: this.envVariablesConfig.mailFrom,
       subject: 'Recurring Item Created',
     };
@@ -114,11 +148,11 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     const recurringItemCreatedTemplateData: IRecurringItemCreated = {
       name: recurringItem.name,
       type: recurringItem.type,
-      companyName: recurringItem.companyName,
+      companyName: recurringItem.companyName ?? undefined,
       servicePeriod: recurringItem.servicePeriod.toString(),
       servicePeriodUnit: recurringItem.servicePeriodUnit,
-      servicePlaceAddress: recurringItem.servicePlaceAddress,
-      userName: recurringItem.user.name,
+      servicePlaceAddress: recurringItem.servicePlaceAddress ?? undefined,
+      userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),
     };
 

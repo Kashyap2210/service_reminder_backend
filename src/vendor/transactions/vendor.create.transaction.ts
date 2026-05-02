@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityHistoryOperation, EntityList, IVendorRecurringItemMappingCreateDto } from 'service_reminder_common';
+import {
+  EntityHistoryOperation,
+  EntityList,
+  IVendorRecurringItemMappingCreateDto,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { BaseTransaction } from 'src/shared/transactions/base.transaction';
 import { DataSource, EntityManager } from 'typeorm';
@@ -7,8 +11,8 @@ import { VendorHistoryService } from '../services/vendor-history.service';
 import { VendorRecurringItemMappingService } from '../services/vendor-recurring-item-mapping.service';
 import { VendorService } from '../services/vendor.service';
 import {
-    IVendorCreateTransactionInputData,
-    IVendorCreateTransactionOutputData,
+  IVendorCreateTransactionInputData,
+  IVendorCreateTransactionOutputData,
 } from './interfaces/vendor-create-transaction.interface';
 
 @Injectable()
@@ -75,7 +79,11 @@ export class VendorCreateTransaction extends BaseTransaction<
       manager,
     );
 
-    await this.vendorService.sendVendorCreatedNotification(created);
+    await this.vendorService.sendVendorCreatedNotification(
+      currentUser,
+      created,
+      manager,
+    );
 
     return created;
   }

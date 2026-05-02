@@ -6,8 +6,8 @@ import { DataSource, EntityManager } from 'typeorm';
 import { RecurringItemHistoryService } from '../services/recurring-item-history.service';
 import { RecurringItemService } from '../services/recurring-item.service';
 import {
-    IRecurringItemCreateTransactionInputData,
-    IRecurringItemCreateTransactionOutputData,
+  IRecurringItemCreateTransactionInputData,
+  IRecurringItemCreateTransactionOutputData,
 } from './interfaces/recurring-item-create-transaction.interface';
 
 @Injectable()
@@ -46,7 +46,10 @@ export class RecurringItemCreateTransaction extends BaseTransaction<
       manager,
     );
 
-    const created = await this.recurringItemService.createBase(instance, manager);
+    const created = await this.recurringItemService.createBase(
+      instance,
+      manager,
+    );
 
     await this.recurringItemHistoryService.createHistoryEntity(
       currentUser,
@@ -57,7 +60,9 @@ export class RecurringItemCreateTransaction extends BaseTransaction<
     );
 
     await this.recurringItemService.sendRecurringItemCreatedNotification(
+      currentUser,
       created,
+      manager,
     );
 
     return created;

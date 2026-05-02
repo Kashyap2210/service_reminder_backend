@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   DateCodeUtils,
+  EntityFilterDataHelper,
   EntityList,
   EntityType,
+  IEntityFilterIncludeData,
   IUserEntity,
   IVendorEntity,
   IVendorRecurringItemMappingCreateDto,
@@ -196,9 +198,37 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     };
   }
 
-  async sendVendorCreatedNotification(vendor: IVendorEntity) {
+  async sendVendorCreatedNotification(
+    currentUser: IUserEntity,
+    vendor: IVendorEntity,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [vendor.userId],
+        columnKeys: ['id', 'name', 'email'],
+      },
+    };
+
+    const searchResponse = await this.searchV2(
+      {
+        id: [-1],
+        entities: [userEntityInclude],
+      },
+      currentUser,
+      entityManager,
+    );
+
+    const searchResHelper = new EntityFilterDataHelper(searchResponse);
+
+    const userEntity = searchResHelper.getEntityModelByFilter(EntityList.USER, {
+      key: 'id',
+      value: vendor.userId,
+    });
+
     const mailData: IMailData = {
-      toEmail: [vendor.user.email],
+      toEmail: [userEntity.email],
       fromEmail: this.envVariablesConfig.mailFrom,
       subject: 'Vendor Created',
     };
@@ -206,8 +236,8 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     const vendorCreatedTemplateData: IVendorCreated = {
       name: vendor.name,
       contactNo: vendor.contactNo,
-      email: vendor.email,
-      userName: vendor.user.name,
+      email: vendor.email ?? undefined,
+      userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),
     };
 

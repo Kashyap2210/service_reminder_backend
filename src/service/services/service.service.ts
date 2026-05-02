@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   DateCodeUtils,
+  EntityFilterDataHelper,
   EntityList,
   EntityType,
+  IEntityFilterIncludeData,
   IServiceEntity,
   IUserEntity,
   ServiceModel,
@@ -114,27 +116,89 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     return this.serviceRepository.deleteById(id, entityManager);
   }
 
-  async sendServiceCreatedNotification(service: IServiceEntity) {
+  async sendServiceCreatedNotification(
+    currentUser: IUserEntity,
+    service: IServiceEntity,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+      name: EntityList.USER,
+      include: {
+        id: [service.userId],
+        columnKeys: ['id', 'name', 'email'],
+      },
+    };
+
+    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+      include: {
+        id: [service.vendorId],
+        columnKeys: ['id', 'name'],
+      },
+    };
+
+    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+      {
+        name: EntityList.RECURRING_ITEM,
+        include: {
+          id: [service.recurringItemId],
+          columnKeys: ['id', 'name'],
+        },
+      };
+
+    const searchResponse = await this.searchV2(
+      {
+        id: [-1],
+        entities: [
+          userEntityInclude,
+          vendorEntityInclude,
+          recurringItemEntityInclude,
+        ],
+      },
+      currentUser,
+      entityManager,
+    );
+
+    const searchResHelper = new EntityFilterDataHelper(searchResponse);
+
+    const userEntity = searchResHelper.getEntityModelByFilter(EntityList.USER, {
+      key: 'id',
+      value: service.userId,
+    });
+
+    const vendorEntity = searchResHelper.getEntityModelByFilter(
+      EntityList.VENDOR,
+      {
+        key: 'id',
+        value: service.vendorId,
+      },
+    );
+
+    const recurringItemEntity = searchResHelper.getEntityModelByFilter(
+      EntityList.RECURRING_ITEM,
+      {
+        key: 'id',
+        value: service.recurringItemId,
+      },
+    );
+
     const mailData: IMailData = {
-      toEmail: [service.user.email],
+      toEmail: [userEntity.email],
       fromEmail: this.envVariablesConfig.mailFrom,
       subject: 'Service Created',
     };
 
-    const formattedDate = new Date(service.serviceDate).toLocaleDateString(
-      'en-US',
-      { year: 'numeric', month: 'long', day: 'numeric' },
-    );
-
     const serviceCreatedTemplateData: IServiceCreated = {
-      serviceDate: formattedDate,
+      serviceDate: new DateCodeUtils(service.serviceDate).toLongDateString(),
       serviceType: service.serviceType,
       serviceStatus: service.serviceStatus,
-      vendorName: service.vendor?.name || '',
-      recurringItemName: service.recurringItem?.name,
-      serviceEstimate: service.serviceEstimate,
-      serviceAmount: service.serviceAmount,
-      userName: service.user.name,
+      vendorName: vendorEntity?.name || '',
+      recurringItemName: recurringItemEntity?.name || '',
+      serviceEstimate: service.serviceEstimate
+        ? `${service.serviceEstimate}`
+        : undefined,
+      serviceAmount: service.serviceAmount ?? undefined,
+      userName: userEntity.name,
       year: DateCodeUtils.getCurrentYear(),
     };
 
