@@ -5,6 +5,7 @@ import {
   IEntityCreateDto,
   IEntityFilterData,
   IEntityUpdateDto,
+  OrderByDirection,
 } from 'service_reminder_common';
 import {
   DeepPartial,
@@ -84,7 +85,8 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
   ): Promise<EntityType<T>[]> {
     console.log('filter from entity-base-manager for getByFilter', filter);
 
-    const { columnKeys, entities, ...rest } = filter;
+    const { columnKeys, entities, orderBy, limit, ...rest } = filter;
+    console.log('orderBy', orderBy);
 
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;
@@ -109,6 +111,29 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
       );
     }
 
+    if (orderBy && Object.keys(orderBy).length > 0) {
+      let isFirst = true;
+      for (const [column, direction] of Object.entries(orderBy)) {
+        if (isFirst) {
+          query = query.orderBy(
+            `${tableName}.${column}`,
+            direction as OrderByDirection,
+          );
+          isFirst = false;
+        } else {
+          query = query.addOrderBy(
+            `${tableName}.${column}`,
+            direction as OrderByDirection,
+          );
+        }
+      }
+    }
+
+    if (limit && limit > 0) {
+      query = query.limit(limit);
+    }
+
+    // console.log('final SQL:', query.getSql());
     const result = await query.getMany();
     // console.log('result', result);
 
