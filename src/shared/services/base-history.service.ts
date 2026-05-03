@@ -1,6 +1,13 @@
+import {
+  EntityHistoryOperation,
+  EntityList,
+  EntityType,
+  getObjectDiffingKeys,
+  IEntityCreateDto,
+  IUserEntity,
+} from 'service_reminder_common';
 import { EntityManager } from 'typeorm';
 import { BaseService } from './base.service';
-import { EntityHistoryOperation, EntityList, EntityType, getObjectDiffingKeys, IEntityCreateDto, IUserEntity } from 'service_reminder_common';
 
 export abstract class BaseHistoryService<
   T extends EntityList, // T will be the history entity class
@@ -9,6 +16,8 @@ export abstract class BaseHistoryService<
   constructor(entityName: T) {
     super(entityName);
   }
+
+  // abstract getEntityConfig(): IEntityConfig<EntityType<T>>;
 
   async createHistoryEntity(
     currentUser: IUserEntity,

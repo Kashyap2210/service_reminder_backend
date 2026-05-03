@@ -86,7 +86,7 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     console.log('filter from entity-base-manager for getByFilter', filter);
 
     const { columnKeys, entities, orderBy, limit, ...rest } = filter;
-    console.log('orderBy', orderBy);
+    // console.log('orderBy', orderBy);
 
     const repository = this.getRepository(entityManager);
     const tableName = repository.metadata.tableName;

@@ -6,7 +6,7 @@ import {
   EntityList,
   EntityType,
   IAppointmentEntity,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IUserEntity,
 } from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
@@ -14,7 +14,7 @@ import { IAppointmentCreated } from 'src/mail/templates/template-interfaces/appo
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
@@ -42,6 +42,16 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.APPOINTMENT> {
     return this.appointmentRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.APPOINTMENT>> {
+    return {
+      [EntityList.USER]: {
+        mappingProperty: 'userId',
+        searchProperty: 'id',
+      },
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createAppointment(
@@ -151,7 +161,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [appointment.userId],
@@ -159,7 +169,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       },
     };
 
-    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+    const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [appointment.vendorId],
@@ -167,7 +177,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       },
     };
 
-    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: {

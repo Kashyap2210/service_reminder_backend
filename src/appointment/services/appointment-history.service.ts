@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { EntityList, EntityType } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseHistoryService } from 'src/shared/services/base-history.service';
+import { IEntityConfig } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentHistoryRepository } from '../repositories/appointment-history.repository';
-import { EntityList } from 'service_reminder_common';
 
 @Injectable()
 export class AppointmentHistoryService extends BaseHistoryService<
@@ -20,5 +21,11 @@ export class AppointmentHistoryService extends BaseHistoryService<
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.APPOINTMENT_HISTORY> {
     return this.appointmentHistoryRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.APPOINTMENT_HISTORY>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 }

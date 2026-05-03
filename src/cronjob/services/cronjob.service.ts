@@ -6,7 +6,7 @@ import {
   IUserEntity,
 } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
 import { CronJobCreateDto } from '../dtos/cronjob.create.dto';
 import { CronJobUpdateDto } from '../dtos/cronjob.update.dto';
@@ -30,6 +30,12 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.CRONJOB> {
     return this.cronJobRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.CRONJOB>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createCronJob(
