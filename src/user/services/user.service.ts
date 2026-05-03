@@ -14,7 +14,7 @@ import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.inte
 import { IUserSignUp } from 'src/mail/templates/template-interfaces/user-signup.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { UserCreateDto } from '../dtos/user.create.dto';
@@ -50,6 +50,12 @@ export class UserService extends BaseService<EntityList.USER> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.USER> {
     return this.userRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.USER>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createUser(dto: UserCreateDto, entityManager?: EntityManager) {

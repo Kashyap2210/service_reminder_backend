@@ -12,6 +12,18 @@ import { DataSource, EntityManager } from 'typeorm';
 import { EntityManagerBaseService } from '../repositories/entity.base.manager';
 import { RegistryService } from './registry.service';
 
+export type IEntityRelationConfig<
+  TSource,
+  K extends EntityList = EntityList,
+> = {
+  mappingProperty: keyof TSource;
+  searchProperty: keyof EntityType<K>;
+};
+
+export type IEntityConfig<T> = {
+  [K in EntityList]?: IEntityRelationConfig<T, K>;
+};
+
 export abstract class BaseService<
   T extends EntityList,
 > implements OnModuleInit {
@@ -30,6 +42,8 @@ export abstract class BaseService<
   abstract getRepository(
     entityManager?: EntityManager,
   ): EntityManagerBaseService<T>;
+
+  abstract getEntityConfig(): IEntityConfig<EntityType<T>>;
 
   getEntityManager(entityManager?: EntityManager) {
     return entityManager ?? this.dataSource.manager;
@@ -106,13 +120,13 @@ export abstract class BaseService<
     currentUser?: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<ISearchV2Response> {
-    const { entities, ...rest } = filter;
+    const { entities, relations, ...rest } = filter;
     const mainResponse = {} as ISearchV2Response;
-    const response = await this.getRepository(entityManager).getByFilter(
+    const mainResults = await this.getRepository(entityManager).getByFilter(
       rest as IEntityFilterData<EntityType<T>>,
       entityManager,
     );
-    mainResponse[this.entityName] = response as ISearchV2Response[T];
+    mainResponse[this.entityName] = mainResults as ISearchV2Response[T];
 
     if (entities?.length && this.registryService) {
       await Promise.all(
@@ -146,6 +160,42 @@ export abstract class BaseService<
             mainResponse[name] = results;
           },
         ),
+      );
+    }
+
+    if (relations?.length && this.registryService) {
+      const config = this.getEntityConfig();
+      await Promise.all(
+        relations.map(async ({ name, columnKeys, orderBy, limit }) => {
+          const relationConfig = config[name];
+          if (!relationConfig || !mainResults.length) return;
+          const { mappingProperty, searchProperty } = relationConfig;
+          const fkValues = [
+            ...new Set(
+              mainResults
+                .map(
+                  (r) =>
+                    (r as unknown as Record<string, unknown>)[
+                      mappingProperty as string
+                    ],
+                )
+                .filter((v) => v != null),
+            ),
+          ];
+          if (!fkValues.length) return;
+          const results = await this.registryService.get(name).search(
+            {
+              [searchProperty as string]: fkValues,
+              ...(columnKeys?.length ? { columnKeys } : undefined),
+              ...(orderBy ? { orderBy } : undefined),
+              ...(limit ? { limit } : undefined),
+            },
+            currentUser,
+            entityManager,
+          );
+          // @ts-ignore
+          mainResponse[name] = results;
+        }),
       );
     }
 

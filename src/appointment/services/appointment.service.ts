@@ -14,7 +14,7 @@ import { IAppointmentCreated } from 'src/mail/templates/template-interfaces/appo
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
@@ -42,6 +42,12 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.APPOINTMENT> {
     return this.appointmentRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.APPOINTMENT>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createAppointment(

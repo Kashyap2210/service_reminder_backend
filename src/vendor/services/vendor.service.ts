@@ -15,7 +15,7 @@ import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.inte
 import { IVendorCreated } from 'src/mail/templates/template-interfaces/vendor-created.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { VendorCreateDto } from '../dtos/vendor.create.dto';
@@ -56,6 +56,12 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.VENDOR> {
     return this.vendorRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.VENDOR>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createVendor(

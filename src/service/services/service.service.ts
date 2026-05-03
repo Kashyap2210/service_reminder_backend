@@ -14,7 +14,7 @@ import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.inte
 import { IServiceCreated } from 'src/mail/templates/template-interfaces/service-created.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { ServiceCreateDto } from '../dtos/service.create.dto';
@@ -48,6 +48,12 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.SERVICE> {
     return this.serviceRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.SERVICE>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createService(
