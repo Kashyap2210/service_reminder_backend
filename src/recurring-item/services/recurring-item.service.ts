@@ -4,7 +4,7 @@ import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IRecurringItemEntity,
   IUserEntity,
 } from 'service_reminder_common';
@@ -149,7 +149,7 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [recurringItem.userId],

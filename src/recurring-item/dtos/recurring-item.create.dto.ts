@@ -6,7 +6,18 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, IRecurringItemCreateDto, IRecurringItemSearchDto, IUserEntity, Nullable, ServicePeriodUnit } from 'service_reminder_common';
+import {
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IEntityFilterSearchData,
+  IRecurringItemCreateDto,
+  IRecurringItemSearchDto,
+  IUserEntity,
+  Nullable,
+  ServicePeriodUnit,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class RecurringItemCreateDto implements IRecurringItemCreateDto {
@@ -138,7 +149,7 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
-    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [this.userId],

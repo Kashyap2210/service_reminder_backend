@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, ValidateNested } from 'class-validator';
-import { EntityList, IEntityFilterIncludeData } from 'service_reminder_common';
+import { EntityList, IEntityFilterSearchData } from 'service_reminder_common';
 
 export class EntityFilterIncludeDataDto {
   @IsEnum(EntityList)
@@ -24,5 +24,5 @@ export class BaseSearchDto {
   @IsOptional()
   @ValidateNested({ each: true }) // validates each object in the array
   @Type(() => EntityFilterIncludeDataDto) // class-transformer needs this to instantiate the class
-  entities?: IEntityFilterIncludeData<EntityList>[];
+  entities?: IEntityFilterSearchData<EntityList>[];
 }

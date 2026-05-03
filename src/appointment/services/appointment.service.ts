@@ -6,7 +6,7 @@ import {
   EntityList,
   EntityType,
   IAppointmentEntity,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IUserEntity,
 } from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
@@ -151,7 +151,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [appointment.userId],
@@ -159,7 +159,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       },
     };
 
-    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+    const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [appointment.vendorId],
@@ -167,7 +167,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       },
     };
 
-    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: {

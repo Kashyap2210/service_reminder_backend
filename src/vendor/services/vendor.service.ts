@@ -4,7 +4,7 @@ import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IUserEntity,
   IVendorEntity,
   IVendorRecurringItemMappingCreateDto,
@@ -236,7 +236,7 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [vendor.userId],

@@ -6,7 +6,18 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AppointmentType, EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, IServiceCreateDto, IServiceSearchDto, IUserEntity, Nullable } from 'service_reminder_common';
+import {
+  AppointmentType,
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IEntityFilterSearchData,
+  IServiceCreateDto,
+  IServiceSearchDto,
+  IUserEntity,
+  Nullable,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { IsValidDateCode } from 'src/shared/validators/dateCode.validator';
 
@@ -202,7 +213,7 @@ export class ServiceCreateDto implements IServiceCreateDto {
     const errors: IDtoValidationError[] = [];
 
     if (this.vendorId) {
-      //  const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
+      //  const vendorEntityIncludeRelations: IEntityFilterSearchData<EntityList.VENDOR> =
       //   {
       //     name: EntityList.VENDOR,
       //     include: { id: [this.vendorId], userId: [this.userId] },
@@ -218,7 +229,7 @@ export class ServiceCreateDto implements IServiceCreateDto {
       }
     }
 
-    //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    //  const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
     //   {
     //     name: EntityList.RECURRING_ITEM,
     //     include: { id: [this.recurringItemId], userId: [this.userId] },
@@ -325,25 +336,25 @@ export class ServiceCreateDto implements IServiceCreateDto {
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
-    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [this.userId],
       },
     };
 
-    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
-    const vendorIncludeData: IEntityFilterIncludeData<EntityList.VENDOR> = {
+    const vendorIncludeData: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: { id: [this.vendorId] },
     };
 
-    const serviceEntityIncludeData: IEntityFilterIncludeData<EntityList.SERVICE> =
+    const serviceEntityIncludeData: IEntityFilterSearchData<EntityList.SERVICE> =
       {
         name: EntityList.SERVICE,
         include: {
@@ -354,7 +365,7 @@ export class ServiceCreateDto implements IServiceCreateDto {
         },
       };
 
-    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterIncludeData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
       {
         name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
         include: {
@@ -374,7 +385,7 @@ export class ServiceCreateDto implements IServiceCreateDto {
     };
 
     if (this.appointmentId != null) {
-      const appointmentEntityIncludeData: IEntityFilterIncludeData<EntityList.APPOINTMENT> =
+      const appointmentEntityIncludeData: IEntityFilterSearchData<EntityList.APPOINTMENT> =
         {
           name: EntityList.APPOINTMENT,
           include: {

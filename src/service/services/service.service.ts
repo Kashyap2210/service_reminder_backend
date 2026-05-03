@@ -4,7 +4,7 @@ import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IServiceEntity,
   IUserEntity,
   ServiceModel,
@@ -156,7 +156,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [service.userId],
@@ -164,7 +164,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       },
     };
 
-    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+    const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [service.vendorId],
@@ -172,7 +172,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       },
     };
 
-    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: {

@@ -9,7 +9,20 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IEntityFilterIncludeData, INotificationCreateDto, INotificationPayload, INotificationSearchDto, IUserEntity, NotificationStatus, NotificationType, Nullable } from 'service_reminder_common';
+import {
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IEntityFilterSearchData,
+  INotificationCreateDto,
+  INotificationPayload,
+  INotificationSearchDto,
+  IUserEntity,
+  NotificationStatus,
+  NotificationType,
+  Nullable,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class NotificationPayloadDto implements INotificationPayload {
@@ -168,14 +181,14 @@ export class NotificationCreateDto implements INotificationCreateDto {
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
-    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [this.userId],
       },
     };
 
-    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: { id: [this.recurringItemId], userId: [this.userId] },
@@ -186,7 +199,7 @@ export class NotificationCreateDto implements INotificationCreateDto {
     };
 
     if (this.appointmentId != null) {
-      const appointmentEntityIncludeData: IEntityFilterIncludeData<EntityList.APPOINTMENT> =
+      const appointmentEntityIncludeData: IEntityFilterSearchData<EntityList.APPOINTMENT> =
         {
           name: EntityList.APPOINTMENT,
           include: {

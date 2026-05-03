@@ -86,5 +86,5 @@ export class AppointmentSearchDto
   //   ],
   // })
   // @IsOptional()
-  // entities?: IEntityFilterIncludeData<EntityList>[];
+  // entities?: IEntityFilterSearchData<EntityList>[];
 }

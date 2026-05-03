@@ -14,7 +14,7 @@ import {
   IAppointmentCreateDto,
   IAppointmentSearchDto,
   IDtoValidationError,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IUserEntity,
   Nullable,
 } from 'service_reminder_common';
@@ -156,7 +156,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   async validateUserId() {
     const errors: IDtoValidationError[] = [];
 
-    // const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    // const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
     //   name: EntityList.USER,
     //   include: {
     //     id: [this.userId],
@@ -178,7 +178,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   async validateCombineVendorIdRecurringItemId() {
     const errors: IDtoValidationError[] = [];
 
-    //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    //  const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
     //   {
     //     name: EntityList.RECURRING_ITEM,
     //     include: { id: [this.recurringItemId], userId: [this.userId] },
@@ -211,7 +211,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   // async validateRecurringItemId() {
   //   const errors: IDtoValidationError[] = [];
 
-  //   //  const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+  //   //  const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
   //   //   {
   //   //     name: EntityList.RECURRING_ITEM,
   //   //     include: { id: [this.recurringItemId], userId: [this.userId] },
@@ -260,20 +260,20 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
-    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [this.userId],
       },
     };
 
-    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: { id: [this.recurringItemId], userId: [this.userId] },
       };
 
-    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterIncludeData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+    const vendorRecurringItemMappingEntityIncludeData: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
       {
         name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
         include: {
@@ -293,7 +293,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     };
 
     if (this.vendorId) {
-      const vendorEntityIncludeRelations: IEntityFilterIncludeData<EntityList.VENDOR> =
+      const vendorEntityIncludeRelations: IEntityFilterSearchData<EntityList.VENDOR> =
         {
           name: EntityList.VENDOR,
           include: { id: [this.vendorId], userId: [this.userId] },
