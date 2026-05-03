@@ -4,7 +4,7 @@ import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IServiceEntity,
   IUserEntity,
   ServiceModel,
@@ -14,7 +14,7 @@ import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.inte
 import { IServiceCreated } from 'src/mail/templates/template-interfaces/service-created.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { ServiceCreateDto } from '../dtos/service.create.dto';
@@ -48,6 +48,12 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.SERVICE> {
     return this.serviceRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.SERVICE>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createService(
@@ -156,7 +162,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [service.userId],
@@ -164,7 +170,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       },
     };
 
-    const vendorEntityInclude: IEntityFilterIncludeData<EntityList.VENDOR> = {
+    const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [service.vendorId],
@@ -172,7 +178,7 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       },
     };
 
-    const recurringItemEntityInclude: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: {

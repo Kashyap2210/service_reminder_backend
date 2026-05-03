@@ -1,15 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  EntityList,
+  EntityType,
+  INotificationEntity,
+  IUserEntity,
+} from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
 import { NotificationCreateDto } from '../dtos/notification.create.dto';
 import { NotificationUpdateDto } from '../dtos/notification.update.dto';
 import { NotificationRepository } from '../repositories/notification.repository';
-import { NotificationCreateTransaction } from '../transactions/notification.create.transaction';
-import { NotificationUpdateTransaction } from '../transactions/notification.update.transaction';
 import { INotificationCreateTransactionInputData } from '../transactions/interfaces/notification-create-transaction.interface';
 import { INotificationUpdateTransactionInputData } from '../transactions/interfaces/notification-update-transaction.interface';
-import { EntityList, EntityType, INotificationEntity, IUserEntity } from 'service_reminder_common';
+import { NotificationCreateTransaction } from '../transactions/notification.create.transaction';
+import { NotificationUpdateTransaction } from '../transactions/notification.update.transaction';
 
 @Injectable()
 export class NotificationService extends BaseService<EntityList.NOTIFICATION> {
@@ -25,6 +30,12 @@ export class NotificationService extends BaseService<EntityList.NOTIFICATION> {
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.NOTIFICATION> {
     return this.notificationRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.NOTIFICATION>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createNotification(

@@ -12,7 +12,7 @@ import {
   EntityList,
   EntityType,
   IDtoValidationError,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IUserEntity,
   IVendorCreateDto,
   IVendorEntity,
@@ -201,14 +201,14 @@ export class VendorCreateDto implements IVendorCreateDto {
   async fetchDataForCombineValidation(
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
-    const userEntityIncludeData: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityIncludeData: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [this.userId],
       },
     };
 
-    const recurringItemEntityIncludeData: IEntityFilterIncludeData<EntityList.RECURRING_ITEM> =
+    const recurringItemEntityIncludeData: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
       {
         name: EntityList.RECURRING_ITEM,
         include: { id: this.recurringItemIds, userId: [this.userId] },

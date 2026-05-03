@@ -4,7 +4,7 @@ import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
-  IEntityFilterIncludeData,
+  IEntityFilterSearchData,
   IRecurringItemEntity,
   IUserEntity,
 } from 'service_reminder_common';
@@ -13,7 +13,7 @@ import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.inte
 import { IRecurringItemCreated } from 'src/mail/templates/template-interfaces/recurring-item-created.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { EntityManager } from 'typeorm';
 import { RecurringItemCreateDto } from '../dtos/recurring-item.create.dto';
@@ -47,6 +47,12 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.RECURRING_ITEM> {
     return this.recurringItemRepository;
+  }
+
+  getEntityConfig(): IEntityConfig<EntityType<EntityList.RECURRING_ITEM>> {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createRecurringItem(
@@ -149,7 +155,7 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    const userEntityInclude: IEntityFilterIncludeData<EntityList.USER> = {
+    const userEntityInclude: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
       include: {
         id: [recurringItem.userId],

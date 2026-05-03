@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
   EntityList,
+  EntityType,
   IUserEntity,
   IVendorRecurringItemMappingCreateDto,
 } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
-import { BaseService } from 'src/shared/services/base.service';
+import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EntityManager } from 'typeorm';
 import { VendorRecurringItemMappingRepository } from '../repositories/vendor-recurring-item-mapping.repository';
 
@@ -21,6 +22,14 @@ export class VendorRecurringItemMappingService extends BaseService<EntityList.VE
     entityManager?: EntityManager,
   ): EntityManagerBaseService<EntityList.VENDOR_RECURRING_ITEM_MAPPING> {
     return this.vendorRecurringItemMappingEntity;
+  }
+
+  getEntityConfig(): IEntityConfig<
+    EntityType<EntityList.VENDOR_RECURRING_ITEM_MAPPING>
+  > {
+    return {
+      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+    };
   }
 
   async createVendorRecurringItemMapping(
