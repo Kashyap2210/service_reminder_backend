@@ -62,6 +62,17 @@ export abstract class BaseService<
     return this.getRepository(entityManager).create(entity, entityManager);
   }
 
+  async createBulkBase(
+    currentUser: IUserEntity,
+    entities: EntityType<T>[],
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>[]> {
+    return this.getRepository(entityManager).createBulk(
+      entities,
+      entityManager,
+    );
+  }
+
   async updateByIdBase(
     id: number,
     dto: IEntityUpdateDto<EntityType<T>> & { updatedBy: number },
@@ -103,7 +114,7 @@ export abstract class BaseService<
 
   async searchV2(
     filter: IEntityFilterData<EntityType<T>>,
-    currentUser?: IUserEntity,
+    currentUser: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<ISearchV2Response> {
     const { entities, ...rest } = filter;

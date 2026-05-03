@@ -158,6 +158,14 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     return this.getRepository(entityManager).save(entity);
   }
 
+  // Create many entities
+  async createBulk(
+    entities: EntityType<T>[],
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>[]> {
+    return this.getRepository(entityManager).save(entities);
+  }
+
   // Update by id
   async updateById(
     id: number,
