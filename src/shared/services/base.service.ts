@@ -163,7 +163,7 @@ export abstract class BaseService<
       );
     }
 
-    if (relations?.length && this.registryService) {
+    if (relations?.length) {
       const config = this.getEntityConfig();
       await Promise.all(
         relations.map(async ({ name, columnKeys, orderBy, limit }) => {

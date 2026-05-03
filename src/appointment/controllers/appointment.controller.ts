@@ -89,9 +89,8 @@ export class AppointmentController {
   ) {
     const serachRes = await this.appointmentService.searchV2(dto, currentUser);
 
-    const searchResConverted = new EntityFilterDataHelper(
-      serachRes,
-    ).getEntityModelsMap();
+    const searchResConverted = new EntityFilterDataHelper(serachRes)
+      .entityModelsMap;
     console.log('searchResConverted', searchResConverted);
 
     return searchResConverted;
