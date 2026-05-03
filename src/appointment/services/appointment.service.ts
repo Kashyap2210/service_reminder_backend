@@ -46,6 +46,10 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
 
   getEntityConfig(): IEntityConfig<EntityType<EntityList.APPOINTMENT>> {
     return {
+      [EntityList.USER]: {
+        mappingProperty: 'userId',
+        searchProperty: 'id',
+      },
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
     };
   }
