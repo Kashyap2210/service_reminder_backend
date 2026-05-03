@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Service Reminder</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f5f5;
@@ -20,92 +16,31 @@
       margin: 0 auto;
       background-color: #ffffff;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       overflow: hidden;
     }
+
+    /* ── Header ── */
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 30px 20px;
       text-align: center;
     }
-    .header h1 {
-      font-size: 28px;
-      margin-bottom: 5px;
-    }
-    .header p {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-    .content {
-      padding: 30px 20px;
-    }
+    .header h1 { font-size: 28px; margin-bottom: 5px; }
+    .header p  { font-size: 14px; opacity: 0.9; }
+
+    /* ── Content ── */
+    .content { padding: 30px 20px; }
+
     .greeting {
       font-size: 16px;
       color: #333;
       margin-bottom: 20px;
       line-height: 1.6;
     }
-    .service-info {
-      background-color: #f9f9f9;
-      border-left: 4px solid #667eea;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 4px;
-    }
-    .service-info-item {
-      margin: 10px 0;
-      font-size: 14px;
-      color: #555;
-    }
-    .service-info-item strong {
-      color: #333;
-      display: inline-block;
-      width: 120px;
-    }
-    .appointment-details {
-      background-color: #f0f7ff;
-      border: 1px solid #d4e8ff;
-      border-radius: 6px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-    .appointment-details h3 {
-      color: #667eea;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 10px 0;
-      font-size: 14px;
-    }
-    .detail-label {
-      color: #666;
-      font-weight: 600;
-    }
-    .detail-value {
-      color: #333;
-      text-align: right;
-    }
-    .vendor-info {
-      margin: 20px 0;
-      font-size: 14px;
-      color: #555;
-    }
-    .vendor-info h4 {
-      color: #333;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-    .vendor-contact {
-      margin-left: 15px;
-      font-size: 13px;
-    }
-    .vendor-contact p {
-      margin: 5px 0;
-    }
+
+    /* ── Reminder blurb ── */
     .message {
       background-color: #fffbea;
       border: 1px solid #ffe082;
@@ -114,96 +49,154 @@
       margin: 20px 0;
       font-size: 14px;
       color: #856404;
+      line-height: 1.6;
     }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #667eea;
+      margin: 24px 0 10px 0;
+    }
+
+    /* ── Vendor table ── */
+    .vendor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .vendor-table thead tr {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+    .vendor-table thead th {
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .vendor-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+    .vendor-table tbody tr:nth-child(odd)  { background-color: #ffffff; }
+    .vendor-table tbody td {
+      padding: 9px 12px;
+      color: #444;
+      border-bottom: 1px solid #eee;
+    }
+    .vendor-table tbody td a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    /* ── Last service card ── */
+    .last-service {
+      background-color: #f9f9f9;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 8px 0 20px 0;
+    }
+    .last-service-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #555;
+      margin: 8px 0;
+    }
+    .last-service-item .label {
+      font-weight: 600;
+      color: #333;
+    }
+    .last-service-item .value { color: #444; }
+
+    /* ── Footer ── */
     .footer {
       text-align: center;
       padding: 20px;
       border-top: 1px solid #eee;
       font-size: 12px;
       color: #999;
-    }
-    .button {
-      display: inline-block;
-      background-color: #667eea;
-      color: white;
-      padding: 12px 30px;
-      text-decoration: none;
-      border-radius: 4px;
-      margin-top: 15px;
-      font-weight: 600;
-    }
-    .button:hover {
-      background-color: #5568d3;
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
   <div class="container">
+
+    <!-- ① Common header -->
     <div class="header">
       <h1>🔔 Service Reminder</h1>
-      <p>You have an upcoming service appointment</p>
+      <p>{{recurringItemName}} &middot; due in {{daysUntilDue}} day(s)</p>
     </div>
-    
+
     <div class="content">
+
+      <!-- ② Reminder blurb -->
       <div class="greeting">
-        <p>Hello <strong>{{userName}}</strong>,</p>
-        <p>This is a friendly reminder about your upcoming service appointment. Please find the details below.</p>
+        <p>Hey <strong>{{recipientName}}</strong>,</p>
       </div>
 
-      <div class="service-info">
-        <div class="service-info-item">
-          <strong>Service:</strong> {{serviceName}}
-        </div>
-        <div class="service-info-item">
-          <strong>Description:</strong> {{serviceDescription}}
-        </div>
-      </div>
-
-      <div class="appointment-details">
-        <h3>📅 Appointment Details</h3>
-        <div class="detail-row">
-          <span class="detail-label">Date:</span>
-          <span class="detail-value">{{appointmentDate}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Time:</span>
-          <span class="detail-value">{{appointmentTime}}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Vendor:</span>
-          <span class="detail-value">{{vendorName}}</span>
-        </div>
-      </div>
-
-      {{#if vendorContactEmail}}
-      <div class="vendor-info">
-        <h4>📞 Vendor Contact Information</h4>
-        <div class="vendor-contact">
-          {{#if vendorContactEmail}}
-          <p>📧 Email: <a href="mailto:{{vendorContactEmail}}">{{vendorContactEmail}}</a></p>
-          {{/if}}
-          {{#if vendorContactPhone}}
-          <p>📱 Phone: {{vendorContactPhone}}</p>
-          {{/if}}
-        </div>
-      </div>
-      {{/if}}
-
-      {{#if reminderMessage}}
       <div class="message">
-        {{reminderMessage}}
+        ⏰ Your <strong>{{recurringItemName}}</strong> is due on <strong>{{nextDueDate}}</strong> — that's just <strong>{{daysUntilDue}} day(s)</strong> away.
+        Please reach out to one of your registered vendors below and get your slot booked.
+      </div>
+
+      <!-- ③ Vendor list table -->
+      <div class="section-title">🏪 Registered Vendors</div>
+      <table class="vendor-table">
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each vendors}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{contactNo}}</td>
+            <td>
+              {{#if email}}
+                <a href="mailto:{{email}}">{{email}}</a>
+              {{else}}
+                —
+              {{/if}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <!-- ④ Last service details -->
+      {{#if lastServiceDate}}
+      <div class="section-title">🔧 Last Service</div>
+      <div class="last-service">
+        <div class="last-service-item">
+          <span class="label">Date</span>
+          <span class="value">{{lastServiceDate}}</span>
+        </div>
+        <div class="last-service-item">
+          <span class="label">Vendor</span>
+          <span class="value">{{lastServiceVendorName}}</span>
+        </div>
+        {{#if lastServiceAmount}}
+        <div class="last-service-item">
+          <span class="label">Amount Paid</span>
+          <span class="value">₹{{lastServiceAmount}}</span>
+        </div>
+        {{/if}}
       </div>
       {{/if}}
 
-      <p style="margin-top: 20px; font-size: 14px; color: #555;">
-        Please make sure to be available at the scheduled time. If you need to reschedule or have any questions, please contact the vendor directly.
-      </p>
     </div>
 
+    <!-- Footer -->
     <div class="footer">
       <p>© 2026 Service Reminder App. All rights reserved.</p>
       <p>This is an automated email. Please do not reply to this message.</p>
     </div>
+
   </div>
 </body>
 </html>
