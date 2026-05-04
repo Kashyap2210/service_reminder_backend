@@ -55,6 +55,10 @@ export class UserService extends BaseService<EntityList.USER> {
   getEntityConfig(): IEntityConfig<EntityType<EntityList.USER>> {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'id',
+        searchProperty: 'userId',
+      },
     };
   }
 

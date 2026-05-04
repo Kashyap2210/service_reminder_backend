@@ -29,6 +29,14 @@ export class VendorRecurringItemMappingService extends BaseService<EntityList.VE
   > {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.VENDOR]: {
+        mappingProperty: 'vendorId',
+        searchProperty: 'id',
+      },
+      [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'recurringItemId',
+        searchProperty: 'id',
+      },
     };
   }
 

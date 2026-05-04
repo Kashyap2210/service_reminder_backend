@@ -50,6 +50,10 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
         mappingProperty: 'userId',
         searchProperty: 'id',
       },
+      [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'recurringItemId',
+        searchProperty: 'id',
+      },
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
     };
   }

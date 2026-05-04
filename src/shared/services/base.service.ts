@@ -132,6 +132,7 @@ export abstract class BaseService<
     entityManager?: EntityManager,
   ): Promise<ISearchV2Response> {
     const { entities, relations, ...rest } = filter;
+    console.log('relations', relations);
     const mainResponse = {} as ISearchV2Response;
     const mainResults = await this.getRepository(entityManager).getByFilter(
       rest as IEntityFilterData<EntityType<T>>,
@@ -139,7 +140,7 @@ export abstract class BaseService<
     );
     mainResponse[this.entityName] = mainResults as ISearchV2Response[T];
 
-    if (entities?.length && this.registryService) {
+    if (entities?.length) {
       await Promise.all(
         entities.map(
           async ({
@@ -156,7 +157,7 @@ export abstract class BaseService<
                   ),
                 )
               : {};
-            const results = await this.registryService.get(name).search(
+            const results = await this.registryService.get(name).searchV2(
               {
                 ...cleanEntityFilter,
                 ...(columnKeys?.length ? { columnKeys } : undefined),
@@ -176,38 +177,52 @@ export abstract class BaseService<
 
     if (relations?.length) {
       const config = this.getEntityConfig();
-      await Promise.all(
-        relations.map(async ({ name, columnKeys, orderBy, limit }) => {
-          const relationConfig = config[name];
-          if (!relationConfig || !mainResults.length) return;
-          const { mappingProperty, searchProperty } = relationConfig;
-          const fkValues = [
-            ...new Set(
-              mainResults
-                .map(
-                  (r) =>
-                    (r as unknown as Record<string, unknown>)[
-                      mappingProperty as string
-                    ],
-                )
-                .filter((v) => v != null),
-            ),
-          ];
-          if (!fkValues.length) return;
-          const results = await this.registryService.get(name).search(
-            {
-              [searchProperty as string]: fkValues,
-              ...(columnKeys?.length ? { columnKeys } : undefined),
-              ...(orderBy ? { orderBy } : undefined),
-              ...(limit ? { limit } : undefined),
-            },
-            currentUser,
-            entityManager,
-          );
+      console.log('config', config);
+
+      for (const {
+        name,
+        columnKeys,
+        orderBy,
+        limit,
+        relations: nestedRelations,
+      } of relations) {
+        const relationConfig = config[name];
+        if (!relationConfig || !mainResults.length) continue;
+        const { mappingProperty, searchProperty } = relationConfig;
+        const fkValues = [
+          ...new Set(
+            mainResults
+              .map(
+                (r) =>
+                  (r as unknown as Record<string, unknown>)[
+                    mappingProperty as string
+                  ],
+              )
+              .filter((v) => v != null),
+          ),
+        ];
+        if (!fkValues.length) continue;
+
+        const nestedResponse = await this.registryService.get(name).searchV2(
+          {
+            [searchProperty as string]: fkValues,
+            ...(columnKeys?.length ? { columnKeys } : undefined),
+            ...(orderBy ? { orderBy } : undefined),
+            ...(limit ? { limit } : undefined),
+            ...(nestedRelations?.length
+              ? { relations: nestedRelations }
+              : undefined),
+          },
+          currentUser,
+          entityManager,
+        );
+
+        // always merge — never assign directly
+        for (const [key, value] of Object.entries(nestedResponse)) {
           // @ts-ignore
-          mainResponse[name] = results;
-        }),
-      );
+          mainResponse[key as EntityList] = value;
+        }
+      }
     }
 
     return mainResponse;

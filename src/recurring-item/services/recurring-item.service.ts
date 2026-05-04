@@ -52,6 +52,19 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
   getEntityConfig(): IEntityConfig<EntityType<EntityList.RECURRING_ITEM>> {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.USER]: { mappingProperty: 'userId', searchProperty: 'id' },
+      [EntityList.VENDOR_RECURRING_ITEM_MAPPING]: {
+        mappingProperty: 'id',
+        searchProperty: 'recurringItemId',
+      },
+      [EntityList.APPOINTMENT]: {
+        mappingProperty: 'id',
+        searchProperty: 'recurringItemId',
+      },
+      [EntityList.SERVICE]: {
+        mappingProperty: 'id',
+        searchProperty: 'recurringItemId',
+      },
     };
   }
 

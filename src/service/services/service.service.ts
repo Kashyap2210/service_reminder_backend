@@ -53,6 +53,22 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
   getEntityConfig(): IEntityConfig<EntityType<EntityList.SERVICE>> {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'recurringItemId',
+        searchProperty: 'id',
+      },
+      [EntityList.APPOINTMENT]: {
+        mappingProperty: 'appointmentId',
+        searchProperty: 'id',
+      },
+      [EntityList.USER]: {
+        mappingProperty: 'userId',
+        searchProperty: 'id',
+      },
+      [EntityList.VENDOR]: {
+        mappingProperty: 'vendorId',
+        searchProperty: 'id',
+      },
     };
   }
 

@@ -61,6 +61,14 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
   getEntityConfig(): IEntityConfig<EntityType<EntityList.VENDOR>> {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.VENDOR_RECURRING_ITEM_MAPPING]: {
+        mappingProperty: 'id',
+        searchProperty: 'vendorId',
+      },
+      [EntityList.USER]: {
+        mappingProperty: 'userId',
+        searchProperty: 'id',
+      },
     };
   }
 

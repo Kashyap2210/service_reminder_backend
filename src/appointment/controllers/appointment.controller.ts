@@ -87,11 +87,35 @@ export class AppointmentController {
     @Body() dto: AppointmentSearchDto,
     @CurrentUser() currentUser: IUserEntity,
   ) {
+    // {
+    //   "relations": [
+    //     {
+    //       "name": "user",
+    //       "relations": [
+    //         {
+    //           "name": "recurring_item",
+    //           "relations": [
+    //             { "name": "vendor_recurring_item_mapping", "relations": [{"name": "vendor"}] },
+    //             { "name": "appointment" },
+    //             { "name": "service" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // }
+    console.log(dto);
     const serachRes = await this.appointmentService.searchV2(dto, currentUser);
-
+    console.log('searchRes', serachRes);
     const searchResConverted = new EntityFilterDataHelper(serachRes);
     // .entityModelsMap;
-    searchResConverted.populateRelationsFor([EntityList.APPOINTMENT]);
+    searchResConverted.populateRelationsFor([
+      EntityList.APPOINTMENT,
+      EntityList.RECURRING_ITEM,
+      EntityList.USER,
+      EntityList.SERVICE,
+      EntityList.VENDOR,
+    ]);
     console.log('searchResConverted', searchResConverted.entityModelsMap);
 
     return searchResConverted;
