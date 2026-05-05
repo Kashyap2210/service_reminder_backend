@@ -70,14 +70,14 @@ export class MailService {
     // );
 
     try {
-      // console.log(this.envVariablesConfig.getEnviornment() === 'development');
-      // console.log(this.envVariablesConfig.mailTo);
-      // console.log(fromEmail);
-      // console.log(
-      //   this.envVariablesConfig.getEnviornment() === 'development'
-      //     ? [this.envVariablesConfig.mailTo]
-      //     : toEmail,
-      // );
+      console.log(this.envVariablesConfig.getEnviornment() === 'development');
+      console.log(this.envVariablesConfig.mailTo);
+      console.log(fromEmail);
+      console.log(
+        this.envVariablesConfig.getEnviornment() === 'development'
+          ? [this.envVariablesConfig.mailTo]
+          : toEmail,
+      );
 
       const response = await this.mailerService.sendMail({
         to:
@@ -85,7 +85,8 @@ export class MailService {
             ? [this.envVariablesConfig.mailTo]
             : toEmail,
         // toEmail,
-        from: fromEmail,
+        // from: fromEmail,
+        from: this.envVariablesConfig.mailFrom,
         subject,
         html,
       });

@@ -11,6 +11,7 @@ import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
 import { NotificationDBEntites } from '../cronjobs/notification-cronjob';
+import { SendServiceReminderNotifications } from '../cronjobs/send-notification-cronjob';
 import { CronJobCreateDto } from '../dtos/cronjob.create.dto';
 import { CronJobUpdateDto } from '../dtos/cronjob.update.dto';
 import { CronJobRepository } from '../repositories/cronjob.repository';
@@ -27,6 +28,9 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     private readonly cronJobRepository: CronJobRepository,
     private readonly cronJobCreateTransaction: CronJobCreateTransaction,
     private readonly cronJobUpdateTransaction: CronJobUpdateTransaction,
+
+    // private readonly mailService: MailService,
+    private readonly sendServiceReminderNotifications: SendServiceReminderNotifications, // ← inject
   ) {
     super(EntityList.CRONJOB);
   }
@@ -47,7 +51,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     };
   }
 
-  @Cron('* * * * *') // every 1 minute for testing
+  @Cron('0-58/2 * * * *') // even minutes (0, 2, 4, 6, 8...)
   async runNotificationJob() {
     this.logger.log('[runNotificationJob] Cron triggered');
     const currentUser = await this.userService.getSystemUser();
@@ -55,6 +59,15 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
       this.registryService,
       currentUser,
     ).prepareNotificationEntities();
+  }
+
+  @Cron('1-59/2 * * * *') // odd minutes (1, 3, 5, 7, 9...)
+  async runSendNotificationsJob() {
+    this.logger.log('[runSendNotificationsJob] Cron triggered');
+    const currentUser = await this.userService.getSystemUser();
+    await this.sendServiceReminderNotifications.processAndSendNotifications(
+      currentUser,
+    );
   }
 
   async createCronJob(
