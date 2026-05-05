@@ -5,8 +5,16 @@ export interface IServiceReminderTemplateData {
   recurringItemName: string; // ← was serviceName
   daysUntilDue: number;
   nextDueDate: string;
-  vendors: { name: string; contactNo: string; email: string | null }[];
+  vendors: {
+    vendorId: number;
+    name: string;
+    contactNo: string;
+    email: string | null;
+  }[];
   lastServiceDate: Nullable<number>;
   lastServiceVendorName: string | null;
   lastServiceAmount: number | null;
+  baseUrl: string;
+  recurringItemId: number;
+  userId: number;
 }

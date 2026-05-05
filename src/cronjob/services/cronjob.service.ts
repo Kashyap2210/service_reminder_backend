@@ -31,6 +31,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
 
     // private readonly mailService: MailService,
     private readonly sendServiceReminderNotifications: SendServiceReminderNotifications, // ← inject
+    private readonly notificationDBEntities: NotificationDBEntites, // ← inject
   ) {
     super(EntityList.CRONJOB);
   }
@@ -55,10 +56,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
   async runNotificationJob() {
     this.logger.log('[runNotificationJob] Cron triggered');
     const currentUser = await this.userService.getSystemUser();
-    await new NotificationDBEntites(
-      this.registryService,
-      currentUser,
-    ).prepareNotificationEntities();
+    await this.notificationDBEntities.prepareNotificationEntities();
   }
 
   @Cron('1-59/2 * * * *') // odd minutes (1, 3, 5, 7, 9...)

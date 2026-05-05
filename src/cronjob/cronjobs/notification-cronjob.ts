@@ -16,23 +16,34 @@ import {
 import { IServiceReminderTemplateData } from 'src/mail/templates/template-interfaces/service-reminder.interface';
 import { NotificationService } from 'src/notification/services/notification.service';
 import { RecurringItemService } from 'src/recurring-item/services/recurring-item.service';
+import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
 import { RegistryService } from 'src/shared/services/registry.service';
+import { UserService } from 'src/user/services/user.service';
 import { VendorRecurringItemMappingService } from 'src/vendor/services/vendor-recurring-item-mapping.service';
 import { VendorService } from 'src/vendor/services/vendor.service';
 import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class NotificationDBEntites {
+  private currentUser: IUserEntity;
   constructor(
     private readonly registryService: RegistryService,
-    private readonly currentUser: IUserEntity,
+    private readonly envVariablesConfig: EnvVariablesConfig,
     private readonly entityManager?: EntityManager,
   ) {}
+
+  async getSystemUser() {
+    return await this.userService.getSystemUser();
+  }
 
   get recurringItemService(): RecurringItemService {
     return this.registryService.get(
       EntityList.RECURRING_ITEM,
     ) as RecurringItemService;
+  }
+
+  get userService(): UserService {
+    return this.registryService.get(EntityList.USER) as UserService;
   }
 
   get vendorRecurringItemMappingService(): VendorRecurringItemMappingService {
@@ -52,6 +63,7 @@ export class NotificationDBEntites {
   }
 
   async prepareNotificationEntities() {
+    this.currentUser = await this.getSystemUser();
     // we will bring all the recurring items
     // we will bring all the service entities
     const userIncludeRelations: IEntityFilterSearchData<EntityList.USER> = {
@@ -179,13 +191,11 @@ export class NotificationDBEntites {
     // );
 
     // AFTER
-    const nextDueDate = new DateCodeUtils(
-      this.getNextDueDate(
-        latestService.serviceDate,
-        item.servicePeriod,
-        item.servicePeriodUnit,
-      ),
-    ).toLongDateString();
+    const nextDueDate = this.getNextDueDate(
+      latestService.serviceDate,
+      item.servicePeriod,
+      item.servicePeriodUnit,
+    );
 
     const daysUntilDue = DateCodeUtils.daysDiff(nextDueDate);
 
@@ -200,9 +210,10 @@ export class NotificationDBEntites {
       recipientName: item[EntityList.USER]?.name ?? 'User',
       recurringItemName: item.name,
       daysUntilDue,
-      nextDueDate,
+      nextDueDate: new DateCodeUtils(nextDueDate).toLongDateString(),
 
       vendors: vendors.map((vendor) => ({
+        vendorId: vendor.id,
         name: vendor.name,
         contactNo: vendor.contactNo,
         email: vendor.email,
@@ -211,6 +222,10 @@ export class NotificationDBEntites {
       lastServiceDate: latestService.serviceDate,
       lastServiceVendorName: lastVendor?.name ?? 'Unknown',
       lastServiceAmount: latestService.serviceAmount,
+
+      baseUrl: this.envVariablesConfig.baseUrl,
+      recurringItemId: item.id,
+      userId: item.userId,
     };
   }
 

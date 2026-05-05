@@ -6,6 +6,7 @@ import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.ser
 import { SharedModule } from 'src/shared/shared.module';
 import { UserModule } from 'src/user/user.module';
 import { CronJobController } from './controllers/cronjob.controller';
+import { NotificationDBEntites } from './cronjobs/notification-cronjob';
 import { SendServiceReminderNotifications } from './cronjobs/send-notification-cronjob';
 import { CronJobEntity } from './entities/cronjob.entity';
 import { CronJobRepository } from './repositories/cronjob.repository';
@@ -26,6 +27,7 @@ import { CronJobUpdateTransaction } from './transactions/cronjob.update.transact
     CronJobCreateTransaction,
     CronJobUpdateTransaction,
     MailService,
+    NotificationDBEntites,
     SendServiceReminderNotifications,
     EnvVariablesConfig,
   ],
