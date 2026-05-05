@@ -116,7 +116,10 @@ export class AppointmentController {
       EntityList.SERVICE,
       EntityList.VENDOR,
     ]);
-    console.log('searchResConverted', searchResConverted.entityModelsMap);
+    console.log(
+      'searchResConverted',
+      searchResConverted.entityModelsMap[EntityList.SERVICE],
+    );
 
     return searchResConverted;
   }

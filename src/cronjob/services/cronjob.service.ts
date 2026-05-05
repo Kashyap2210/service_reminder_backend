@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import {
   EntityList,
   EntityType,
@@ -7,7 +8,9 @@ import {
 } from 'service_reminder_common';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
+import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
+import { NotificationDBEntites } from '../cronjobs/notification-cronjob';
 import { CronJobCreateDto } from '../dtos/cronjob.create.dto';
 import { CronJobUpdateDto } from '../dtos/cronjob.update.dto';
 import { CronJobRepository } from '../repositories/cronjob.repository';
@@ -18,12 +21,18 @@ import { ICronJobUpdateTransactionInputData } from '../transactions/interfaces/c
 
 @Injectable()
 export class CronJobService extends BaseService<EntityList.CRONJOB> {
+  private readonly logger = new Logger(CronJobService.name);
+
   constructor(
     private readonly cronJobRepository: CronJobRepository,
     private readonly cronJobCreateTransaction: CronJobCreateTransaction,
     private readonly cronJobUpdateTransaction: CronJobUpdateTransaction,
   ) {
     super(EntityList.CRONJOB);
+  }
+
+  get userService(): UserService {
+    return this.registryService.get(EntityList.USER) as UserService;
   }
 
   getRepository(
@@ -36,6 +45,16 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     return {
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
     };
+  }
+
+  @Cron('* * * * *') // every 1 minute for testing
+  async runNotificationJob() {
+    this.logger.log('[runNotificationJob] Cron triggered');
+    const currentUser = await this.userService.getSystemUser();
+    await new NotificationDBEntites(
+      this.registryService,
+      currentUser,
+    ).prepareNotificationEntities();
   }
 
   async createCronJob(
