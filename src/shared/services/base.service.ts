@@ -169,7 +169,10 @@ export abstract class BaseService<
             );
 
             // @ts-ignore — runtime type is correct, TS can't narrow through Map<EntityList, BaseService<EntityList>>
-            mainResponse[name] = results;
+            for (const [key, value] of Object.entries(results)) {
+              // @ts-ignore
+              mainResponse[key as EntityList] = value;
+            }
           },
         ),
       );
