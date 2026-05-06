@@ -162,9 +162,9 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     //     id: [this.userId],
     //   },
     // };
-    const existingUserId = this.validationData.getEntityFromList(
-      EntityList.USER,
-    );
+    console.log('this.validationData', this.validationData);
+    const existingUserId = this.validationData.entityModelsMap[EntityList.USER];
+    console.log('existingUserId', existingUserId);
     if (existingUserId.length === 0) {
       errors.push({
         key: 'userId',

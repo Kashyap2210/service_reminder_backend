@@ -9,6 +9,7 @@ export class EnvVariablesConfig {
   private readonly _mailPassword: string;
   private readonly _mailFrom: string;
   private readonly _mailTo: string;
+  private readonly _baseUrl: string;
 
   constructor(private readonly configService: ConfigService) {
     this._mailHost = this.getOrThrow('MAIL_HOST');
@@ -17,6 +18,7 @@ export class EnvVariablesConfig {
     this._mailPassword = this.getOrThrow('MAIL_PASSWORD');
     this._mailFrom = this.getOrThrow('MAIL_FROM');
     this._mailTo = this.getOrThrow('MAIL_TO');
+    this._baseUrl = this.getOrThrow('APP_BASE_URL');
 
     // Optional: validate port
     if (isNaN(this._mailPort)) {
@@ -67,5 +69,9 @@ export class EnvVariablesConfig {
 
   get mailTo(): string {
     return this._mailTo;
+  }
+
+  get baseUrl(): string {
+    return this._baseUrl;
   }
 }

@@ -16,6 +16,7 @@ import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
+import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
@@ -31,6 +32,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     private readonly appointmentRepository: AppointmentRepository,
     private readonly mailService: MailService,
     private readonly envVariablesConfig: EnvVariablesConfig,
+    private readonly userService: UserService,
 
     private readonly appointmentCreateTransaction: AppointmentCreateTransaction,
     private readonly appointmentUpdateTransaction: AppointmentUpdateTransaction,
@@ -48,6 +50,10 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     return {
       [EntityList.USER]: {
         mappingProperty: 'userId',
+        searchProperty: 'id',
+      },
+      [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'recurringItemId',
         searchProperty: 'id',
       },
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
@@ -73,6 +79,17 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
     };
 
     return this.appointmentCreateTransaction.run(data);
+  }
+
+  async bookFromEmail(dto: AppointmentCreateDto): Promise<void> {
+    try {
+      const currentUser = await this.userService.getSystemUser();
+      currentUser.id = dto.userId;
+      await this.createAppointment(currentUser, dto);
+    } catch (error) {
+      console.error('bookFromEmail error:', error);
+      throw error;
+    }
   }
 
   async updateAppointment(

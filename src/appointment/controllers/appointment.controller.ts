@@ -2,13 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
+  Header,
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  AppointmentType,
   EntityFilterDataHelper,
   EntityList,
   IAppointmentEntity,
@@ -23,6 +27,11 @@ import {
   SearchAppointmentsSwagger,
   UpdateAppointmentSwagger,
 } from '../appointment.swagger';
+import {
+  bookAppointmentErrorPage,
+  bookAppointmentFromReminderMail,
+  bookAppointmentSuccessPage,
+} from '../browser-templates/appointment-booking.template';
 import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentSearchDto } from '../dtos/appointment.search.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
@@ -87,13 +96,96 @@ export class AppointmentController {
     @Body() dto: AppointmentSearchDto,
     @CurrentUser() currentUser: IUserEntity,
   ) {
+    // {
+    //   "relations": [
+    //     {
+    //       "name": "user",
+    //       "relations": [
+    //         {
+    //           "name": "recurring_item",
+    //           "relations": [
+    //             { "name": "vendor_recurring_item_mapping", "relations": [{"name": "vendor"}] },
+    //             { "name": "appointment" },
+    //             { "name": "service" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // }
+    console.log(dto);
     const serachRes = await this.appointmentService.searchV2(dto, currentUser);
-
+    console.log('searchRes', serachRes);
     const searchResConverted = new EntityFilterDataHelper(serachRes);
     // .entityModelsMap;
-    searchResConverted.populateRelationsFor([EntityList.APPOINTMENT]);
-    console.log('searchResConverted', searchResConverted.entityModelsMap);
+    searchResConverted.populateRelationsFor([
+      EntityList.APPOINTMENT,
+      EntityList.RECURRING_ITEM,
+      EntityList.USER,
+      EntityList.SERVICE,
+      EntityList.VENDOR,
+    ]);
+    console.log(
+      'searchResConverted',
+      searchResConverted.entityModelsMap[EntityList.SERVICE],
+    );
 
     return searchResConverted;
+  }
+
+  @Get('book-page')
+  @Header('Content-Type', 'text/html')
+  async bookPage(@Query() query: any): Promise<string> {
+    const vendorId = Number(query.vendorId ?? '');
+    const recurringItemId = Number(query.recurringItemId ?? '');
+    const userId = Number(query.userId ?? '');
+    const vendorName = String(query.vendorName ?? '');
+    const recurringItemName = String(query.recurringItemName ?? '');
+
+    return bookAppointmentFromReminderMail({
+      vendorId,
+      vendorName,
+      recurringItemId,
+      userId,
+      recurringItemName,
+    });
+  }
+
+  @Post('book')
+  @Header('Content-Type', 'text/html')
+  async book(@Body() body: any): Promise<string> {
+    try {
+      if (!body?.appointmentDate) {
+        throw new Error('Appointment date is required.');
+      }
+
+      const dto = new AppointmentCreateDto();
+      dto.vendorId = Number(body.vendorId);
+      dto.recurringItemId = Number(body.recurringItemId);
+      dto.userId = Number(body.userId);
+      dto.appointmentDate = Number(
+        String(body.appointmentDate).replace(/-/g, ''),
+      );
+      dto.checkPoints = body.checkPoints ? String(body.checkPoints) : null;
+      dto.appointmentType = AppointmentType.SERVICE;
+
+      await this.appointmentService.bookFromEmail(dto);
+
+      return bookAppointmentSuccessPage();
+    } catch (error: any) {
+      console.log('error', error);
+      const message =
+        error?.message ?? 'Unable to book the appointment at this time.';
+      return bookAppointmentErrorPage(message);
+    }
+  }
+
+  private escapeHtml(value: string): string {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

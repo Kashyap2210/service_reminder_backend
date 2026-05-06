@@ -85,7 +85,8 @@ export class MailService {
             ? [this.envVariablesConfig.mailTo]
             : toEmail,
         // toEmail,
-        from: fromEmail,
+        // from: fromEmail,
+        from: this.envVariablesConfig.mailFrom,
         subject,
         html,
       });

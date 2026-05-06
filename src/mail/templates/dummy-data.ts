@@ -10,19 +10,28 @@ import { IVendorCreated } from './template-interfaces/vendor-created.interface';
 //   [EmailTemplate.USER_SIGNUP]: IUserSignUp;
 // };
 
+
 export const dummyData = {
   [EmailTemplate.SERVICE_REMINDER]: {
-    userName: 'John Doe',
-    serviceName: 'Annual Car Service',
-    serviceDescription:
-      'Comprehensive vehicle maintenance including oil change, filter replacement, and inspection',
-    appointmentDate: 'May 15, 2026',
-    appointmentTime: '10:00 AM',
-    vendorName: 'Premium Auto Services',
-    vendorContactEmail: 'contact@premiumauto.com',
-    vendorContactPhone: '+1 (555) 123-4567',
-    reminderMessage:
-      'Please arrive 5-10 minutes early to check in. Bring your vehicle keys and ownership documents.',
+    recipientName: 'John Doe',
+    recurringItemName: 'Annual Car Service',
+    daysUntilDue: 7,
+    nextDueDate: 'May 10, 2026',
+    vendors: [
+      {
+        name: 'Premium Auto Services',
+        contactNo: '+1 (555) 123-4567',
+        email: 'contact@premiumauto.com',
+      },
+      {
+        name: 'Quick Fix Garage',
+        contactNo: '+1 (555) 987-6543',
+        email: null,
+      },
+    ],
+    lastServiceDate: 'Nov 10, 2025',
+    lastServiceVendorName: 'Premium Auto Services',
+    lastServiceAmount: 4500,
   },
   [EmailTemplate.USER_SIGNUP]: {
     name: 'John Doe',

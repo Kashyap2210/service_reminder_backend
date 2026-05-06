@@ -1,11 +1,20 @@
-export interface ServiceReminderData {
-  userName: string;
-  serviceName: string;
-  serviceDescription: string;
-  appointmentDate: string;
-  appointmentTime: string;
-  vendorName: string;
-  vendorContactEmail?: string;
-  vendorContactPhone?: string;
-  reminderMessage?: string;
+import { Nullable } from 'service_reminder_common';
+
+export interface IServiceReminderTemplateData {
+  recipientName: string;
+  recurringItemName: string; // ← was serviceName
+  daysUntilDue: number;
+  nextDueDate: string;
+  vendors: {
+    vendorId: number;
+    name: string;
+    contactNo: string;
+    email: string | null;
+  }[];
+  lastServiceDate: Nullable<number>;
+  lastServiceVendorName: string | null;
+  lastServiceAmount: number | null;
+  baseUrl: string;
+  recurringItemId: number;
+  userId: number;
 }

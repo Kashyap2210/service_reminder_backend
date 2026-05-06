@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'dotenv/config';
+import * as express from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -41,6 +42,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000; // fallback to 3000 if not set
   await app.listen(port);
+  app.use(express.urlencoded({ extended: true }));
+
   console.log(`Server running on: http://localhost:${port}`);
   console.log(`Swagger docs at:   http://localhost:${port}/api/docs`);
 }
