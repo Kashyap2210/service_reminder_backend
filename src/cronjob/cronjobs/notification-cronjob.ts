@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  AppointmentType,
   DateCodeUtils,
   EntityFilterDataHelper,
   EntityList,
@@ -75,6 +76,9 @@ export class NotificationDBEntites {
         name: EntityList.SERVICE,
         orderBy: {
           serviceDate: OrderByDirection.DESC,
+        },
+        include: {
+          serviceType: [AppointmentType.SERVICE],
         },
       };
 
