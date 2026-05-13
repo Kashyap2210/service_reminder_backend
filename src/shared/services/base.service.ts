@@ -230,4 +230,17 @@ export abstract class BaseService<
 
     return mainResponse;
   }
+
+  async updateBulkBase(
+    entities: (IEntityUpdateDto<EntityType<T>> & {
+      id: number;
+      updatedBy?: number;
+    })[],
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>[]> {
+    return this.getRepository(entityManager).updateBulk(
+      entities,
+      entityManager,
+    );
+  }
 }

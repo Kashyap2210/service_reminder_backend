@@ -21,6 +21,8 @@ import {
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';
+import { UserService } from 'src/user/services/user.service';
+import { VendorService } from 'src/vendor/services/vendor.service';
 import {
   CreateAppointmentSwagger,
   DeleteAppointmentSwagger,
@@ -36,6 +38,7 @@ import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentSearchDto } from '../dtos/appointment.search.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
 import { AppointmentService } from '../services/appointment.service';
+// import { manageAppointmentPage } from '../templates/manage-appointment.page';
 
 @ApiTags(EntityList.APPOINTMENT)
 @Controller(EntityList.APPOINTMENT)
@@ -46,6 +49,14 @@ export class AppointmentController {
     return this.registryService.get(
       EntityList.APPOINTMENT,
     ) as AppointmentService;
+  }
+
+  get vendorService(): VendorService {
+    return this.registryService.get(EntityList.VENDOR) as VendorService;
+  }
+
+  get userService(): UserService {
+    return this.registryService.get(EntityList.USER) as UserService;
   }
 
   @Post()
@@ -150,6 +161,41 @@ export class AppointmentController {
       recurringItemName,
     });
   }
+
+  // @Get('manage-page')
+  // @Header('Content-Type', 'text/html')
+  // async managePage(@Query() query: any): Promise<string> {
+  //   const appointmentId = Number(query.appointmentId ?? '');
+  //   const userId = Number(query.userId ?? '');
+  //   const vendorId = Number(query.vendorId ?? '');
+  //   const recurringItemId = Number(query.recurringItemId ?? '');
+  //   const appointmentDate = Number(query.appointmentDate ?? '');
+
+  //   const systemUser = await this.userService.getSystemUser();
+  //   const appointments = await this.appointmentService.search(
+  //     { id: [appointmentId] },
+  //     systemUser,
+  //   );
+  //   const appointment = appointments[0];
+
+  //   if (!appointment) {
+  //     return `<!DOCTYPE html><html><body><h1>Appointment not found</h1></body></html>`;
+  //   }
+
+  //   const vendors = await this.vendorService.search({}, systemUser);
+
+  //   return manageAppointmentPage({
+  //     appointmentId: appointment.id,
+  //     userId,
+  //     vendorId: appointment.vendorId,
+  //     recurringItemId: appointment.recurringItemId,
+  //     appointmentDate: appointment.appointmentDate,
+  //     appointmentType: appointment.appointmentType,
+  //     appointmentStatus: appointment.appointmentStatus,
+  //     checkPoints: appointment.checkPoints,
+  //     vendors: vendors.map((vendor) => ({ id: vendor.id, name: vendor.name })),
+  //   });
+  // }
 
   @Post('book')
   @Header('Content-Type', 'text/html')

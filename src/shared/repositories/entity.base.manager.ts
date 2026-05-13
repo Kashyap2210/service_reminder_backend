@@ -183,6 +183,125 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     return updated[0];
   }
 
+  async updateBulk(
+    entities: (IEntityUpdateDto<EntityType<T>> & {
+      id: number;
+      updatedBy?: number;
+    })[],
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>[]> {
+    if (!entities.length) {
+      return [];
+    }
+
+    const repository = this.getRepository(entityManager);
+
+    const primaryColumn = repository.metadata.primaryColumns[0];
+
+    if (!primaryColumn) {
+      throw new BadRequestException({
+        key: 'primaryColumn',
+        message: 'Primary column not found',
+      });
+    }
+
+    const primaryPropertyName = primaryColumn.propertyName;
+
+    const primaryDatabaseName = primaryColumn.databaseName;
+
+    // validate ids
+    const ids = entities.map(
+      (entity) => entity[primaryPropertyName],
+    ) as number[];
+
+    // valid columns from metadata
+    const validColumns = new Set(
+      repository.metadata.columns.map((column) => column.propertyName),
+    );
+
+    // collect update columns
+    const updateColumns = new Set<string>();
+
+    for (const entity of entities) {
+      for (const key of Object.keys(entity)) {
+        if (key !== primaryPropertyName && validColumns.has(key)) {
+          updateColumns.add(key);
+        }
+      }
+    }
+
+    if (!updateColumns.size) {
+      return [];
+    }
+
+    const updatePayload: Record<string, () => string> = {};
+
+    for (const column of updateColumns) {
+      const columnMetadata = repository.metadata.columns.find(
+        (c) => c.propertyName === column,
+      );
+
+      if (!columnMetadata) continue;
+
+      const dbColumnName = columnMetadata.databaseName;
+
+      const cases: string[] = [];
+
+      for (const entity of entities) {
+        const value = entity[column as keyof typeof entity];
+
+        if (value === undefined) continue;
+
+        let formattedValue: string;
+
+        if (value === null) {
+          formattedValue = 'NULL';
+        } else if (typeof value === 'number') {
+          formattedValue = `${value}`;
+        } else if (typeof value === 'boolean') {
+          formattedValue = value ? '1' : '0';
+        } else if (value instanceof Date) {
+          formattedValue = `'${value
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' ')}'`;
+        } else {
+          formattedValue = `'${String(value).replace(/'/g, "''")}'`;
+        }
+
+        const entityId = entity[primaryPropertyName as keyof typeof entity];
+
+        cases.push(`
+        WHEN ${primaryDatabaseName} = ${entityId}
+        THEN ${formattedValue}
+      `);
+      }
+
+      if (!cases.length) continue;
+
+      updatePayload[column] = () => `
+      CASE
+        ${cases.join('\n')}
+        ELSE \`${dbColumnName}\`
+      END
+    `;
+    }
+
+    await repository
+      .createQueryBuilder()
+      .update(this.getEntityClass())
+      .set(updatePayload)
+      .where(`\`${primaryDatabaseName}\` IN (:...ids)`, { ids })
+      .execute();
+
+    return this.getByFilter(
+      {
+        [primaryPropertyName]: ids,
+      } as IEntityFilterData<EntityType<T>>,
+      entityManager,
+    );
+  }
+
   // Delete by id
   async deleteById(
     id: number,

@@ -6,6 +6,7 @@ import {
   ICronJobEntity,
   IUserEntity,
 } from 'service_reminder_common';
+import { AppointmentNoShowCronJob } from 'src/appointment/cron/appointment-no-show.cron';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
 import { BaseService, IEntityConfig } from 'src/shared/services/base.service';
 import { UserService } from 'src/user/services/user.service';
@@ -32,6 +33,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     // private readonly mailService: MailService,
     private readonly sendServiceReminderNotifications: SendServiceReminderNotifications, // ← inject
     private readonly notificationDBEntities: NotificationDBEntites, // ← inject
+    private readonly appointmentNoShowCronJob: AppointmentNoShowCronJob,
   ) {
     super(EntityList.CRONJOB);
   }
@@ -66,6 +68,13 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     await this.sendServiceReminderNotifications.processAndSendNotifications(
       currentUser,
     );
+  }
+
+  @Cron('0 0 10 * *')
+  async runNoShowAppointmentCronJob() {
+    this.logger.log('[runNoShowAppointmentCronJob] Cron triggered');
+    const currentUser = await this.userService.getSystemUser();
+    await this.appointmentNoShowCronJob.updateNoShowCronJobBulk(currentUser);
   }
 
   async createCronJob(
