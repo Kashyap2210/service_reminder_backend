@@ -9,17 +9,12 @@ import { RegistryService } from 'src/shared/services/registry.service';
 import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
 import { AppointmentService } from '../services/appointment.service';
-import { AppointmentBulkUpdateTransaction } from '../transactions/appointment.update.transaction';
 
 @Injectable()
 export class AppointmentNoShowCronJob {
   private readonly logger = new Logger(AppointmentNoShowCronJob.name);
 
-  constructor(
-    private readonly registryService: RegistryService,
-
-    private readonly appointmentBulkUpdateTransaction: AppointmentBulkUpdateTransaction,
-  ) {}
+  constructor(private readonly registryService: RegistryService) {}
 
   get userService(): UserService {
     return this.registryService.get(EntityList.USER) as UserService;
@@ -60,9 +55,9 @@ export class AppointmentNoShowCronJob {
         (entity) => entity.appointmentDate < cutoffDateCode,
       );
 
-    await this.appointmentBulkUpdateTransaction.run({
-      existingEntities: filteredAppointmentsToBeBookedWithNoShow,
-      currentUser: systemUser,
-    });
+    await this.appointmentService.updateAppointmentBulk(
+      systemUser,
+      filteredAppointmentsToBeBookedWithNoShow,
+    );
   }
 }

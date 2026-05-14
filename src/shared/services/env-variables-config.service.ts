@@ -10,6 +10,7 @@ export class EnvVariablesConfig {
   private readonly _mailFrom: string;
   private readonly _mailTo: string;
   private readonly _baseUrl: string;
+  private readonly _sendNotifications: string;
 
   constructor(private readonly configService: ConfigService) {
     this._mailHost = this.getOrThrow('MAIL_HOST');
@@ -19,6 +20,7 @@ export class EnvVariablesConfig {
     this._mailFrom = this.getOrThrow('MAIL_FROM');
     this._mailTo = this.getOrThrow('MAIL_TO');
     this._baseUrl = this.getOrThrow('APP_BASE_URL');
+    this._sendNotifications = this.getOrThrow('SEND_NOTIFICATIONS');
 
     // Optional: validate port
     if (isNaN(this._mailPort)) {
@@ -74,4 +76,12 @@ export class EnvVariablesConfig {
   get baseUrl(): string {
     return this._baseUrl;
   }
+
+  get sendNotifications(): boolean {
+    return toBoolean(this._sendNotifications);
+  }
+}
+
+function toBoolean(value) {
+  return value === 'true';
 }

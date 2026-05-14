@@ -22,7 +22,10 @@ import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { AppointmentCreateTransaction } from '../transactions/appointment.create.transaction';
-import { AppointmentUpdateTransaction } from '../transactions/appointment.update.transaction';
+import {
+  AppointmentBulkUpdateTransaction,
+  AppointmentUpdateTransaction,
+} from '../transactions/appointment.update.transaction';
 import { IAppointmentCreateTransactionInputData } from '../transactions/interfaces/appointment-create-transaction.interface';
 import { IAppointmentUpdateTransactionInputData } from '../transactions/interfaces/appointment-update-transaction.interface';
 
@@ -36,6 +39,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
 
     private readonly appointmentCreateTransaction: AppointmentCreateTransaction,
     private readonly appointmentUpdateTransaction: AppointmentUpdateTransaction,
+    private readonly appointmentBulkUpdateTransaction: AppointmentBulkUpdateTransaction,
   ) {
     super(EntityList.APPOINTMENT);
   }
@@ -238,5 +242,15 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       },
     );
     return { userEntity, vendorEntity, recurringItemEntity };
+  }
+
+  async updateAppointmentBulk(
+    currentUser: IUserEntity,
+    entitiesToUpdate: IAppointmentEntity[],
+  ) {
+    return await this.appointmentBulkUpdateTransaction.run({
+      existingEntities: entitiesToUpdate,
+      currentUser,
+    });
   }
 }
