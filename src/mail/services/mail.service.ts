@@ -21,40 +21,46 @@ export class MailService {
     mailData: IMailData,
     templateData: T,
   ) {
-    this.logger.log(`[sendNotification] Initiating | template=${templateName}`);
-
-    const templatePath = path.join(
-      __dirname,
-      '..',
-      'templates',
-      `${templateName}.html`,
-    );
-
-    // this.logger.debug(
-    //   `[sendNotification] Resolved template path | path=${templatePath}`,
-    // );
-
-    if (!fs.existsSync(templatePath)) {
-      this.logger.error(
-        `[sendNotification] Template file not found | path=${templatePath}`,
+    if (this.envVariablesConfig.sendNotifications) {
+      this.logger.log(
+        `[sendNotification] Initiating | template=${templateName}`,
       );
-      throw new Error(`Template file not found: ${templatePath}`);
+
+      const templatePath = path.join(
+        __dirname,
+        '..',
+        'templates',
+        `${templateName}.html`,
+      );
+
+      // this.logger.debug(
+      //   `[sendNotification] Resolved template path | path=${templatePath}`,
+      // );
+
+      if (!fs.existsSync(templatePath)) {
+        this.logger.error(
+          `[sendNotification] Template file not found | path=${templatePath}`,
+        );
+        throw new Error(`Template file not found: ${templatePath}`);
+      }
+
+      const templateSource = fs.readFileSync(templatePath, 'utf8');
+      this.logger.debug(
+        `[sendNotification] Template file read successfully | template=${templateName}`,
+      );
+
+      const compiled = handlebars.compile(templateSource);
+      const html: string = compiled(templateData);
+      this.logger.debug(
+        `[sendNotification] Template compiled successfully | template=${templateName} | htmlLength=${html.length}`,
+      );
+
+      await this.sendMail(mailData, html);
+
+      this.logger.log(
+        `[sendNotification] Completed | template=${templateName}`,
+      );
     }
-
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
-    this.logger.debug(
-      `[sendNotification] Template file read successfully | template=${templateName}`,
-    );
-
-    const compiled = handlebars.compile(templateSource);
-    const html: string = compiled(templateData);
-    this.logger.debug(
-      `[sendNotification] Template compiled successfully | template=${templateName} | htmlLength=${html.length}`,
-    );
-
-    await this.sendMail(mailData, html);
-
-    this.logger.log(`[sendNotification] Completed | template=${templateName}`);
   }
 
   /**
