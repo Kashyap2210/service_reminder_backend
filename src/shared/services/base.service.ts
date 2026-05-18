@@ -131,11 +131,27 @@ export abstract class BaseService<
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<ISearchV2Response> {
-    const { entities, relations, ...rest } = filter;
+    const {
+      include = {},
+      entities,
+      relations,
+      columnKeys,
+      orderBy,
+      limit,
+      ...rest
+    } = filter;
     console.log('relations', relations);
     const mainResponse = {} as ISearchV2Response;
     const mainResults = await this.getRepository(entityManager).getByFilter(
-      rest as IEntityFilterData<EntityType<T>>,
+      {
+        include,
+
+        ...(columnKeys?.length ? { columnKeys } : undefined),
+
+        ...(orderBy ? { orderBy } : undefined),
+
+        ...(limit ? { limit } : undefined),
+      } as IEntityFilterData<EntityType<T>>,
       entityManager,
     );
     mainResponse[this.entityName] = mainResults as ISearchV2Response[T];
@@ -159,7 +175,7 @@ export abstract class BaseService<
               : {};
             const results = await this.registryService.get(name).searchV2(
               {
-                ...cleanEntityFilter,
+                include: cleanEntityFilter,
                 ...(columnKeys?.length ? { columnKeys } : undefined),
                 ...(orderBy ? { orderBy } : undefined),
                 ...(limit ? { limit } : undefined),
@@ -208,7 +224,9 @@ export abstract class BaseService<
 
         const nestedResponse = await this.registryService.get(name).searchV2(
           {
-            [searchProperty as string]: fkValues,
+            include: {
+              [searchProperty as string]: fkValues,
+            },
             ...(columnKeys?.length ? { columnKeys } : undefined),
             ...(orderBy ? { orderBy } : undefined),
             ...(limit ? { limit } : undefined),
