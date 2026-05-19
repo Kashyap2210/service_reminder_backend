@@ -182,16 +182,16 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
       name: EntityList.USER,
       include: {
         id: [service.userId],
-        columnKeys: ['id', 'name', 'email'],
       },
+      columnKeys: ['id', 'name', 'email'],
     };
 
     const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [service.vendorId],
-        columnKeys: ['id', 'name'],
       },
+      columnKeys: ['id', 'name'],
     };
 
     const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
@@ -199,8 +199,8 @@ export class ServiceService extends BaseService<EntityList.SERVICE> {
         name: EntityList.RECURRING_ITEM,
         include: {
           id: [service.recurringItemId],
-          columnKeys: ['id', 'name'],
         },
+        columnKeys: ['id', 'name'],
       };
 
     const searchResponse = await this.searchV2(

@@ -101,6 +101,7 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     this.registryService = registryService;
 
     this.validationData = await this.fetchDataForCombineValidation(currentUser);
+    console.log('this.validationData', this.validationData);
 
     const appointmentDateValidationResult =
       await this.validateAppointmentDate(existingEntity);
@@ -136,9 +137,12 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     // that will be scheduled for the same data & item
     // recurringItemId: [this.recurringItemId],
     // appointmentDate: [this.appointmentDate],
-    const existingAppointment = this.validationData.getEntityFromList(
-      EntityList.APPOINTMENT,
-    );
+    const existingAppointment = this.validationData
+      .getEntityFromList(EntityList.APPOINTMENT)
+      .filter(
+        (appointment) => appointment.appointmentDate === this.appointmentDate,
+      );
+    console.log('existingAppointment', existingAppointment);
 
     if (existingAppointment && existingAppointment.length > 0) {
       // Only error if the found appointment is a DIFFERENT entity

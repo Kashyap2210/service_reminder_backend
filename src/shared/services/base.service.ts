@@ -238,6 +238,8 @@ export abstract class BaseService<
           entityManager,
         );
 
+        console.log("nestedResponse", nestedResponse)
+
         // always merge — never assign directly
         for (const [key, value] of Object.entries(nestedResponse)) {
           // @ts-ignore
