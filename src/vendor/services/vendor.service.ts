@@ -254,8 +254,8 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
       name: EntityList.USER,
       include: {
         id: [vendor.userId],
-        columnKeys: ['id', 'name', 'email'],
       },
+      columnKeys: ['id', 'name', 'email'],
     };
 
     const searchResponse = await this.searchV2(

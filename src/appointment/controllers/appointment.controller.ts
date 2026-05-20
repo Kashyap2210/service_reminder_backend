@@ -40,7 +40,7 @@ import { AppointmentService } from '../services/appointment.service';
 @ApiTags(EntityList.APPOINTMENT)
 @Controller(EntityList.APPOINTMENT)
 export class AppointmentController {
-  constructor(private readonly registryService: RegistryService) {}
+  constructor(private readonly registryService: RegistryService) { }
 
   get appointmentService(): AppointmentService {
     return this.registryService.get(
@@ -89,49 +89,7 @@ export class AppointmentController {
     return this.appointmentService.deleteAppointment(+id, currentUser);
   }
 
-  @SearchAppointmentsSwagger()
-  @Post('search-global')
-  @UseGuards(AuthGuard)
-  async searchGlobal(
-    @Body() dto: AppointmentSearchDto,
-    @CurrentUser() currentUser: IUserEntity,
-  ) {
-    // {
-    //   "relations": [
-    //     {
-    //       "name": "user",
-    //       "relations": [
-    //         {
-    //           "name": "recurring_item",
-    //           "relations": [
-    //             { "name": "vendor_recurring_item_mapping", "relations": [{"name": "vendor"}] },
-    //             { "name": "appointment" },
-    //             { "name": "service" }
-    //           ]
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // }
-    console.log(dto);
-    const serachRes = await this.appointmentService.searchV2(dto, currentUser);
-    console.log('searchRes', serachRes);
-    const searchResConverted = new EntityFilterDataHelper(serachRes);
-    // .entityModelsMap;
-    searchResConverted.populateRelationsFor([
-      EntityList.APPOINTMENT,
-      EntityList.RECURRING_ITEM,
-      EntityList.USER,
-      EntityList.SERVICE,
-      EntityList.VENDOR,
-    ]);
-    console.log(
-      'searchResConverted',
-      searchResConverted.entityModelsMap[EntityList.SERVICE],
-    );
 
-    return searchResConverted;
-  }
 
   @Get('book-page')
   @Header('Content-Type', 'text/html')
@@ -173,19 +131,12 @@ export class AppointmentController {
 
       return bookAppointmentSuccessPage();
     } catch (error: any) {
-      console.log('error', error);
+      // console.log('error', error);
       const message =
         error?.message ?? 'Unable to book the appointment at this time.';
       return bookAppointmentErrorPage(message);
     }
   }
 
-  private escapeHtml(value: string): string {
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
+
 }

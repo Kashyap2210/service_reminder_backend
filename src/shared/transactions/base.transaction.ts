@@ -2,7 +2,7 @@ import { BadRequestException, Inject } from '@nestjs/common';
 import { DataSource, EntityManager, QueryRunner } from 'typeorm';
 
 export abstract class BaseTransaction<TransactionInput, TransactionOutput> {
-  constructor(@Inject(DataSource) private readonly dataSource: DataSource) {}
+  constructor(@Inject(DataSource) private readonly dataSource: DataSource) { }
 
   //this function will contain all of the operations that you need to perform
   // and has to be implemented in all transaction classes
