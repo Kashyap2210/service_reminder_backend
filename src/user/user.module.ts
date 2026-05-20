@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { MailModule } from 'src/mail/mail.module';
@@ -16,9 +16,9 @@ import { UserUpdateTransaction } from './transactions/user.update.transaction';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, UserHistoryEntity]),
-    SharedModule,
-    AuthModule,
-    MailModule,
+    forwardRef(() => SharedModule),
+    forwardRef(() => AuthModule),
+    forwardRef(() => MailModule),
   ],
   providers: [
     UserService,

@@ -85,7 +85,15 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
   ): Promise<EntityType<T>[]> {
     console.log('filter from entity-base-manager for getByFilter', filter);
 
-    const { columnKeys, entities, orderBy, limit, ...rest } = filter;
+    const {
+      columnKeys,
+      entities,
+      orderBy,
+      limit,
+      relations,
+      include,
+      ...rest
+    } = filter;
     // console.log('orderBy', orderBy);
 
     const repository = this.getRepository(entityManager);
@@ -93,14 +101,19 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
 
     let query = repository.createQueryBuilder(tableName);
 
-    for (const [property, value] of Object.entries(rest)) {
-      if (value === undefined || value === null) continue;
-      const normalizedValue = Array.isArray(value) ? value : [value];
-      if (normalizedValue.length === 0) continue;
+    if (include && Object.keys(include).length > 0) {
+      for (const [property, value] of Object.entries(include)) {
+        if (value === undefined || value === null) continue;
+        const normalizedValue = Array.isArray(value) ? value : [value];
+        if (normalizedValue.length === 0) continue;
 
-      query = query.andWhere(`${tableName}.${property} IN (:...${property})`, {
-        [property]: normalizedValue,
-      });
+        query = query.andWhere(
+          `${tableName}.${property} IN (:...${property})`,
+          {
+            [property]: normalizedValue,
+          },
+        );
+      }
     }
 
     if (columnKeys && columnKeys.length > 0) {

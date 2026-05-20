@@ -60,6 +60,10 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
         mappingProperty: 'recurringItemId',
         searchProperty: 'id',
       },
+      [EntityList.VENDOR]: {
+        mappingProperty: 'vendorId',
+        searchProperty: 'id',
+      },
       // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
     };
   }
@@ -81,6 +85,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       dto: dto.toCreateDto(),
       currentUser,
     };
+    // console.log('data', data);
 
     return this.appointmentCreateTransaction.run(data);
   }
@@ -186,16 +191,16 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       name: EntityList.USER,
       include: {
         id: [appointment.userId],
-        columnKeys: ['id', 'name', 'email'],
       },
+      columnKeys: ['id', 'name', 'email'],
     };
 
     const vendorEntityInclude: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       include: {
         id: [appointment.vendorId],
-        columnKeys: ['id', 'name', 'address'],
       },
+      columnKeys: ['id', 'name', 'address'],
     };
 
     const recurringItemEntityInclude: IEntityFilterSearchData<EntityList.RECURRING_ITEM> =
@@ -203,8 +208,8 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
         name: EntityList.RECURRING_ITEM,
         include: {
           id: [appointment.recurringItemId],
-          columnKeys: ['id', 'name'],
         },
+        columnKeys: ['id', 'name'],
       };
 
     const searchResponse = await this.searchV2(

@@ -172,8 +172,8 @@ export class RecurringItemService extends BaseService<EntityList.RECURRING_ITEM>
       name: EntityList.USER,
       include: {
         id: [recurringItem.userId],
-        columnKeys: ['id', 'name', 'email'],
       },
+      columnKeys: ['id', 'name', 'email'],
     };
 
     const searchResponse = await this.searchV2(
