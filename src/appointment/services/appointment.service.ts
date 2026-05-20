@@ -81,7 +81,7 @@ export class AppointmentService extends BaseService<EntityList.APPOINTMENT> {
       dto: dto.toCreateDto(),
       currentUser,
     };
-    console.log('data', data);
+    // console.log('data', data);
 
     return this.appointmentCreateTransaction.run(data);
   }

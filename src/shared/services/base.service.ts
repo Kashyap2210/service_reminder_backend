@@ -140,7 +140,7 @@ export abstract class BaseService<
       limit,
       ...rest
     } = filter;
-    console.log('relations', relations);
+    // console.log('relations', relations);
     const mainResponse = {} as ISearchV2Response;
     const mainResults = await this.getRepository(entityManager).getByFilter(
       {
@@ -196,7 +196,7 @@ export abstract class BaseService<
 
     if (relations?.length) {
       const config = this.getEntityConfig();
-      console.log('config', config);
+      // console.log('config', config);
 
       for (const {
         name,
@@ -238,7 +238,7 @@ export abstract class BaseService<
           entityManager,
         );
 
-        console.log("nestedResponse", nestedResponse)
+        // console.log("nestedResponse", nestedResponse)
 
         // always merge — never assign directly
         for (const [key, value] of Object.entries(nestedResponse)) {

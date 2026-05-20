@@ -40,7 +40,7 @@ export class SendServiceReminderNotifications {
       },
       currentUser,
     );
-    console.log('eligibleNotifications', eligibleNotifications);
+    // console.log('eligibleNotifications', eligibleNotifications);
 
     this.logger.log(
       `[processAndSendNotifications] Found ${eligibleNotifications.length} eligible notification(s)`,

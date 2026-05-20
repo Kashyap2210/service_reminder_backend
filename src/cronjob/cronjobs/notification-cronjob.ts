@@ -31,7 +31,7 @@ export class NotificationDBEntites {
     private readonly registryService: RegistryService,
     private readonly envVariablesConfig: EnvVariablesConfig,
     private readonly entityManager?: EntityManager,
-  ) {}
+  ) { }
 
   async getSystemUser() {
     return await this.userService.getSystemUser();
@@ -72,24 +72,24 @@ export class NotificationDBEntites {
     };
 
     const serviceIncludeRelations: IEntityFilterSearchData<EntityList.SERVICE> =
-      {
-        name: EntityList.SERVICE,
-        orderBy: {
-          serviceDate: OrderByDirection.DESC,
-        },
-        include: {
-          serviceType: [AppointmentType.SERVICE],
-        },
-      };
+    {
+      name: EntityList.SERVICE,
+      orderBy: {
+        serviceDate: OrderByDirection.DESC,
+      },
+      include: {
+        serviceType: [AppointmentType.SERVICE],
+      },
+    };
 
     const vendorIncludeRelations: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
     };
     const vendorRecurringItemIncludeRelations: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
-      {
-        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
-        relations: [vendorIncludeRelations],
-      };
+    {
+      name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+      relations: [vendorIncludeRelations],
+    };
 
     const recurringItemFilter: IRecurringItemSearchDto = {
       relations: [
@@ -98,7 +98,7 @@ export class NotificationDBEntites {
         userIncludeRelations,
       ],
     };
-    console.log('recurringItemFilter', recurringItemFilter);
+    // console.log('recurringItemFilter', recurringItemFilter);
 
     const baseSearchRes = await this.recurringItemService.searchV2(
       recurringItemFilter,
@@ -113,18 +113,18 @@ export class NotificationDBEntites {
       EntityList.VENDOR,
       EntityList.USER,
     ]);
-    console.log(
-      'baseSearchResConverted',
-      baseSearchResConverted.entityModelsMap,
-    );
-    console.log(
-      baseSearchResConverted.entityModelsMap[EntityList.RECURRING_ITEM],
-    );
-    console.log(
-      baseSearchResConverted.entityModelsMap[EntityList.RECURRING_ITEM][0][
-        EntityList.SERVICE
-      ],
-    );
+    // console.log(
+    //   'baseSearchResConverted',
+    //   baseSearchResConverted.entityModelsMap,
+    // );
+    // console.log(
+    //   baseSearchResConverted.entityModelsMap[EntityList.RECURRING_ITEM],
+    // );
+    // console.log(
+    //   baseSearchResConverted.entityModelsMap[EntityList.RECURRING_ITEM][0][
+    //     EntityList.SERVICE
+    //   ],
+    // );
 
     const recurringItemModels =
       baseSearchResConverted.entityModelsMap[EntityList.RECURRING_ITEM];
@@ -134,10 +134,10 @@ export class NotificationDBEntites {
     const notificationEntity: INotificationEntity[] = [];
 
     const itemsDue = this.filterItemsDueWithinWindow(recurringItemModels);
-    console.log('itemsDue', itemsDue);
+    // console.log('itemsDue', itemsDue);
     for (const item of itemsDue) {
       const templateData = this.prepareTemplateDataShapeForNotifications(item);
-      console.log('templateData', templateData);
+      // console.log('templateData', templateData);
       if (!templateData) continue;
 
       templateDataForNotification.push(templateData);
@@ -178,13 +178,13 @@ export class NotificationDBEntites {
   prepareTemplateDataShapeForNotifications(
     item: RecurringItemModel,
   ): IServiceReminderTemplateData | null {
-    console.log('item', item);
+    // console.log('item', item);
     const services = item[EntityList.SERVICE];
-    console.log('services', services);
+    // console.log('services', services);
     const latestService = services?.sort(
       (a, b) => Number(b.serviceDate) - Number(a.serviceDate),
     )[0];
-    console.log('latestService', latestService);
+    // console.log('latestService', latestService);
 
     if (!latestService || !latestService.serviceDate) {
       return null;
