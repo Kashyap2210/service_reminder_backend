@@ -72,14 +72,18 @@ export class AppointmentUpdateDto
   ): Promise<IDtoValidationError[] | EntityType<EntityList.APPOINTMENT>> {
     const errors: IDtoValidationError[] = [];
 
-    const existingAppointment = await this.registryService
-      .get(EntityList.APPOINTMENT)
-      .search(
-        {
-          id: [existingEntityId],
-        },
-        currentUser,
-      );
+    const existingAppointment =
+      (
+        await this.registryService.get(EntityList.APPOINTMENT).searchV2(
+          {
+            include: {
+              id: [existingEntityId],
+            },
+          },
+          currentUser,
+        )
+      )[EntityList.APPOINTMENT] ?? [];
+    console.log('existingAppointment from dto', existingAppointment);
 
     if (!existingAppointment || existingAppointment.length === 0) {
       errors.push({
