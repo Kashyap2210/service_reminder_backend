@@ -116,9 +116,9 @@ export class RecurringItemCreateDto implements IRecurringItemCreateDto {
   async validateName(existingEntity?: EntityType<EntityList.RECURRING_ITEM>) {
     const errors: IDtoValidationError[] = [];
 
-    const existingRecurringItems = this.validationData.getEntityFromList(
-      EntityList.RECURRING_ITEM,
-    );
+    const existingRecurringItems = this.validationData
+      .getEntityFromList(EntityList.RECURRING_ITEM)
+      .filter((item) => item.name === this.name);
 
     if (existingRecurringItems && existingRecurringItems.length !== 0) {
       if (!existingEntity || existingEntity.id !== existingRecurringItems[0].id)

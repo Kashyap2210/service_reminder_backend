@@ -38,10 +38,12 @@ export class AppointmentNoShowCronJob {
       (
         await this.appointmentService.searchV2(
           {
-            appointmentStatus: [
-              AppointmentStatus.BOOKED,
-              AppointmentStatus.RE_SCHEDULED,
-            ],
+            include: {
+              appointmentStatus: [
+                AppointmentStatus.BOOKED,
+                AppointmentStatus.RE_SCHEDULED,
+              ],
+            },
           },
           systemUser,
           entityManager,

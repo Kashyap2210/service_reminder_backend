@@ -131,6 +131,7 @@ export abstract class BaseService<
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ): Promise<ISearchV2Response> {
+    console.log('filter from searchV2', filter);
     const {
       include = {},
       entities,
@@ -165,6 +166,7 @@ export abstract class BaseService<
             columnKeys,
             orderBy,
             limit,
+            relations,
           }) => {
             const cleanEntityFilter = entityFilter
               ? Object.fromEntries(
@@ -179,6 +181,7 @@ export abstract class BaseService<
                 ...(columnKeys?.length ? { columnKeys } : undefined),
                 ...(orderBy ? { orderBy } : undefined),
                 ...(limit ? { limit } : undefined),
+                ...(relations ? { relations } : undefined),
               },
               currentUser,
               entityManager,

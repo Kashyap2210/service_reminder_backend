@@ -1,8 +1,15 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
+import {
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IUserEntity,
+  IVendorEntity,
+  IVendorEntityUpdateDto,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { VendorCreateDto } from './vendor.create.dto';
-import { EntityList, EntityType, IDtoValidationError, IUserEntity, IVendorEntity, IVendorEntityUpdateDto } from 'service_reminder_common';
 
 export class VendorUpdateDto
   extends PartialType(
@@ -63,12 +70,15 @@ export class VendorUpdateDto
   ): Promise<IDtoValidationError[] | EntityType<EntityList.VENDOR>> {
     const errors: IDtoValidationError[] = [];
 
-    const existing = await this.registryService.get(EntityList.VENDOR).search(
-      {
-        id: [existingEntityId],
-      },
-      currentUser,
-    );
+    const existing =
+      (
+        await this.registryService.get(EntityList.VENDOR).searchV2(
+          {
+            include: { id: [existingEntityId] },
+          },
+          currentUser,
+        )
+      )[EntityList.VENDOR] ?? [];
 
     if (!existing || existing.length === 0) {
       errors.push({

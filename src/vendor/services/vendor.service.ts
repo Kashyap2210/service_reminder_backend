@@ -185,13 +185,17 @@ export class VendorService extends BaseService<EntityList.VENDOR> {
     mappingsToDelete: number[];
   }> {
     const existingVendorRecurringItemMappings =
-      await this.vendorRecurringItemMappingService.search(
-        {
-          vendorId: [vendorId],
-        },
-        currentUser,
-        entityManager,
-      );
+      (
+        await this.vendorRecurringItemMappingService.searchV2(
+          {
+            include: {
+              vendorId: [vendorId],
+            },
+          },
+          currentUser,
+          entityManager,
+        )
+      )[EntityList.VENDOR_RECURRING_ITEM_MAPPING] ?? [];
     const { present, added, deleted } = diffArrays(
       existingVendorRecurringItemMappings.map(
         (mapping) => mapping.recurringItemId,
