@@ -190,7 +190,7 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
       entity as QueryDeepPartialEntity<EntityType<T>>,
     );
     const updated = await this.getByFilter(
-      { id: [id] } as IEntityFilterData<EntityType<T>>,
+      { include: { id: [id] } } as IEntityFilterData<EntityType<T>>,
       entityManager,
     );
     return updated[0];
