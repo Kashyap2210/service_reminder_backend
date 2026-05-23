@@ -18,85 +18,87 @@ export function bookAppointmentFromReminderMail(
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'DM Sans', Arial, sans-serif;
+      background-color: #0d0d0d;
       padding: 20px;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
       overflow: hidden;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
       padding: 30px 20px;
       text-align: center;
     }
-    .header h1 { font-size: 28px; margin-bottom: 5px; }
+    .header h1 { color: #6ee7b7; font-size: 1.75rem; font-weight: 600; margin: 0; }
     .content { padding: 30px 20px; }
     .section-title {
-      font-size: 15px;
+      color: #6ee7b7;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #667eea;
-      margin: 24px 0 10px 0;
+      margin-bottom: 12px;
     }
     .info-card {
-      background-color: #f9f9f9;
-      border-left: 4px solid #667eea;
-      border-radius: 4px;
+      background-color: #111111;
+      border-left: 4px solid #6ee7b7;
+      border-radius: 8px;
       padding: 15px;
       margin-bottom: 20px;
     }
     .details-item {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
-      color: #555;
-      margin: 8px 0;
+      font-size: 0.875rem;
+      color: #c4c4c4;
+      padding: 8px 0;
     }
-    .details-item .label {
-      font-weight: 600;
-      color: #333;
-    }
-    .details-item .value { color: #444; }
+    .details-item .label { font-weight: 600; color: #888888; }
+    .details-item .value { color: #c4c4c4; }
     .form-group { margin-bottom: 18px; }
     .form-group label {
       display: block;
-      font-size: 14px;
-      color: #333;
+      font-size: 0.875rem;
+      color: #888888;
       margin-bottom: 8px;
       font-weight: 600;
     }
     .input-field {
       width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
       padding: 10px;
-      font-size: 14px;
-      color: #333;
-      background: #fff;
+      font-size: 0.875rem;
+      color: #c4c4c4;
+      background: #111111;
+      outline: none;
     }
+    .input-field:focus { border-color: #6ee7b7; }
+    .input-field::placeholder { color: #555; }
+    textarea.input-field { resize: vertical; }
     .submit-button {
       width: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background-color: #6ee7b7;
+      color: #0d0d0d;
       padding: 12px;
-      border-radius: 4px;
+      border-radius: 8px;
       border: none;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
     }
+    .submit-button:hover { opacity: 0.9; }
     .footer {
       text-align: center;
       padding: 20px;
-      border-top: 1px solid #eee;
-      font-size: 12px;
-      color: #999;
+      border-top: 1px solid #2a2a2a;
+      font-size: 0.75rem;
+      color: #888888;
       line-height: 1.8;
     }
   </style>
@@ -104,7 +106,7 @@ export function bookAppointmentFromReminderMail(
 <body>
   <div class="container">
     <div class="header">
-      <h1>📅 Book Appointment</h1>
+      <h1>&#x1F4C5; Book Appointment</h1>
     </div>
     <div class="content">
       <div class="section-title">Appointment Info</div>
@@ -134,7 +136,7 @@ export function bookAppointmentFromReminderMail(
       </form>
     </div>
     <div class="footer">
-      <p>© 2026 Service Reminder App. All rights reserved.</p>
+      <p>&copy; 2026 Service Reminder App. All rights reserved.</p>
       <p>This is an automated message. Please do not reply to this message.</p>
     </div>
   </div>
@@ -152,53 +154,54 @@ export function bookAppointmentSuccessPage(): string {
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'DM Sans', Arial, sans-serif;
+      background-color: #0d0d0d;
       padding: 20px;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
       overflow: hidden;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
       padding: 30px 20px;
       text-align: center;
     }
-    .header h1 { font-size: 28px; margin-bottom: 5px; }
+    .header h1 { color: #6ee7b7; font-size: 1.75rem; font-weight: 600; margin: 0; }
     .content { padding: 30px 20px; }
     .message {
-      background-color: #fffbea;
-      border: 1px solid #ffe082;
-      border-radius: 4px;
-      padding: 12px 15px;
+      background-color: #111111;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 15px;
       margin: 20px 0;
-      font-size: 14px;
-      color: #856404;
+      font-size: 0.875rem;
+      color: #c4c4c4;
       line-height: 1.6;
     }
     .action-wrapper { text-align: center; margin-top: 20px; }
     .close-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 14px;
-      border-radius: 4px;
+      background-color: #6ee7b7;
+      color: #0d0d0d;
+      padding: 12px 30px;
+      border-radius: 8px;
       border: none;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
     }
+    .close-button:hover { opacity: 0.9; }
     .footer {
       text-align: center;
       padding: 20px;
-      border-top: 1px solid #eee;
-      font-size: 12px;
-      color: #999;
+      border-top: 1px solid #2a2a2a;
+      font-size: 0.75rem;
+      color: #888888;
       line-height: 1.8;
     }
   </style>
@@ -206,7 +209,7 @@ export function bookAppointmentSuccessPage(): string {
 <body>
   <div class="container">
     <div class="header">
-      <h1>✅ Appointment Booked</h1>
+      <h1>&#x2705; Appointment Booked</h1>
     </div>
     <div class="content">
       <div class="message">
@@ -217,7 +220,7 @@ export function bookAppointmentSuccessPage(): string {
       </div>
     </div>
     <div class="footer">
-      <p>© 2026 Service Reminder App. All rights reserved.</p>
+      <p>&copy; 2026 Service Reminder App. All rights reserved.</p>
       <p>This is an automated message. Please do not reply to this message.</p>
     </div>
   </div>
@@ -241,42 +244,42 @@ export function bookAppointmentErrorPage(
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'DM Sans', Arial, sans-serif;
+      background-color: #0d0d0d;
       padding: 20px;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
       overflow: hidden;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
       padding: 30px 20px;
       text-align: center;
     }
-    .header h1 { font-size: 28px; margin-bottom: 5px; }
+    .header h1 { color: #f87171; font-size: 1.75rem; font-weight: 600; margin: 0; }
     .content { padding: 30px 20px; }
     .message {
-      background-color: #fffbea;
-      border: 1px solid #ffe082;
-      border-radius: 4px;
-      padding: 12px 15px;
+      background-color: #1a1a1a;
+      border: 1px solid #f87171;
+      border-radius: 8px;
+      padding: 15px;
       margin: 20px 0;
-      font-size: 14px;
-      color: #856404;
+      font-size: 0.875rem;
+      color: #f87171;
       line-height: 1.6;
     }
     .footer {
       text-align: center;
       padding: 20px;
-      border-top: 1px solid #eee;
-      font-size: 12px;
-      color: #999;
+      border-top: 1px solid #2a2a2a;
+      font-size: 0.75rem;
+      color: #888888;
       line-height: 1.8;
     }
   </style>
@@ -284,13 +287,13 @@ export function bookAppointmentErrorPage(
 <body>
   <div class="container">
     <div class="header">
-      <h1>❌ Booking Failed</h1>
+      <h1>&#x274C; Booking Failed</h1>
     </div>
     <div class="content">
       <div class="message">${pageData.message}</div>
     </div>
     <div class="footer">
-      <p>© 2026 Service Reminder App. All rights reserved.</p>
+      <p>&copy; 2026 Service Reminder App. All rights reserved.</p>
       <p>This is an automated message. Please do not reply to this message.</p>
     </div>
   </div>

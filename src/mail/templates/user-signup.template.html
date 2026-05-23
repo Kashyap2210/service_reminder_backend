@@ -5,205 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to Service Reminder</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f5f5f5;
-        padding: 20px;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-      .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 30px 20px;
-        text-align: center;
-      }
-      .header h1 {
-        font-size: 28px;
-        margin-bottom: 5px;
-      }
-      .header p {
-        font-size: 14px;
-        opacity: 0.9;
-      }
-      .content {
-        padding: 30px 20px;
-      }
-      .greeting {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 20px;
-        line-height: 1.6;
-      }
-      .account-info {
-        background-color: #f9f9f9;
-        border-left: 4px solid #667eea;
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 4px;
-      }
-      .account-info-item {
-        margin: 10px 0;
-        font-size: 14px;
-        color: #555;
-      }
-      .account-info-item strong {
-        color: #333;
-        display: inline-block;
-        width: 120px;
-      }
-      .account-details {
-        background-color: #f0f7ff;
-        border: 1px solid #d4e8ff;
-        border-radius: 6px;
-        padding: 20px;
-        margin: 20px 0;
-      }
-      .account-details h3 {
-        color: #667eea;
-        font-size: 16px;
-        margin-bottom: 15px;
-      }
-      .detail-row {
-        display: flex;
-        justify-content: space-between;
-        margin: 10px 0;
-        font-size: 14px;
-      }
-      .detail-label {
-        color: #666;
-        font-weight: 600;
-      }
-      .detail-value {
-        color: #333;
-        text-align: right;
-      }
-      .role-badge {
-        display: inline-block;
-        background-color: #667eea;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 99px;
-        letter-spacing: 0.5px;
-      }
-      .message {
-        background-color: #fffbea;
-        border: 1px solid #ffe082;
-        border-radius: 4px;
-        padding: 12px 15px;
-        margin: 20px 0;
-        font-size: 14px;
-        color: #856404;
-      }
-      .footer {
-        text-align: center;
-        padding: 20px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #999;
-      }
-      .button {
-        display: inline-block;
-        background-color: #667eea;
-        color: white;
-        padding: 12px 30px;
-        text-decoration: none;
-        border-radius: 4px;
-        margin-top: 15px;
-        font-weight: 600;
-      }
-      .button:hover {
-        background-color: #5568d3;
+      @media only screen and (max-width: 600px) {
+        .container { width: 100% !important; max-width: 100% !important; margin: 0 auto !important; }
+        .content-td { padding: 20px 16px !important; }
+        .header-td { padding: 24px 16px !important; }
+        .header h1 { font-size: 1.4rem !important; }
+        .detail-label, .detail-value { font-size: 0.85rem !important; }
+        .btn { padding: 10px 20px !important; }
+        .info-block { padding: 12px !important; }
+        table, td, th { word-break: break-word !important; }
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <!-- Header -->
-      <div class="header">
-        <h1>🎉 Welcome Aboard!</h1>
-        <p>Your account has been created successfully</p>
-      </div>
+  <body style="background-color: #0d0d0d; font-family: 'DM Sans', Arial, sans-serif; padding: 20px; margin: 0; text-align: center;">
+    <table role="presentation" class="container" align="center" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="header-td" style="background-color: #1a1a1a; border-bottom: 1px solid #2a2a2a; padding: 30px 20px; text-align: center;">
+          <h1 class="header" style="color: #6ee7b7; font-size: 1.75rem; font-weight: 600; margin: 0;">&#x1F389; Welcome Aboard!</h1>
+          <p style="color: #888888; font-size: 0.875rem; margin: 6px 0 0 0;">Your account has been created successfully</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="content-td" style="background-color: #1a1a1a; padding: 30px 20px; text-align: left;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="color: #c4c4c4; font-size: 1rem; line-height: 1.6; padding-bottom: 20px;">
+                <p style="margin: 0;">Hello <strong style="color: #ffffff;">{{name}}</strong>,</p>
+                <p style="margin: 10px 0 0 0;">We're excited to have you on Service Reminder. Your account is ready to go. Here's a summary of your details.</p>
+              </td>
+            </tr>
+          </table>
 
-      <div class="content">
-        <!-- Greeting -->
-        <div class="greeting">
-          <p>Hello <strong>{{name}}</strong>,</p>
-          <p>
-            We're excited to have you on Service Reminder. Your account is ready
-            to go. Here's a summary of your details.
-          </p>
-        </div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="info-block" style="background-color: #111111; border-left: 4px solid #6ee7b7; border-radius: 8px; padding: 15px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding: 8px 0; font-size: 0.875rem; color: #c4c4c4;">
+                      <strong style="color: #ffffff; display: inline-block; width: 120px;">Full Name:</strong> {{name}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-size: 0.875rem; color: #c4c4c4;">
+                      <strong style="color: #ffffff; display: inline-block; width: 120px;">Email:</strong> {{email}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-size: 0.875rem; color: #c4c4c4;">
+                      <strong style="color: #ffffff; display: inline-block; width: 120px;">Contact No:</strong> {{contactNo}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
 
-        <!-- Basic Info Block (same left-border card as service reminder) -->
-        <div class="account-info">
-          <div class="account-info-item">
-            <strong>Full Name:</strong> {{name}}
-          </div>
-          <div class="account-info-item"><strong>Email:</strong> {{email}}</div>
-          <div class="account-info-item">
-            <strong>Contact No:</strong> {{contactNo}}
-          </div>
-        </div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+            <tr>
+              <td style="background-color: #111111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px;">
+                <h3 style="color: #6ee7b7; font-size: 0.95rem; font-weight: 700; margin: 0 0 12px 0;">&#x1FAAA; Account Details</h3>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="detail-label" style="color: #888888; font-size: 0.875rem; font-weight: 600; padding: 8px 0; border-bottom: 1px solid #2a2a2a;">Registered Email:</td>
+                    <td class="detail-value" style="color: #c4c4c4; font-size: 0.875rem; text-align: right; padding: 8px 0; border-bottom: 1px solid #2a2a2a;">{{email}}</td>
+                  </tr>
+                  <tr>
+                    <td class="detail-label" style="color: #888888; font-size: 0.875rem; font-weight: 600; padding: 8px 0;">Contact Number:</td>
+                    <td class="detail-value" style="color: #c4c4c4; font-size: 0.875rem; text-align: right; padding: 8px 0;">{{contactNo}}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
 
-        <!-- Account Details Card (same blue card as appointment details) -->
-        <div class="account-details">
-          <h3>🪪 Account Details</h3>
-          <div class="detail-row">
-            <span class="detail-label">Registered Email:</span>
-            <span class="detail-value">{{email}}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Contact Number:</span>
-            <span class="detail-value">{{contactNo}}</span>
-          </div>
-          <!-- <div class="detail-row">
-          <span class="detail-label">Account Role:</span>
-          <span class="detail-value">
-            <span class="role-badge">{{role}}</span>
-          </span>
-        </div> -->
-        </div>
+          <!-- {{#if verificationUrl}}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+            <tr>
+              <td style="background-color: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 12px 15px; color: #c4c4c4; font-size: 0.875rem;">
+                &#x26A0;&#xFE0F; Your email address is not yet verified. Please <a href="{{verificationUrl}}" style="color: #6ee7b7; font-weight: 600;">click here to verify</a> your email to unlock all features.
+              </td>
+            </tr>
+          </table>
+          {{/if}} -->
 
-        <!-- Optional email verification warning (same yellow message block) -->
-        <!-- {{#if verificationUrl}}
-        <div class="message">
-          ⚠️ Your email address is not yet verified. Please
-          <a href="{{verificationUrl}}" style="color: #856404; font-weight: 600"
-            >click here to verify</a
-          >
-          your email to unlock all features.
-        </div>
-        {{/if}} -->
-
-        <!-- CTA -->
-        <!-- <p style="margin-top: 20px; font-size: 14px; color: #555">
-          You can log in anytime using your registered email address. If you did
-          not create this account, please contact our support team immediately.
-        </p>
-        <div style="text-align: center">
-          <a href="{{loginUrl}}" class="button">Log In to Your Account</a>
-        </div> -->
-      </div>
-
-      <!-- Footer -->
-      <div class="footer">
-        <p>© {{year}} Service Reminder App. All rights reserved.</p>
-        <p>This is an automated email. Please do not reply to this message.</p>
-      </div>
-    </div>
+          <!-- <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+            <tr>
+              <td style="color: #c4c4c4; font-size: 0.875rem; padding-bottom: 10px;">
+                <p style="margin: 0;">You can log in anytime using your registered email address. If you did not create this account, please contact our support team immediately.</p>
+              </td>
+            </tr>
+          </table>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="text-align: center;">
+                <a href="{{loginUrl}}" class="btn" style="display: inline-block; background-color: #6ee7b7; color: #0d0d0d; padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 500; text-decoration: none;">Log In to Your Account</a>
+              </td>
+            </tr>
+          </table> -->
+        </td>
+      </tr>
+      <tr>
+        <td style="border-top: 1px solid #2a2a2a; padding: 20px; text-align: center; color: #888888; font-size: 0.75rem; line-height: 1.8;">
+          <p style="margin: 0;">&copy; {{year}} Service Reminder App. All rights reserved.</p>
+          <p style="margin: 0;">This is an automated email. Please do not reply to this message.</p>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
