@@ -65,7 +65,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
   async runNotificationJob() {
     if (this.sendNotifications) {
       this.logger.log('[runNotificationJob] Cron triggered');
-      const currentUser = await this.userService.getSystemUser();
+      // const currentUser = await this.userService.getSystemUser();
       await this.notificationDBEntities.prepareNotificationEntities();
     }
   }
