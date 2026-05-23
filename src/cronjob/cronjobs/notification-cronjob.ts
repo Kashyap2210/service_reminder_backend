@@ -151,7 +151,7 @@ export class NotificationDBEntites {
       );
     }
 
-    console.log('notificationEntity', notificationEntity);
+    // console.log('notificationEntity', notificationEntity);
 
     if (notificationEntity.length > 0) {
       const notificationEntityInstances = await Promise.all(
@@ -163,7 +163,7 @@ export class NotificationDBEntites {
           );
         }),
       );
-      console.log('notificationEntityInstances', notificationEntityInstances);
+      // console.log('notificationEntityInstances', notificationEntityInstances);
 
       const notificationEntitiesToBeSent =
         await this.notificationService.createBulkBase(
@@ -171,7 +171,7 @@ export class NotificationDBEntites {
           notificationEntityInstances,
           this.entityManager,
         );
-      console.log('notificationEntitiesToBeSent', notificationEntitiesToBeSent);
+      // console.log('notificationEntitiesToBeSent', notificationEntitiesToBeSent);
     }
   }
 

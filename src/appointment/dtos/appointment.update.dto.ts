@@ -83,7 +83,7 @@ export class AppointmentUpdateDto
           currentUser,
         )
       )[EntityList.APPOINTMENT] ?? [];
-    console.log('existingAppointment from dto', existingAppointment);
+    // console.log('existingAppointment from dto', existingAppointment);
 
     if (!existingAppointment || existingAppointment.length === 0) {
       errors.push({

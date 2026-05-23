@@ -13,7 +13,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import {
   AppointmentType,
-  EntityFilterDataHelper,
   EntityList,
   IAppointmentEntity,
   IUserEntity,
@@ -43,7 +42,7 @@ import { AppointmentService } from '../services/appointment.service';
 @ApiTags(EntityList.APPOINTMENT)
 @Controller(EntityList.APPOINTMENT)
 export class AppointmentController {
-  constructor(private readonly registryService: RegistryService) { }
+  constructor(private readonly registryService: RegistryService) {}
 
   get appointmentService(): AppointmentService {
     return this.registryService.get(
@@ -100,8 +99,6 @@ export class AppointmentController {
     return this.appointmentService.deleteAppointment(+id, currentUser);
   }
 
-
-
   @Get('book-page')
   @Header('Content-Type', 'text/html')
   async bookPage(@Query() query: any): Promise<string> {
@@ -119,41 +116,6 @@ export class AppointmentController {
       recurringItemName,
     });
   }
-
-  // @Get('manage-page')
-  // @Header('Content-Type', 'text/html')
-  // async managePage(@Query() query: any): Promise<string> {
-  //   const appointmentId = Number(query.appointmentId ?? '');
-  //   const userId = Number(query.userId ?? '');
-  //   const vendorId = Number(query.vendorId ?? '');
-  //   const recurringItemId = Number(query.recurringItemId ?? '');
-  //   const appointmentDate = Number(query.appointmentDate ?? '');
-
-  //   const systemUser = await this.userService.getSystemUser();
-  //   const appointments = await this.appointmentService.search(
-  //     { id: [appointmentId] },
-  //     systemUser,
-  //   );
-  //   const appointment = appointments[0];
-
-  //   if (!appointment) {
-  //     return `<!DOCTYPE html><html><body><h1>Appointment not found</h1></body></html>`;
-  //   }
-
-  //   const vendors = await this.vendorService.search({}, systemUser);
-
-  //   return manageAppointmentPage({
-  //     appointmentId: appointment.id,
-  //     userId,
-  //     vendorId: appointment.vendorId,
-  //     recurringItemId: appointment.recurringItemId,
-  //     appointmentDate: appointment.appointmentDate,
-  //     appointmentType: appointment.appointmentType,
-  //     appointmentStatus: appointment.appointmentStatus,
-  //     checkPoints: appointment.checkPoints,
-  //     vendors: vendors.map((vendor) => ({ id: vendor.id, name: vendor.name })),
-  //   });
-  // }
 
   @Post('book')
   @Header('Content-Type', 'text/html')
@@ -183,6 +145,4 @@ export class AppointmentController {
       return bookAppointmentErrorPage(message);
     }
   }
-
-
 }
