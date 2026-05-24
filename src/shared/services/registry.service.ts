@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { EntityList } from 'service_reminder_common';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import { BaseService } from './base.service';
-import { EntityList } from 'service_reminder_common';
 
 export type EntityListServiceMapping = {
   [EntityList.USER]: UserService;

@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, MaxLength } from 'class-validator';
-import { EntityFilterDataHelper, EntityList, EntityType, IDtoValidationError, IUserCreateDto, IUserEntity, IUserSearchDto, UserRole } from 'service_reminder_common';
+import {
+  EntityFilterDataHelper,
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IUserCreateDto,
+  IUserEntity,
+  IUserSearchDto,
+  UserRole,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
 export class UserCreateDto implements IUserCreateDto {
@@ -62,7 +71,8 @@ export class UserCreateDto implements IUserCreateDto {
     this.registryService = registryService;
     this.validationData = await this.fetchDataForCombineValidation(currentUser);
 
-    const contactNoValidationResult = await this.validateContactNo(existingEntity);
+    const contactNoValidationResult =
+      await this.validateContactNo(existingEntity);
     if (contactNoValidationResult) errors.push(...contactNoValidationResult);
 
     const emailValidationResult = await this.validateEmail(existingEntity);
@@ -121,12 +131,16 @@ export class UserCreateDto implements IUserCreateDto {
     currentUser: IUserEntity,
   ): Promise<EntityFilterDataHelper> {
     const filter: IUserSearchDto = {
-      contactNo: [this.contactNo],
-      email: [this.email],
+      include: {
+        contactNo: [this.contactNo],
+        email: [this.email],
+      },
     };
 
     return new EntityFilterDataHelper(
-      await this.registryService.get(EntityList.USER).searchV2(filter, currentUser),
+      await this.registryService
+        .get(EntityList.USER)
+        .searchV2(filter, currentUser),
     );
   }
 

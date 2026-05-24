@@ -25,7 +25,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         schema: configService.get<string>('database.schema'),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: false,
-        logging: true,
+        // logging: true,
         ssl:
           process.env.NODE_ENV === 'production'
             ? { rejectUnauthorized: false } // Supabase needs this

@@ -13,7 +13,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import {
   AppointmentType,
-  EntityFilterDataHelper,
   EntityList,
   IAppointmentEntity,
   IUserEntity,
@@ -21,6 +20,8 @@ import {
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RegistryService } from 'src/shared/services/registry.service';
+import { UserService } from 'src/user/services/user.service';
+import { VendorService } from 'src/vendor/services/vendor.service';
 import {
   CreateAppointmentSwagger,
   DeleteAppointmentSwagger,
@@ -36,16 +37,25 @@ import { AppointmentCreateDto } from '../dtos/appointment.create.dto';
 import { AppointmentSearchDto } from '../dtos/appointment.search.dto';
 import { AppointmentUpdateDto } from '../dtos/appointment.update.dto';
 import { AppointmentService } from '../services/appointment.service';
+// import { manageAppointmentPage } from '../templates/manage-appointment.page';
 
 @ApiTags(EntityList.APPOINTMENT)
 @Controller(EntityList.APPOINTMENT)
 export class AppointmentController {
-  constructor(private readonly registryService: RegistryService) { }
+  constructor(private readonly registryService: RegistryService) {}
 
   get appointmentService(): AppointmentService {
     return this.registryService.get(
       EntityList.APPOINTMENT,
     ) as AppointmentService;
+  }
+
+  get vendorService(): VendorService {
+    return this.registryService.get(EntityList.VENDOR) as VendorService;
+  }
+
+  get userService(): UserService {
+    return this.registryService.get(EntityList.USER) as UserService;
   }
 
   @Post()
@@ -88,8 +98,6 @@ export class AppointmentController {
   ): Promise<boolean> {
     return this.appointmentService.deleteAppointment(+id, currentUser);
   }
-
-
 
   @Get('book-page')
   @Header('Content-Type', 'text/html')
@@ -137,6 +145,4 @@ export class AppointmentController {
       return bookAppointmentErrorPage(message);
     }
   }
-
-
 }

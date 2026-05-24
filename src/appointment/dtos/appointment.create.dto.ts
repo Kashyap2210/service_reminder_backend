@@ -7,6 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import {
+  AppointmentStatus,
   AppointmentType,
   EntityFilterDataHelper,
   EntityList,
@@ -101,7 +102,6 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
     this.registryService = registryService;
 
     this.validationData = await this.fetchDataForCombineValidation(currentUser);
-    // console.log('this.validationData', this.validationData);
 
     const appointmentDateValidationResult =
       await this.validateAppointmentDate(existingEntity);
@@ -287,8 +287,14 @@ export class AppointmentCreateDto implements IAppointmentCreateDto {
       };
 
     const filter: IAppointmentSearchDto = {
-      recurringItemId: [this.recurringItemId],
-      appointmentDate: [this.appointmentDate],
+      include: {
+        recurringItemId: [this.recurringItemId],
+        appointmentDate: [this.appointmentDate],
+        appointmentStatus: [
+          AppointmentStatus.BOOKED,
+          AppointmentStatus.RE_SCHEDULED,
+        ],
+      },
       entities: [
         userEntityIncludeData,
         recurringItemEntityIncludeData,

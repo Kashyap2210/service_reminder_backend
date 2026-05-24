@@ -68,4 +68,60 @@ export abstract class BaseHistoryService<
     }
     return data;
   }
+
+  async createBulkHistory(
+    currentUser: IUserEntity,
+    existingEntities: EntityType<K>[],
+    operation: EntityHistoryOperation,
+    updatedEntities?: EntityType<K>[],
+    entityManager?: EntityManager,
+  ): Promise<EntityType<T>[]> {
+    if (!existingEntities.length) {
+      return [];
+    }
+
+    const updatedEntityMap = new Map<number, EntityType<K>>();
+
+    if (updatedEntities?.length) {
+      for (const entity of updatedEntities) {
+        updatedEntityMap.set(entity.id, entity);
+      }
+    }
+
+    const historyInstances: EntityType<T>[] = [];
+
+    for (const existingEntity of existingEntities) {
+      const updatedEntity = updatedEntityMap.get(existingEntity.id);
+
+      const data = this.getHistoryEntityData(existingEntity, updatedEntity);
+
+      // Skip empty diffs
+      if (
+        operation === EntityHistoryOperation.UPDATE &&
+        (!data || Object.keys(data).length === 0)
+      ) {
+        continue;
+      }
+
+      const createDto = this.getHistoryEntityCreateDto(
+        existingEntity,
+        data,
+        operation,
+      );
+
+      const historyInstance = await this.getInstanceBase(
+        currentUser,
+        createDto,
+        entityManager,
+      );
+
+      historyInstances.push(historyInstance);
+    }
+
+    if (!historyInstances.length) {
+      return [];
+    }
+
+    return this.createBulkBase(currentUser, historyInstances, entityManager);
+  }
 }

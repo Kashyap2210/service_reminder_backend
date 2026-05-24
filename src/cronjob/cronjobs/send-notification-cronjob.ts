@@ -9,7 +9,6 @@ import { IServiceReminderTemplateData } from 'src/mail/templates/template-interf
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { NotificationService } from 'src/notification/services/notification.service';
 import { RegistryService } from 'src/shared/services/registry.service';
-import { UserService } from 'src/user/services/user.service';
 
 const MAX_RETRY_COUNT = 3;
 
@@ -21,10 +20,6 @@ export class SendServiceReminderNotifications {
     private readonly mailService: MailService,
     private readonly registryService: RegistryService,
   ) {}
-
-  get userService(): UserService {
-    return this.registryService.get(EntityList.USER) as UserService;
-  }
 
   get notificationService(): NotificationService {
     return this.registryService.get(

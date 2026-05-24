@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppointmentNoShowCronJob } from 'src/appointment/cron/appointment-no-show.cron';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/services/mail.service';
 import { EnvVariablesConfig } from 'src/shared/services/env-variables-config.service';
@@ -29,6 +30,8 @@ import { CronJobUpdateTransaction } from './transactions/cronjob.update.transact
     MailService,
     NotificationDBEntites,
     SendServiceReminderNotifications,
+    EnvVariablesConfig,
+    AppointmentNoShowCronJob,
     EnvVariablesConfig,
   ],
   controllers: [CronJobController],
