@@ -1,8 +1,17 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
+import {
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IServiceEntity,
+  IServiceUpdateDto,
+  IUserEntity,
+  ServiceAction,
+  ServiceStatus,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { ServiceCreateDto } from './service.create.dto';
-import { EntityList, EntityType, IDtoValidationError, IServiceEntity, IServiceUpdateDto, IUserEntity, ServiceAction, ServiceStatus } from 'service_reminder_common';
 
 export class ServiceUpdateDto
   extends PartialType(

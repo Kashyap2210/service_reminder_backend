@@ -14,6 +14,7 @@ import {
   IDtoValidationError,
   IEntityFilterSearchData,
   IServiceCreateDto,
+  IServiceEntity,
   IServiceSearchDto,
   IUserEntity,
   Nullable,
@@ -149,7 +150,8 @@ export class ServiceCreateDto implements IServiceCreateDto {
     // const vendorValidationResult = await this.validateVendorId();
     // if (vendorValidationResult) errors.push(...vendorValidationResult);
 
-    const serviceDateValidationResult = await this.validateServiceDate();
+    const serviceDateValidationResult =
+      await this.validateServiceDate(existingEntity);
     if (serviceDateValidationResult)
       errors.push(...serviceDateValidationResult);
 
@@ -175,14 +177,21 @@ export class ServiceCreateDto implements IServiceCreateDto {
     return errors.length > 0 ? errors : null;
   }
 
-  async validateServiceDate() {
+  async validateServiceDate(existingEntity?: IServiceEntity) {
     const errors: IDtoValidationError[] = [];
 
     const existingServices = this.validationData.getEntityFromList(
       EntityList.SERVICE,
     );
 
-    if (existingServices.length > 0) {
+    // console.log('dto', this);
+    // console.log('existingServices', existingServices);
+    // console.log('existingEntity', existingEntity);
+    if (
+      existingServices.length > 0 &&
+      (!existingEntity ||
+        (existingEntity && existingEntity.id !== existingServices[0].id))
+    ) {
       errors.push({
         key: 'serviceDate',
         message: `A service already exists for this vendor and recurring item on the selected date.`,
@@ -375,11 +384,17 @@ export class ServiceCreateDto implements IServiceCreateDto {
       };
 
     const filter: IServiceSearchDto = {
+      include: {
+        userId: [this.userId],
+        recurringItemId: [this.recurringItemId],
+        vendorId: [this.vendorId],
+        serviceDate: [this.serviceDate],
+      },
       entities: [
         userEntityIncludeData,
         recurringItemEntityIncludeData,
         vendorIncludeData,
-        serviceEntityIncludeData,
+        // serviceEntityIncludeData,
         vendorRecurringItemMappingEntityIncludeData,
       ],
     };
