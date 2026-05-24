@@ -100,20 +100,17 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     const tableName = repository.metadata.tableName;
 
     let query = repository.createQueryBuilder(tableName);
+    const filterFields =
+      include && Object.keys(include).length > 0 ? include : rest;
 
-    if (include && Object.keys(include).length > 0) {
-      for (const [property, value] of Object.entries(include)) {
-        if (value === undefined || value === null) continue;
-        const normalizedValue = Array.isArray(value) ? value : [value];
-        if (normalizedValue.length === 0) continue;
+    for (const [property, value] of Object.entries(filterFields)) {
+      if (value === undefined || value === null) continue;
+      const normalizedValue = Array.isArray(value) ? value : [value];
+      if (normalizedValue.length === 0) continue;
 
-        query = query.andWhere(
-          `${tableName}.${property} IN (:...${property})`,
-          {
-            [property]: normalizedValue,
-          },
-        );
-      }
+      query = query.andWhere(`${tableName}.${property} IN (:...${property})`, {
+        [property]: normalizedValue,
+      });
     }
 
     if (columnKeys && columnKeys.length > 0) {
@@ -147,6 +144,8 @@ export abstract class EntityManagerBaseService<T extends EntityList> {
     }
 
     // console.log('final SQL:', query.getSql());
+    console.log('final SQL:', query.getSql());
+    console.log('final params:', query.getParameters());
     const result = await query.getMany();
     // console.log('result', result);
 
