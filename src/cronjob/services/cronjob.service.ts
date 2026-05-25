@@ -14,6 +14,7 @@ import { UserService } from 'src/user/services/user.service';
 import { EntityManager } from 'typeorm';
 import { NotificationDBEntites } from '../cronjobs/notification-cronjob';
 import { SendServiceReminderNotifications } from '../cronjobs/send-notification-cronjob';
+import { UserDeleteCronJob } from '../cronjobs/user-delete-cronjob';
 import { CronJobCreateDto } from '../dtos/cronjob.create.dto';
 import { CronJobUpdateDto } from '../dtos/cronjob.update.dto';
 import { CronJobRepository } from '../repositories/cronjob.repository';
@@ -35,6 +36,7 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
     private readonly sendServiceReminderNotifications: SendServiceReminderNotifications, // ← inject
     private readonly notificationDBEntities: NotificationDBEntites, // ← inject
     private readonly appointmentNoShowCronJob: AppointmentNoShowCronJob,
+    private readonly userDeleteCronJob: UserDeleteCronJob,
 
     private readonly envVariablesConfig: EnvVariablesConfig,
   ) {
@@ -88,6 +90,21 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
       const currentUser = await this.userService.getSystemUser();
       await this.appointmentNoShowCronJob.updateNoShowCronJobBulk(currentUser);
     }
+  }
+
+  // @Cron('59 23 * * *')
+  @Cron('1-59/2 * * * *') // odd minutes (1, 3, 5, 7, 9...)
+  async runUserDeleteJob() {
+    if (!this.isLastDayOfMonth()) return;
+    this.logger.log('[runUserDeleteJob] Cron triggered');
+    await this.userDeleteCronJob.deleteMarkedUsers();
+  }
+
+  private isLastDayOfMonth(): boolean {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.getDate() === 1;
   }
 
   async createCronJob(

@@ -11,6 +11,7 @@ import { UserRepository } from './repositories/user.repository';
 import { UserHistoryService } from './services/user-history.service';
 import { UserService } from './services/user.service';
 import { UserCreateTransaction } from './transactions/user.create.transaction';
+import { UserDeleteTransaction } from './transactions/user.delete.transaction';
 import { UserUpdateTransaction } from './transactions/user.update.transaction';
 
 @Module({
@@ -26,6 +27,7 @@ import { UserUpdateTransaction } from './transactions/user.update.transaction';
     UserHistoryService,
     UserHistoryRepository,
     UserCreateTransaction,
+    UserDeleteTransaction,
     UserUpdateTransaction,
   ],
   controllers: [UserController],

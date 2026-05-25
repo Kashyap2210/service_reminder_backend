@@ -1,14 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsString, MaxLength } from 'class-validator';
 import {
   EntityFilterDataHelper,
   EntityList,
   EntityType,
   IDtoValidationError,
+  IEntityCreateDto,
   IUserCreateDto,
   IUserEntity,
   IUserSearchDto,
   UserRole,
+  UserStatus,
 } from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 
@@ -50,13 +52,13 @@ export class UserCreateDto implements IUserCreateDto {
   @MaxLength(128)
   email: string;
 
-  @ApiProperty({
-    example: UserRole.ADMIN,
-    description: 'Role of the user',
-    required: true,
-  })
-  @IsEnum(UserRole)
-  role: UserRole;
+  // @ApiProperty({
+  //   example: UserRole.ADMIN,
+  //   description: 'Role of the user',
+  //   required: true,
+  // })
+  // @IsEnum(UserRole)
+  // role: UserRole;
 
   registryService: RegistryService;
 
@@ -144,13 +146,14 @@ export class UserCreateDto implements IUserCreateDto {
     );
   }
 
-  toCreateDto(): IUserCreateDto {
+  toCreateDto(): IEntityCreateDto<EntityType<EntityList.USER>> {
     return {
       name: this.name,
       contactNo: this.contactNo,
       email: this.email,
       password: this.password,
-      role: this.role,
+      role: UserRole.USER,
+      status: UserStatus.ACTIVE,
     };
   }
 }

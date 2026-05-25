@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { dbSchemaName } from '../../shared/constants';
 import { BaseEntity } from '../../shared/entities/base.entity';
-import { EntityList, IUserEntity, UserRole } from 'service_reminder_common';
+import { EntityList, IUserEntity, UserRole, UserStatus } from 'service_reminder_common';
 
 @Entity({ name: EntityList.USER, schema: dbSchemaName })
 export class UserEntity extends BaseEntity implements IUserEntity {
@@ -26,4 +26,11 @@ export class UserEntity extends BaseEntity implements IUserEntity {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
+  status: UserStatus;
 }
