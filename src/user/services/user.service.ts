@@ -135,7 +135,7 @@ export class UserService extends BaseService<EntityList.USER> {
     const data: IUserUpdateTransactionInputData = {
       id,
       dto: {
-        ...dto.toUpdateDto(),
+        ...dto.toUpdateDto(currentUser, existingUser!),
         ...(dto.password ? { password: updatedPassword } : {}),
       },
       currentUser,
