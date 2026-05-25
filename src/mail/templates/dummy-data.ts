@@ -2,6 +2,7 @@ import { EmailTemplate } from '../utils/email-template.enum';
 import { IAppointmentCreated } from './template-interfaces/appointment-created.interface';
 import { IRecurringItemCreated } from './template-interfaces/recurring-item-created.interface';
 import { IServiceCreated } from './template-interfaces/service-created.interface';
+import { IUserDeleted } from './template-interfaces/user-deleted.interface';
 import { IUserSignUp } from './template-interfaces/user-signup.interface';
 import { IVendorCreated } from './template-interfaces/vendor-created.interface';
 
@@ -9,7 +10,6 @@ import { IVendorCreated } from './template-interfaces/vendor-created.interface';
 //   [EmailTemplate.SERVICE_REMINDER]: IServiceReminder;
 //   [EmailTemplate.USER_SIGNUP]: IUserSignUp;
 // };
-
 
 export const dummyData = {
   [EmailTemplate.SERVICE_REMINDER]: {
@@ -77,4 +77,8 @@ export const dummyData = {
     userName: 'John Doe',
     year: new Date().getFullYear(),
   } satisfies IVendorCreated,
+  [EmailTemplate.USER_DELETED]: {
+    name: 'John Doe',
+    year: new Date().getFullYear(),
+  } satisfies IUserDeleted,
 };

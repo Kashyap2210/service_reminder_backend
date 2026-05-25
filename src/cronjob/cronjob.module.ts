@@ -9,6 +9,7 @@ import { UserModule } from 'src/user/user.module';
 import { CronJobController } from './controllers/cronjob.controller';
 import { NotificationDBEntites } from './cronjobs/notification-cronjob';
 import { SendServiceReminderNotifications } from './cronjobs/send-notification-cronjob';
+import { UserDeleteCronJob } from './cronjobs/user-delete-cronjob';
 import { CronJobEntity } from './entities/cronjob.entity';
 import { CronJobRepository } from './repositories/cronjob.repository';
 import { CronJobService } from './services/cronjob.service';
@@ -32,6 +33,7 @@ import { CronJobUpdateTransaction } from './transactions/cronjob.update.transact
     SendServiceReminderNotifications,
     EnvVariablesConfig,
     AppointmentNoShowCronJob,
+    UserDeleteCronJob,
     EnvVariablesConfig,
   ],
   controllers: [CronJobController],

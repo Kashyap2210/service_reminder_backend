@@ -1,6 +1,7 @@
 export enum EmailTemplate {
   SERVICE_REMINDER = 'service-reminder.template',
   USER_SIGNUP = 'user-signup.template',
+  USER_DELETED = 'user-deleted.template',
   APPOINTMENT_CREATED = 'appointment-created.template',
   RECURRING_ITEM_CREATED = 'recurring-item-created.template',
   SERVICE_CREATED = 'service-created.template',

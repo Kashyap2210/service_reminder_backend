@@ -8,9 +8,11 @@ import {
   EntityType,
   IUserEntity,
   UserRole,
+  UserStatus,
 } from 'service_reminder_common';
 import { MailService } from 'src/mail/services/mail.service';
 import { IMailData } from 'src/mail/templates/template-interfaces/mail-data.interface';
+import { IUserDeleted } from 'src/mail/templates/template-interfaces/user-deleted.interface';
 import { IUserSignUp } from 'src/mail/templates/template-interfaces/user-signup.interface';
 import { EmailTemplate } from 'src/mail/utils/email-template.enum';
 import { EntityManagerBaseService } from 'src/shared/repositories/entity.base.manager';
@@ -21,8 +23,10 @@ import { UserCreateDto } from '../dtos/user.create.dto';
 import { UserUpdateDto } from '../dtos/user.update.dto';
 import { UserRepository } from '../repositories/user.repository';
 import { IUserCreateTransactionInputData } from '../transactions/interfaces/user-create-transaction.interface';
+import { IUserDeleteTransactionInputData } from '../transactions/interfaces/user-delete-transaction.interface';
 import { IUserUpdateTransactionInputData } from '../transactions/interfaces/user-update-transaction.interface';
 import { UserCreateTransaction } from '../transactions/user.create.transaction';
+import { UserDeleteTransaction } from '../transactions/user.delete.transaction';
 import { UserUpdateTransaction } from '../transactions/user.update.transaction';
 import { UserHistoryService } from './user-history.service';
 
@@ -36,6 +40,7 @@ export class UserService extends BaseService<EntityList.USER> {
 
     private readonly userCreateTransaction: UserCreateTransaction,
     private readonly userUpdateTransaction: UserUpdateTransaction,
+    private readonly userDeleteTransaction: UserDeleteTransaction,
   ) {
     super(EntityList.USER);
   }
@@ -54,8 +59,23 @@ export class UserService extends BaseService<EntityList.USER> {
 
   getEntityConfig(): IEntityConfig<EntityType<EntityList.USER>> {
     return {
-      // [EntityList.XYZ]: { mappingProperty: 'xyzId', searchProperty: 'id' }
+      [EntityList.APPOINTMENT]: {
+        mappingProperty: 'id',
+        searchProperty: 'userId',
+      },
+      [EntityList.NOTIFICATION]: {
+        mappingProperty: 'id',
+        searchProperty: 'userId',
+      },
       [EntityList.RECURRING_ITEM]: {
+        mappingProperty: 'id',
+        searchProperty: 'userId',
+      },
+      [EntityList.SERVICE]: {
+        mappingProperty: 'id',
+        searchProperty: 'userId',
+      },
+      [EntityList.VENDOR]: {
         mappingProperty: 'id',
         searchProperty: 'userId',
       },
@@ -76,10 +96,10 @@ export class UserService extends BaseService<EntityList.USER> {
     }
 
     const data: IUserCreateTransactionInputData = {
-      dto: {
+      dto: Object.assign(new UserCreateDto(), {
         ...dto.toCreateDto(),
         password: await bcrypt.hash(dto.password, 10),
-      },
+      }),
       currentUser: systemUser,
     };
 
@@ -130,7 +150,12 @@ export class UserService extends BaseService<EntityList.USER> {
     currentUser: IUserEntity,
     entityManager?: EntityManager,
   ) {
-    return this.userRepository.deleteById(id, entityManager);
+    const data: IUserDeleteTransactionInputData = {
+      id,
+      currentUser,
+    };
+
+    return this.userDeleteTransaction.run(data);
   }
 
   async getSystemUser(
@@ -168,6 +193,49 @@ export class UserService extends BaseService<EntityList.USER> {
       EmailTemplate.USER_SIGNUP,
       mailData,
       userSignUpTemplateData,
+    );
+  }
+
+  async updateUserToDeletedStatus(
+    id: number,
+    currentUser: IUserEntity,
+  ): Promise<boolean> {
+    const existingUser = (await this.search({ id: [id] }, currentUser))[0];
+
+    if (!existingUser) {
+      throw new BadRequestException({
+        key: 'id',
+        message: `User with id ${id} not found`,
+      });
+    }
+
+    const data: IUserUpdateTransactionInputData = {
+      id,
+      dto: { status: UserStatus.DELETED },
+      currentUser,
+      existingEntity: existingUser,
+    };
+
+    await this.userUpdateTransaction.run(data);
+    return true;
+  }
+
+  async sendUserDeleteNotification(user: IUserEntity) {
+    const mailData: IMailData = {
+      toEmail: [user.email],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Account Deleted',
+    };
+
+    const userDeletedTemplateData: IUserDeleted = {
+      name: user.name,
+      year: DateCodeUtils.getCurrentYear(),
+    };
+
+    await this.mailServie.sendNotification(
+      EmailTemplate.USER_DELETED,
+      mailData,
+      userDeletedTemplateData,
     );
   }
 }

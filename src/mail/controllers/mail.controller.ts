@@ -7,6 +7,7 @@ import { IAppointmentCreated } from '../templates/template-interfaces/appointmen
 import { IMailData } from '../templates/template-interfaces/mail-data.interface';
 import { IRecurringItemCreated } from '../templates/template-interfaces/recurring-item-created.interface';
 import { IServiceCreated } from '../templates/template-interfaces/service-created.interface';
+import { IUserDeleted } from '../templates/template-interfaces/user-deleted.interface';
 import { IUserSignUp } from '../templates/template-interfaces/user-signup.interface';
 import { IVendorCreated } from '../templates/template-interfaces/vendor-created.interface';
 import { EmailTemplate } from '../utils/email-template.enum';
@@ -82,6 +83,40 @@ export class MailController {
     );
 
     return this.mailService.previewTemplate(EmailTemplate.USER_SIGNUP, data);
+  }
+
+  @Get('preview/user-deleted')
+  @Header('Content-Type', 'text/html')
+  @ApiOperation({
+    summary: 'Preview user deleted email template',
+    description:
+      'Returns the rendered HTML for the user deleted email template with dummy data',
+  })
+  async previewUserDeleted(): Promise<string> {
+    const data = dummyData[EmailTemplate.USER_DELETED];
+
+    if (!data) {
+      throw new BadRequestException(
+        'Dummy data not found for user deleted template',
+      );
+    }
+
+    const mailData: IMailData = {
+      toEmail: [this.envVariablesConfig.mailTo],
+      fromEmail: this.envVariablesConfig.mailFrom,
+      subject: 'Account Deleted',
+    };
+
+    const userDeletedTemplateData: IUserDeleted =
+      dummyData[EmailTemplate.USER_DELETED];
+
+    await this.mailService.sendNotification(
+      EmailTemplate.USER_DELETED,
+      mailData,
+      userDeletedTemplateData,
+    );
+
+    return this.mailService.previewTemplate(EmailTemplate.USER_DELETED, data);
   }
 
   @Get('preview/appointment-created')

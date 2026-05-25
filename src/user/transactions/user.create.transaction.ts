@@ -40,7 +40,7 @@ export class UserCreateTransaction extends BaseTransaction<
 
     const userInstance = await this.userService.getInstanceBase(
       currentUser,
-      dto,
+      dto.toCreateDto(),
       manager,
     );
 

@@ -146,11 +146,9 @@ export abstract class BaseService<
     const mainResults = await this.getRepository(entityManager).getByFilter(
       {
         include,
-
+        ...rest,
         ...(columnKeys?.length ? { columnKeys } : undefined),
-
         ...(orderBy ? { orderBy } : undefined),
-
         ...(limit ? { limit } : undefined),
       } as IEntityFilterData<EntityType<T>>,
       entityManager,
