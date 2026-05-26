@@ -1,7 +1,15 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
+import {
+  EntityList,
+  EntityType,
+  IDtoValidationError,
+  IUserEntity,
+  IUserUpdateDto,
+  UserStatus,
+} from 'service_reminder_common';
 import { RegistryService } from 'src/shared/services/registry.service';
 import { UserCreateDto } from './user.create.dto';
-import { EntityList, EntityType, IDtoValidationError, IUserEntity, IUserUpdateDto } from 'service_reminder_common';
 
 export class UserUpdateDto
   extends PartialType(
@@ -13,6 +21,14 @@ export class UserUpdateDto
   )
   implements IUserUpdateDto
 {
+  @ApiProperty({
+    example: UserStatus.ACTIVE,
+    description: 'Role of the user',
+    required: false,
+  })
+  @IsEnum(UserStatus)
+  status?: UserStatus;
+
   registryService: RegistryService;
 
   async validate(
@@ -92,12 +108,16 @@ export class UserUpdateDto
     return errors.length > 0 ? errors : null;
   }
 
-  toUpdateDto(): IUserUpdateDto {
+  toUpdateDto(
+    currentUser: IUserEntity,
+    existingEntity: IUserEntity,
+  ): IUserUpdateDto {
     return {
       name: this.name ?? undefined,
       contactNo: this.contactNo ?? undefined,
       email: this.email ?? undefined,
       password: this.password ?? undefined,
+      status: this.status ?? existingEntity.status,
     };
   }
 }

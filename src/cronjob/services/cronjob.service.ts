@@ -95,7 +95,10 @@ export class CronJobService extends BaseService<EntityList.CRONJOB> {
   // @Cron('59 23 * * *')
   @Cron('1-59/2 * * * *') // odd minutes (1, 3, 5, 7, 9...)
   async runUserDeleteJob() {
-    if (!this.isLastDayOfMonth()) return;
+    if (!this.isLastDayOfMonth()) {
+      this.logger.log('Not the last day of the month');
+      return;
+    }
     this.logger.log('[runUserDeleteJob] Cron triggered');
     await this.userDeleteCronJob.deleteMarkedUsers();
   }
